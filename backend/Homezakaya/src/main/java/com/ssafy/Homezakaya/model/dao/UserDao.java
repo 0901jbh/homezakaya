@@ -1,7 +1,11 @@
 package com.ssafy.Homezakaya.model.dao;
 
 import com.ssafy.Homezakaya.model.dto.UserDto;
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
 
+@Mapper
+@Repository
 public interface UserDao {
 
     // 회원 정보 등록 (회원가입)

@@ -48,13 +48,13 @@
             </template>
           </el-input>
         </el-form-item>
-        <el-form-item label="인증번호">
+        <!-- <el-form-item label="인증번호">
           <el-input v-model="form.emailcheck" placeholder="인증번호을 입력해주세요" clearable>
             <template #append>
               <el-button @click="emailconfirm">인증확인</el-button>
             </template>
           </el-input>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="주량">
           <!-- <el-input v-model="form.alcohol" placeholder="주량을 입력해주세요 (소주 기준)" clearable /> -->
           <el-input-number v-model="form.alcohol" size=large :precision="1" :step="0.5" :min="0" />
@@ -76,6 +76,7 @@
 
 <script setup>
 import { reactive, ref } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 const form = reactive({
   id: '',
@@ -106,11 +107,28 @@ const nicknamecheck = () => {
 
 const emailsend = () => {
   console.log('email send!')
+  ElMessageBox.prompt('인증번호를 입력해주세요.', '메일인증', {
+    confirmButtonText: 'OK',
+    cancelButtonText: 'Cancel',
+  })
+    .then(({ }) => {
+      console.log('email confirm!')
+      ElMessage({
+        type: 'success',
+        message: `인증되었습니다.`,
+      })
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '입력이 취소되었습니다.',
+      })
+    })
 }
 
-const emailconfirm = () => {
-  console.log('email confirm!')
-}
+// const emailconfirm = () => {
+//   console.log('email confirm!')
+// }
 
 function isCorrect() {
   if (form.password == form.password2) {

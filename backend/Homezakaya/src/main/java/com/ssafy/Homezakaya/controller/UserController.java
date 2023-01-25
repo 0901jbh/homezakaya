@@ -1,2 +1,4 @@
-package com.ssafy.Homezakaya.controller;public class UserController {
+package com.ssafy.Homezakaya.controller;
+
+public class UserController {
 }

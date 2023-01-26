@@ -1,6 +1,6 @@
 <template>
   <header>
-    <HeaderItem/>
+    <HeaderItem />
   </header>
   <div class="container">
     <div class="signup-title">회원가입</div>
@@ -65,25 +65,27 @@
         </el-form-item>
         <el-form-item>
           <div class="btn">
-            <RouterLink to="/rooms" style="text-decoration:none;"><el-button type="info" size="large" @click="onSubmit">가입 완료</el-button></RouterLink>
+            <RouterLink to="/rooms" style="text-decoration:none;"><el-button type="info" size="large"
+                @click="onSubmit">가입 완료</el-button></RouterLink>
           </div>
           <div class="btn">
-            <RouterLink to="/" style="text-decoration:none;"><el-button type="info" size="large">돌아가기</el-button></RouterLink>
+            <RouterLink to="/" style="text-decoration:none;"><el-button type="info" size="large">돌아가기</el-button>
+            </RouterLink>
           </div>
         </el-form-item>
       </el-form>
     </div>
   </div>
   <footer>
-    <FooterItem/>
+    <FooterItem />
   </footer>
 </template>
 
 <script setup>
 import { reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import HeaderItem from '../components/HeaderItem.vue'
-import FooterItem from '../components/FooterItem.vue'
+import HeaderItem from '../menu/HeaderItem.vue'
+import FooterItem from '../menu/FooterItem.vue'
 
 const form = reactive({
   id: '',

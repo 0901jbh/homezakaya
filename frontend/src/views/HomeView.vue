@@ -1,4 +1,7 @@
 <template>
+  <header>
+    <HeaderItem/>
+  </header>
   <div class="container">
     <div>
       <img src="../assets/sample.png" alt="izakaya img" style="width: 40vw; height:90vh;">
@@ -43,9 +46,14 @@
       </div>
     </div>
   </div>
+  <footer>
+    <FooterItem/>
+  </footer>
 </template>
 
 <script setup>
+import HeaderItem from '../components/HeaderItem.vue'
+import FooterItem from '../components/FooterItem.vue'
 import { reactive } from 'vue'
 
 const form = reactive({

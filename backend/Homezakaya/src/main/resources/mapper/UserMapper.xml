@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.Homezakaya.model.dao.UserDao">
+
+    <insert id="insertUser" parameterType="UserDto">
+        INSERT INTO User(userId, password, nickname, email, birthDate, gender, mannerPoint, alcoholPoint, username)
+        VALUES (#{userId}, #{password}, #{nickname}, #{email}, #{birthDate}, #{gender}, #{mannerPoint}, #{alcoholPoint},
+                #{username})
+    </insert>
+
+        <select id="selectUserById" parameterType="String">
+            SELECT * FROM User WHERE userId = #{userId}
+        </select>
+
+        <update id="updateUser" parameterType="int">
+            UPDATE User
+            SET user
+        </update>
+
+        <delete id="deleteUser" parameterType="int">
+
+        </delete>
+
+    <!--    <select id="averageOfMannerPoint" parameterType="double">-->
+
+    <!--    </select>-->
+</mapper>

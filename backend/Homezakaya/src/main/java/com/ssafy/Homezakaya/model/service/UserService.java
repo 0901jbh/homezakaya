@@ -1,7 +1,6 @@
 package com.ssafy.Homezakaya.model.service;
 
 import com.ssafy.Homezakaya.model.dto.UserDto;
-import org.apache.catalina.User;
 
 public interface UserService {
 

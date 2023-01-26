@@ -2,17 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.ssafy.Homezakaya.model.dao.UserDao">
-    <resultMap id="userResultMap" type="userDto">
-        <id column="userId" property="userId"/>
-        <result column="password" property="password"/>
-        <result column="nickname" property="nickname"/>
-        <result column="email" property="email"/>
-        <result column="birthDate" property="birthDate"/>
-        <result column="gender" property="gender"/>
-        <result column="mannerPoint" property="mannerPoint"/>
-        <result column="alcoholPoint" property="alcoholPoint"/>
-        <result column="username" property="username"/>
-    </resultMap>
 
     <insert id="insertUser" parameterType="UserDto">
         INSERT INTO User(userId, password, nickname, email, birthDate, gender, mannerPoint, alcoholPoint, username)
@@ -20,20 +9,20 @@
                 #{username})
     </insert>
 
-    <select id="selectUserById" parameterType="String">
-        SELECT * FROM User WHERE userId = #{userId}
-    </select>
+        <select id="selectUserById" parameterType="String">
+            SELECT * FROM User WHERE userId = #{userId}
+        </select>
 
-    <update id="updateUser" parameterType="int">
-        UPDATE User
-        SET user
-    </update>
+        <update id="updateUser" parameterType="int">
+            UPDATE User
+            SET user
+        </update>
 
-    <delete id="deleteUser" parameterType="int">
+        <delete id="deleteUser" parameterType="int">
 
-    </delete>
+        </delete>
 
-    <select id="averageOfMannerPoint" parameterType="double">
+    <!--    <select id="averageOfMannerPoint" parameterType="double">-->
 
-    </select>
+    <!--    </select>-->
 </mapper>

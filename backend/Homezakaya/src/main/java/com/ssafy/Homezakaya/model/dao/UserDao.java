@@ -4,6 +4,8 @@ import com.ssafy.Homezakaya.model.dto.UserDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
+
 @Mapper
 @Repository
 public interface UserDao {
@@ -20,7 +22,11 @@ public interface UserDao {
     // 회원 정보 삭제 - 기존 비밀번호 입력
     int deleteUser(String userId);  // 0,1 로 확인만
 
-    // 매너 도수 계산 (평균내기)
-    double averageOfMannerPoint(String userId);
+    // 매너 도수 누적
+    int addMannerPoint(UserDto userDto);
 
+    // 매너 도수 계산 (평균내기)
+    double selectMannerPoint(String userId);
+
+    int selectEvaluateCount(String userId);
 }

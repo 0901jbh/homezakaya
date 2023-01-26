@@ -5,6 +5,8 @@ import com.ssafy.Homezakaya.model.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -19,11 +21,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean modifyUser(UserDto user) {
         UserDto originUser = userDao.selectUserById(user.getUserId());
-
-        // 확인용
-        System.out.println("originUser.getUserId() = " + originUser.getUserId());
-        System.out.println("user.getUserId() = " + user.getUserId());
-
         // 수정 가능 정보 :  비밀번호, 이메일, 알콜 도수, 닉네임
         originUser.setPassword(user.getPassword());
         originUser.setEmail(user.getEmail());
@@ -43,8 +40,25 @@ public class UserServiceImpl implements UserService {
         return userDao.deleteUser(userId) == 1;
     }
 
+    // 매너도수 누적
+    @Override
+    public boolean addMannerPoint(String userId, double mannerPointSum) {
+        UserDto originUser = userDao.selectUserById(userId);
+
+        originUser.setMannerPointSum(originUser.getMannerPointSum() + mannerPointSum);
+        originUser.setEvaluatedCount(originUser.getEvaluatedCount() + 1);
+
+        return userDao.addMannerPoint(originUser) == 1;
+    }
+
+    // 매너도수 평균
     @Override
     public double averageOfMannerPoint(String userId) {
-        return userDao.averageOfMannerPoint(userId);
+        // 여기서 계산
+        double mannerPoint = userDao.selectMannerPoint(userId);
+        int evaluatePerson = userDao.selectEvaluateCount(userId);
+
+        System.out.println(mannerPoint);
+        return (double) (mannerPoint / evaluatePerson);
     }
 }

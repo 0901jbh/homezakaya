@@ -3,26 +3,64 @@
 
 <mapper namespace="com.ssafy.Homezakaya.model.dao.UserDao">
 
+    <resultMap id="userResultMap" type="UserDto">
+        <id column="userId" property="userId"/>
+        <result column="password" property="password"/>
+        <result column="nickname" property="nickname"/>
+        <result column="email" property="email"/>
+        <result column="birthDate" property="birthDate"/>
+        <result column="gender" property="gender"/>
+        <result column="mannerPointSum" property="mannerPointSum"/>
+        <result column="evaluatedCount" property="evaluatedCount"/>
+        <result column="alcoholPoint" property="alcoholPoint"/>
+        <result column="username" property="username"/>
+    </resultMap>
+
     <insert id="insertUser" parameterType="UserDto">
-        INSERT INTO User(userId, password, nickname, email, birthDate, gender, mannerPoint, alcoholPoint, username)
-        VALUES (#{userId}, #{password}, #{nickname}, #{email}, #{birthDate}, #{gender}, #{mannerPoint}, #{alcoholPoint},
+        INSERT INTO User(userId, password, nickname, email, birthDate, gender, mannerPointSum, evaluatedCount,
+                         alcoholPoint, username)
+        VALUES (#{userId}, #{password}, #{nickname}, #{email}, #{birthDate}, #{gender}, #{mannerPointSum},
+                #{evaluatedCount}, #{alcoholPoint},
                 #{username})
     </insert>
 
-        <select id="selectUserById" parameterType="String">
-            SELECT * FROM User WHERE userId = #{userId}
-        </select>
+    <select id="selectUserById" parameterType="String" resultMap="userResultMap">
+        SELECT *
+        FROM User
+        WHERE userId = #{userId}
+    </select>
 
-        <update id="updateUser" parameterType="int">
-            UPDATE User
-            SET user
-        </update>
+    <update id="updateUser" parameterType="UserDto">
+        UPDATE User
+        SET password=#{password},
+            nickname=#{nickname},
+            email=#{email},
+            birthDate=#{birthDate},
+            alcoholPoint=#{alcoholPoint}
+        WHERE userId = #{userId}
+    </update>
 
-        <delete id="deleteUser" parameterType="int">
+    <delete id="deleteUser" parameterType="String">
+        DELETE
+        FROM User
+        WHERE userId = #{userId}
+    </delete>
 
-        </delete>
+    <!-- 매너도수 -->
+    <update id="addMannerPoint" parameterType="UserDto">
+        UPDATE User
+        SET mannerPointSum = #{mannerPointSum},
+            evaluatedCount = #{evaluatedCount}
+        WHERE userId = #{userId}
+    </update>
 
-    <!--    <select id="averageOfMannerPoint" parameterType="double">-->
+    <select id="selectMannerPoint" parameterType="String" resultType="Double">
+        SELECT mannerPointSum FROM User WHERE userId = #{userId}
+    </select>
 
-    <!--    </select>-->
+    <select id="selectEvaluateCount" parameterType="String" resultType="Int">
+        SELECT evaluatedCount
+        FROM User
+        WHERE userId = #{userId}
+    </select>
 </mapper>

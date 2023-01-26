@@ -8,7 +8,7 @@ import java.util.List;
 @Mapper
 public interface RoomDao {
     int insertRoom(RoomDto room);
-    List<RoomDto> getRooms();
+    List<RoomDto> selectRooms();
     int checkPassword(RoomDto room);
     int enterRoom(int roomId);
     int quitRoom(int roomId);

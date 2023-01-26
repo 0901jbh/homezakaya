@@ -19,8 +19,8 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public List<RoomDto> selectRooms(){
-        return roomDao.getRooms();
+    public List<RoomDto> getRooms(){
+        return roomDao.selectRooms();
     }
 
     @Override

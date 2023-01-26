@@ -6,7 +6,7 @@
         insert into room(roomId, title, password, category, hostId, createdTime, personLimit, personCount) values(#{roomId}, #{title}, #{password}, #{category}, #{hostId}, #{createdTime}, #{personLimit}, #{personCount})
     </insert>
 
-    <select id="getRooms" resultType="RoomDto">
+    <select id="selectRooms" resultType="RoomDto">
         select * from room
     </select>
 

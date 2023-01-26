@@ -13,9 +13,7 @@
         <RoomsIndexItem />
       </div>
     </div>
-    <!-- <div class="friends"> -->
-    <FriendsItem class="friends" />
-    <!-- </div>   -->
+    <FriendsItem />
   </div>
   <footer>
     <FooterItem />
@@ -80,10 +78,5 @@ import InfoItem from '../menu/InfoItem.vue'
   border-radius: 30px;
   padding: 4vh;
   margin-bottom: 4vh;
-}
-
-.friends {
-  margin: 5vh 4vh;
-  height: 80vh;
 }
 </style>

@@ -17,7 +17,7 @@ public class RoomController {
     private RoomServiceImpl roomService;
 
     @PostMapping
-    public ResponseEntity<?> registRoom(@RequestBody RoomDto room) {
+    public ResponseEntity<?> createRoom(@RequestBody RoomDto room) {
         room.setCreatedTime(LocalDateTime.now());
         boolean res = roomService.insertRoom(room);
 
@@ -28,14 +28,14 @@ public class RoomController {
     }
 
     @GetMapping()
-    public ResponseEntity<?> getRoomList() {
-        List<RoomDto> rooms = roomService.getRooms();
+    public ResponseEntity<?> getRooms() {
+        List<RoomDto> rooms = roomService.selectRooms();
         return ResponseEntity.ok(rooms);
     }
 
 
     //비번, 입장, 퇴장
-    @GetMapping()
+    @GetMapping("/password")
     public ResponseEntity<?> checkPassword(@RequestBody RoomDto room){
         boolean res = roomService.checkPassword(room);
 

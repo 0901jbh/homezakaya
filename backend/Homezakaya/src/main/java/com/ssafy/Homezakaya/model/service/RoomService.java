@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface RoomService {
     boolean insertRoom(RoomDto room);
-    List<RoomDto> getRooms();
+    List<RoomDto> selectRooms();
     boolean checkPassword(RoomDto room);
     boolean enterRoom(int roomId);
     boolean quitRoom(int roomId);

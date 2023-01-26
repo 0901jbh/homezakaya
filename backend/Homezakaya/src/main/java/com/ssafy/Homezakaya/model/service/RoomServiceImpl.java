@@ -19,7 +19,7 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public List<RoomDto> getRooms(){
+    public List<RoomDto> selectRooms(){
         return roomDao.getRooms();
     }
 

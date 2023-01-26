@@ -19,7 +19,7 @@ public class RoomController {
     @PostMapping
     public ResponseEntity<?> createRoom(@RequestBody RoomDto room) {
         room.setCreatedTime(LocalDateTime.now());
-        boolean res = roomService.insertRoom(room);
+        boolean res = roomService.createRoom(room);
 
         if(res)
             return ResponseEntity.ok(room);
@@ -67,7 +67,7 @@ public class RoomController {
 
     @DeleteMapping("/{roomId}")
     private ResponseEntity<?> removeRoom(@PathVariable int roomId){
-        boolean res = roomService.deleteRoom(roomId);
+        boolean res = roomService.removeRoom(roomId);
 
         if(res)
             return ResponseEntity.noContent().build();

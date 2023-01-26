@@ -1,7 +1,10 @@
 <template>
+  <header>
+    <HeaderItem />
+  </header>
   <div class="container">
     <div>
-      <img src="../assets/sample.png" alt="izakaya img" style="width: 40vw; height:90vh;">
+      <img src="../../../assets/HomeLogin.jpg" alt="izakaya img" style="width: 30vw; height:90vh;">
     </div>
     <div class="wrapper">
       <div class="title">
@@ -13,19 +16,11 @@
           <div>
             <el-form :model="form" label-width="10vw" margin-top="10vh">
               <el-form-item label="아이디" size='big'>
-                <el-input 
-                  v-model="form.id"
-                  placeholder="아이디를 입력해주세요"
-                  clearable
-                  />
+                <el-input v-model="form.id" placeholder="아이디를 입력해주세요" clearable />
               </el-form-item>
               <br>
               <el-form-item label="비밀번호">
-                <el-input 
-                  v-model="form.password" 
-                  placeholder="비밀번호를 입력해주세요"
-                  show-password
-                  />
+                <el-input v-model="form.password" placeholder="비밀번호를 입력해주세요" show-password />
               </el-form-item>
               <br>
               <br>
@@ -34,7 +29,8 @@
                   <el-button type="info" size="large" @click="onSubmit">로그인</el-button>
                 </div>
                 <div class="btn" @click="SignUpRouter">
-                  <RouterLink to="/signup" style="text-decoration:none;"><el-button type="info" size="large">회원가입</el-button></RouterLink>
+                  <RouterLink to="/signup" style="text-decoration:none;"><el-button type="info"
+                      size="large">회원가입</el-button></RouterLink>
                 </div>
               </el-form-item>
             </el-form>
@@ -43,9 +39,14 @@
       </div>
     </div>
   </div>
+  <footer>
+    <FooterItem />
+  </footer>
 </template>
 
 <script setup>
+import HeaderItem from '../menu/HeaderItem.vue'
+import FooterItem from '../menu/FooterItem.vue'
 import { reactive } from 'vue'
 
 const form = reactive({
@@ -64,6 +65,7 @@ const onSubmit = () => {
   grid-template-columns: 2fr 3fr;
   height: 90vh;
 }
+
 .title {
   font-family: 'Inter';
   color: #9D0101;
@@ -73,24 +75,29 @@ const onSubmit = () => {
   text-align: center;
   padding-top: 5vh;
 }
+
 .comment {
   font-weight: 600;
   font-size: 4vh;
   padding-top: 3vh;
   padding-left: 23vw;
 }
+
 .box {
   margin-top: 14vh;
   padding-left: 5vw;
   display: flex;
   justify-content: center;
 }
+
 .btn {
   margin-left: 4vw;
 }
+
 .el-button {
   background-color: black !important;
 }
+
 .el-button:hover {
   background-color: rgb(118, 118, 118) !important;
   transition: 0.2s;

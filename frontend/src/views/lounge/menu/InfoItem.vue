@@ -1,11 +1,11 @@
 <template>
-  
+	<p>this is InfoItem</p>
 </template>
 
 <script setup>
 
 </script>
 
-<style scope>
+<style scoped>
 
 </style>

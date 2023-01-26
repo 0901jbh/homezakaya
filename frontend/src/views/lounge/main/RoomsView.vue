@@ -1,6 +1,6 @@
 <template>
   <header>
-    <HeaderItem />
+    <UserHeader />
   </header>
   <div class="container">
     <div class="title-rooms">
@@ -24,7 +24,7 @@
 
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-import HeaderItem from '../menu/HeaderItem.vue'
+import UserHeader from '../menu/UserHeader.vue'
 import FooterItem from '../menu/FooterItem.vue'
 import RoomsIndexItem from './components/RoomsIndexItem.vue'
 import FriendsItem from './components/FriendsItem.vue'

@@ -4,7 +4,7 @@
   </header>
   <div class="container">
     <div>
-      <img src="../../../assets/sample.png" alt="izakaya img" style="width: 40vw; height:90vh;">
+      <img src="../../../assets/HomeLogin.jpg" alt="izakaya img" style="width: 30vw; height:90vh;">
     </div>
     <div class="wrapper">
       <div class="title">

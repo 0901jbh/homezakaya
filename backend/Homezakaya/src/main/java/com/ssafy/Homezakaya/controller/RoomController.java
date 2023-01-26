@@ -29,7 +29,7 @@ public class RoomController {
 
     @GetMapping()
     public ResponseEntity<?> getRooms() {
-        List<RoomDto> rooms = roomService.selectRooms();
+        List<RoomDto> rooms = roomService.getRooms();
         return ResponseEntity.ok(rooms);
     }
 

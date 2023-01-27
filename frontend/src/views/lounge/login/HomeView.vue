@@ -15,11 +15,11 @@
         <div class="box">
           <div>
             <el-form :model="form" label-width="10vw" margin-top="10vh">
-              <el-form-item label="아이디" size='big'>
+              <el-form-item label="아이디" size='large'>
                 <el-input v-model="form.id" placeholder="아이디를 입력해주세요" clearable />
               </el-form-item>
               <br>
-              <el-form-item label="비밀번호">
+              <el-form-item label="비밀번호" size="large">
                 <el-input v-model="form.password" placeholder="비밀번호를 입력해주세요" show-password />
               </el-form-item>
               <br>

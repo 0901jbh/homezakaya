@@ -43,7 +43,7 @@
             nickname=#{nickname},
             email=#{email},
             birthDate=#{birthDate},
-            alcoholPoint=#{alcoholPoint}
+            alcoholPoint=#{alcoholPoint},
         WHERE userId = #{userId}
     </update>
 
@@ -54,20 +54,11 @@
     </delete>
 
     <!-- 매너도수 -->
-    <update id="addMannerPoint" parameterType="UserDto">
+    <update id="updateMannerPoint" parameterType="UserDto">
         UPDATE User
         SET mannerPointSum = #{mannerPointSum},
             evaluatedCount = #{evaluatedCount}
         WHERE userId = #{userId}
     </update>
 
-    <select id="selectMannerPoint" parameterType="String" resultType="Double">
-        SELECT mannerPointSum FROM User WHERE userId = #{userId}
-    </select>
-
-    <select id="selectEvaluateCount" parameterType="String" resultType="Int">
-        SELECT evaluatedCount
-        FROM User
-        WHERE userId = #{userId}
-    </select>
 </mapper>

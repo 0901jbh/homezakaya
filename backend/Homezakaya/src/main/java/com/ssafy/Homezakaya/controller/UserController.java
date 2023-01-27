@@ -74,14 +74,14 @@ public class UserController {
         return new ResponseEntity<>(FAIL, HttpStatus.NO_CONTENT);
     }
 
-    // 매너 도수 계산
+    // 매너 도수 갱신
     @PutMapping("/point/{userId}")
-    public ResponseEntity<Double> averageOfMannerPoint(@PathVariable String userId, double mannerPointSum) {
-        userService.addMannerPoint(userId, mannerPointSum);
-        return new ResponseEntity<Double>(userService.averageOfMannerPoint(userId), HttpStatus.OK);
+    public ResponseEntity<String> averageOfMannerPoint(@PathVariable String userId, double mannerPointSum) {
+        userService.averageOfMannerPoint(userId, mannerPointSum);
+        return new ResponseEntity<String>(SUCCESS, HttpStatus.OK);
     }
 
-    // 로그인
+    // 로그인 (jwt 토큰만 생성)
     @PostMapping("/login")
     public ResponseEntity<HashMap<String, Object>> login(UserDto user) {
         HashMap<String, Object> result = new HashMap<>();

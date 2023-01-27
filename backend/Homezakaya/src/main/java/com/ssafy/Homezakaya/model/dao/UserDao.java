@@ -28,10 +28,5 @@ public interface UserDao {
     int deleteUser(String userId);  // 0,1 로 확인만
 
     // 매너 도수 누적
-    int addMannerPoint(UserDto user);
-
-    // 매너 도수 계산 (평균내기)
-    double selectMannerPoint(String userId);
-
-    int selectEvaluateCount(String userId);
+    int updateMannerPoint(UserDto user);
 }

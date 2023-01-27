@@ -41,6 +41,16 @@
 </script>
 
 <style scoped>
+@font-face {
+  font-family: 'dokdo';
+  src: url('../../../assets/fonts/Dokdo-Regular.ttf')
+}
+
+@font-face {
+  font-family: 'eastsea';
+  src: url('../../../assets/fonts/EastSeaDokdo-Regular.ttf')
+}
+
 .head {
   background-color: black;
   height: 8vh;
@@ -51,6 +61,7 @@
 }
 
 .title {
+  font-family: 'dokdo';
   color: white;
   font-size: 5vh;
   font-weight: 600;

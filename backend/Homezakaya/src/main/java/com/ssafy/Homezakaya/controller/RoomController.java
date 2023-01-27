@@ -18,12 +18,7 @@ public class RoomController {
 
     @PostMapping
     public ResponseEntity<?> createRoom(@RequestBody RoomDto room) {
-<<<<<<< HEAD
-        boolean res = roomService.insertRoom(room);
-=======
-        room.setCreatedTime(LocalDateTime.now());
         boolean res = roomService.createRoom(room);
->>>>>>> 8c125aa0904858b9495cd38f2a8e42b04ebe82c4
 
         if(res)
             return ResponseEntity.ok(room);

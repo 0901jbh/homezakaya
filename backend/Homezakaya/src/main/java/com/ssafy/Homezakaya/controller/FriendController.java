@@ -27,7 +27,11 @@ public class FriendController {
     @GetMapping("/{userId}")
     public ResponseEntity<List<UserDto>> getFriendsList(@PathVariable("userId") String userId) {
         List<UserDto> list = friendService.getFriendsById(userId);
-        return new ResponseEntity<List<UserDto>>(list, HttpStatus.OK);
+        if(list == null){
+            return new ResponseEntity<List<UserDto>>(list, HttpStatus.NOT_FOUND);
+        }else {
+            return new ResponseEntity<List<UserDto>>(list, HttpStatus.OK);
+        }
     }
 
 
@@ -42,14 +46,15 @@ public class FriendController {
             result = friendService.removeFriend(fDto);
             if (result == 1) {
                 resultMap.put("message", SUCCESS);
-            } else if (result == 0) {
-                resultMap.put("message", FAIL);
+                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
             }
-            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+            else {
+                resultMap.put("message", FAIL);
+                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
-            resultMap.put("message", FAIL);
             return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -58,8 +63,9 @@ public class FriendController {
     // 친구 요청 처리
     @PostMapping("/request")
     public ResponseEntity<?> friendRequest(@RequestBody FriendDto friendDto) {
-        Map<String, Object> resultMap = new HashMap<>();
         int result = 0;
+        Map<String, Object> resultMap = new HashMap<>();
+
         try {
             result = friendService.createFriend(friendDto);
             if (result == 1) {

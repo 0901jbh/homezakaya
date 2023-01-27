@@ -4,7 +4,7 @@
 
     <!--친구목록 조회-->
     <select id="selectFriendsById" parameterType="string" resultType="map">
-        select userId, nickname, email, birthDate, gender, mannerPoint, alcoholPoint, username
+        select userId, nickname, email, birthDate, gender, mannerPoint, evaluatedCount, alcoholPoint, username
         from friend f join user u
         on userBId = userId
         where userAId = #{userId} and isConnected = 1
@@ -34,7 +34,7 @@
 
     <!--친구 요청 리스트 조회-->
     <select id="selectFriendReqById" parameterType="string" resultType="map">
-        select userId, nickname, email, birthDate, gender, mannerPoint, alcoholPoint, username
+        select userId, nickname, email, birthDate, gender, mannerPoint, evaluatedCount, alcoholPoint, username
         from friend f join user u
         on userAId = userId
         where userBId = #{userId} and isConnected = 0
@@ -42,7 +42,15 @@
 
     <!--유저 검색-->
     <select id="selectUserByKeyword" parameterType="string" resultType="map">
-        select * from user where userId LIKE CONCAT('%', #{keyword}, '%')
+        select userId, nickname, email, birthDate, gender, mannerPoint, evaluatedCount, alcoholPoint, username
+        from user where userId LIKE CONCAT('%', #{keyword}, '%')
         or username like CONCAT('%', #{keyword}, '%')
+    </select>
+
+    <!--아이디로 유저 조회-->
+    <select id="selectUserById" parameterType="string" resultType="UserDto">
+        select *
+        from user
+        where userId = #{userId}
     </select>
 </mapper>

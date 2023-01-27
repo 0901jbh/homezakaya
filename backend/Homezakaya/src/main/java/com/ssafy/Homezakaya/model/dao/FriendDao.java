@@ -29,4 +29,7 @@ public interface FriendDao {
 
     // 유저 조회(검색)
     public List<UserDto> selectUserByKeyword(String keyword);
+
+    // 유저 아이디로 조회
+    public UserDto selectUserById(String userId);
 }

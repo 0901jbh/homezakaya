@@ -1,6 +1,7 @@
 package com.ssafy.Homezakaya.model.service;
 
 import com.ssafy.Homezakaya.model.dao.FriendDao;
+import com.ssafy.Homezakaya.model.dao.UserDao;
 import com.ssafy.Homezakaya.model.dto.FriendDto;
 import com.ssafy.Homezakaya.model.dto.UserDto;
 import org.apache.ibatis.session.SqlSession;
@@ -21,7 +22,11 @@ public class FriendServiceImpl implements FriendService{
     // 해당 유저의 친구 목록 조회
     @Override
     public List<UserDto> getFriendsById(String userId) {
-        return fDao.selectFriendsById(userId);
+        // 존재하는 유저인지 확인하기
+        UserDto userDto = fDao.selectUserById(userId);
+        if( userDto == null){
+            return null;
+        }else return fDao.selectFriendsById(userId);
     }
 
     // 친구 삭제 (친구 연결 끊기)

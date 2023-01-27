@@ -1,6 +1,8 @@
 <template>
   <div class="head">
-    <div class="title">Homezakaya</div>
+    <RouterLink to="/" style="text-decoration:none;">
+      <div class="title">Homezakaya</div>
+    </RouterLink>
     <!-- <div class="info">내 정보</div> -->
   </div>
 </template>
@@ -9,6 +11,16 @@
 </script>
 
 <style scoped>
+@font-face {
+  font-family: 'dokdo';
+  src: url('../../../assets/fonts/Dokdo-Regular.ttf')
+}
+
+@font-face {
+  font-family: 'eastsea';
+  src: url('../../../assets/fonts/EastSeaDokdo-Regular.ttf')
+}
+
 .head {
   background-color: black;
   height: 8vh;
@@ -17,12 +29,15 @@
   align-items: center;
   justify-content: space-between;
 }
+
 .title {
+  font-family: 'dokdo';
   color: white;
   font-size: 5vh;
   font-weight: 600;
   padding-left: 1vw;
 }
+
 .info {
   color: white;
   font-size: 4vh;

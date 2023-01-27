@@ -1,6 +1,8 @@
 <template>
   <div class="head">
-    <div class="title">Homezakaya</div>
+    <RouterLink to="/" style="text-decoration:none;">
+      <div class="title">Homezakaya</div>
+    </RouterLink>
     <!-- <div class="info">내 정보</div> -->
   </div>
 </template>

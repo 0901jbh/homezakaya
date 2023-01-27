@@ -1,6 +1,6 @@
 <template>
   <header>
-    <HeaderItem />
+    <UserHeader />
   </header>
   <div class="container">
     <div class="signup-title">회원 정보 수정</div>

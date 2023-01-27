@@ -1,6 +1,8 @@
 <template>
   <div class="head">
-    <div class="title">Homezakaya</div>
+    <RouterLink to="/rooms" style="text-decoration:none;">
+      <div class="title">Homezakaya</div>
+    </RouterLink>
     <!-- <div class="info">
       <img src="../../../assets/profile.png" alt="profile img" style="width:60px; height:60px;">
     </div> -->

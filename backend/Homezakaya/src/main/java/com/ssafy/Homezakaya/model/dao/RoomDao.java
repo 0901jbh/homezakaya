@@ -9,7 +9,7 @@ import java.util.List;
 public interface RoomDao {
     int insertRoom(RoomDto room);
     List<RoomDto> selectRooms();
-    int checkPassword(RoomDto room);
+    RoomDto checkPassword(RoomDto room);
     int enterRoom(int roomId);
     int quitRoom(int roomId);
     int deleteRoom(int roomId);

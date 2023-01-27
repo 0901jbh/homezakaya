@@ -24,8 +24,8 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public boolean checkPassword(RoomDto room){
-        return roomDao.checkPassword(room) > 0;
+    public RoomDto checkPassword(RoomDto room){
+        return roomDao.checkPassword(room);
     }
 
     @Override

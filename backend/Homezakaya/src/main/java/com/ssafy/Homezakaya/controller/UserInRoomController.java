@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+
 @RequestMapping("/api/userinroom")
 @RestController
 public class UserInRoomController {
@@ -18,7 +20,7 @@ public class UserInRoomController {
         boolean res = userInRoomService.insertUserInRoom(userInRoom);
 
         if(res)
-            return ResponseEntity.ok().build();
+            return ResponseEntity.created(URI.create("")).body(userInRoom);
         else
             return ResponseEntity.internalServerError().build();
     }
@@ -35,8 +37,9 @@ public class UserInRoomController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<?> getRoomId(@PathVariable String userId){
-        int res = userInRoomService.getRoomId(userId);
-        if(res > 0)
+        Integer res = userInRoomService.getRoomId(userId);
+        System.out.println(res);
+        if(res != null)
             return ResponseEntity.ok(res);
         else
             return ResponseEntity.internalServerError().build();

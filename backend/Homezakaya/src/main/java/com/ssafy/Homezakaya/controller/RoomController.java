@@ -18,7 +18,6 @@ public class RoomController {
 
     @PostMapping
     public ResponseEntity<?> createRoom(@RequestBody RoomDto room) {
-        room.setCreatedTime(LocalDateTime.now());
         boolean res = roomService.insertRoom(room);
 
         if(res)
@@ -37,12 +36,12 @@ public class RoomController {
     //비번, 입장, 퇴장
     @GetMapping("/password")
     public ResponseEntity<?> checkPassword(@RequestBody RoomDto room){
-        boolean res = roomService.checkPassword(room);
+        RoomDto res = roomService.checkPassword(room);
 
-        if(res)
-            return ResponseEntity.ok().build();
+        if(res != null)
+            return ResponseEntity.ok(res);
         else
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.internalServerError().build();
     }
 
     @PutMapping("/enter/{roomId}")

@@ -22,7 +22,7 @@ public class UserInRoomServiceImpl implements UserInRoomService {
     }
 
     @Override
-    public int getRoomId(String userId) {
+    public Integer getRoomId(String userId) {
         return userInRoomDao.selectRoomIdByUserId(userId);
     }
 }

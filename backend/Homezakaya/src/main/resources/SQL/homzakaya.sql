@@ -40,8 +40,8 @@ CREATE TABLE IF NOT EXISTS Friend (
 -- TABLE Room
 
 CREATE TABLE IF NOT EXISTS Room (
-                                    roomId INT NOT NULL,
-                                    title VARCHAR(45) NOT NULL,
+    roomId INT AUTO_INCREMENT,
+    title VARCHAR(45) NOT NULL,
     password VARCHAR(45) NULL,
     category VARCHAR(45) NOT NULL,
     hostId VARCHAR(45) NOT NULL,
@@ -68,10 +68,9 @@ CREATE TABLE IF NOT EXISTS UserInRoom (
 
 
 -- TABLE Sentence
-
 CREATE TABLE IF NOT EXISTS Sentence (
-                                        sentenceId INT NOT NULL,
-                                        content VARCHAR(255) NOT NULL,
+    sentenceId INT AUTO_INCREMENT,
+    content VARCHAR(255) NOT NULL,
     PRIMARY KEY (sentenceId)
     );
 
@@ -79,7 +78,7 @@ CREATE TABLE IF NOT EXISTS Sentence (
 -- TABLE Topic
 
 CREATE TABLE IF NOT EXISTS Topic (
-                                     topicId INT NOT NULL,
-                                     content VARCHAR(255) NOT NULL,
+     topicId INT AUTO_INCREMENT,
+     content VARCHAR(255) NOT NULL,
     PRIMARY KEY (topicId)
     );

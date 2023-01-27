@@ -10,7 +10,7 @@
         select * from room
     </select>
 
-    <select id="checkPassword" parameterType="RoomDto">
+    <select id="checkPassword" resultType="RoomDto" parameterType="RoomDto">
         select * from room where roomId = #{roomId} and password = #{password}
     </select>
 
@@ -23,7 +23,7 @@
     </update>
 
     <delete id="deleteRoom" parameterType="Integer">
-        delete from post where roomId = #{no}
+        delete from room where roomId = #{no}
     </delete>
 
 </mapper>

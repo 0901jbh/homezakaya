@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -16,6 +17,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public void createUser(UserDto user) {
         userDao.insertUser(user);
+    }
+
+    @Override
+    public UserDto checkId(String userId) {
+        return userDao.selectUserById(userId);
+    }
+
+    @Override
+    public UserDto checkNickname(String nickname) {
+        return userDao.selectUserByNickname(nickname);
     }
 
     @Override

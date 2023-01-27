@@ -30,6 +30,13 @@
         WHERE userId = #{userId}
     </select>
 
+    <!-- 중복 체크 -->
+    <select id="selectUserByNickname" parameterType="String" resultMap="userResultMap">
+        SELECT *
+        FROM User
+        WHERE nickname = #{nickname}
+    </select>
+
     <update id="updateUser" parameterType="UserDto">
         UPDATE User
         SET password=#{password},

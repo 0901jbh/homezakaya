@@ -17,7 +17,7 @@ public class UserInRoomController {
 
     @PostMapping
     public ResponseEntity<?> createUserInRoom(@RequestBody UserInRoomDto userInRoom) {
-        boolean res = userInRoomService.insertUserInRoom(userInRoom);
+        boolean res = userInRoomService.createUserInRoom(userInRoom);
 
         if(res)
             return ResponseEntity.created(URI.create("")).body(userInRoom);
@@ -27,7 +27,7 @@ public class UserInRoomController {
 
     @DeleteMapping("/{userId}")
     public ResponseEntity<?> removeUserInRoom(@PathVariable String userId) {
-        boolean res = userInRoomService.deleteUserInRoom(userId);
+        boolean res = userInRoomService.removeUserInRoom(userId);
 
         if(res)
             return ResponseEntity.noContent().build();

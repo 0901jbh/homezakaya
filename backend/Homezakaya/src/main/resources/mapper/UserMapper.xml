@@ -10,16 +10,16 @@
         <result column="email" property="email"/>
         <result column="birthDate" property="birthDate"/>
         <result column="gender" property="gender"/>
-        <result column="mannerPointSum" property="mannerPointSum"/>
+        <result column="mannerPoint" property="mannerPoint"/>
         <result column="evaluatedCount" property="evaluatedCount"/>
         <result column="alcoholPoint" property="alcoholPoint"/>
         <result column="username" property="username"/>
     </resultMap>
 
     <insert id="insertUser" parameterType="UserDto">
-        INSERT INTO User(userId, password, nickname, email, birthDate, gender, mannerPointSum, evaluatedCount,
+        INSERT INTO User(userId, password, nickname, email, birthDate, gender, mannerPoint, evaluatedCount,
                          alcoholPoint, username)
-        VALUES (#{userId}, #{password}, #{nickname}, #{email}, #{birthDate}, #{gender}, #{mannerPointSum},
+        VALUES (#{userId}, #{password}, #{nickname}, #{email}, #{birthDate}, #{gender}, #{mannerPoint},
                 #{evaluatedCount}, #{alcoholPoint},
                 #{username})
     </insert>
@@ -54,7 +54,7 @@
 
     <update id="updateMannerPoint" parameterType="UserDto">
         UPDATE User
-        SET mannerPointSum = #{mannerPointSum},
+        SET mannerPoint = #{mannerPoint},
             evaluatedCount = #{evaluatedCount}
         WHERE userId = #{userId}
     </update>

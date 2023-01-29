@@ -94,7 +94,7 @@ public class UserController {
                 result.put("access-token", jwtUtil.createToken("userId", user.getUserId()));
                 result.put("message", SUCCESS);
                 result.put("nickname", loginUser.getNickname());
-                result.put("mannerPoint", loginUser.getMannerPointSum());
+                result.put("mannerPoint", loginUser.getMannerPoint());
                 result.put("alcoholPoint", loginUser.getAlcoholPoint());
 
 //                System.out.println(result.get("access-token"));

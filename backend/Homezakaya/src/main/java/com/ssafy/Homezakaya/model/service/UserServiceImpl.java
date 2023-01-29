@@ -53,14 +53,14 @@ public class UserServiceImpl implements UserService {
 
     // 매너도수 평균
     @Override
-    public boolean averageOfMannerPoint(String userId, double mannerPointSum) {
+    public boolean averageOfMannerPoint(String userId, double mannerPoint) {
         UserDto originUser = userDao.selectUserById(userId);
 
-        double updateMannerPoint = (originUser.getMannerPointSum() * originUser.getEvaluatedCount()) + mannerPointSum; // 누적점수
+        double updateMannerPoint = (originUser.getMannerPoint() * originUser.getEvaluatedCount()) + mannerPoint; // 누적점수
         originUser.setEvaluatedCount(originUser.getEvaluatedCount() + 1);   // 평가수 + 1
 
         double avgMannerPoint = updateMannerPoint / (double)originUser.getEvaluatedCount();
-        originUser.setMannerPointSum(Math.round(avgMannerPoint*10)/10.0);   // 매너점수 update
+        originUser.setMannerPoint(Math.round(avgMannerPoint*10)/10.0);   // 매너점수 update
 
         return userDao.updateMannerPoint(originUser) == 1;
     }

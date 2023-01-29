@@ -18,7 +18,7 @@ public class UserDto {
     private String email;
     private String birthDate;
     private String gender;
-    private double mannerPointSum;  // 매너도수누적
+    private double mannerPoint;  // 매너도수누적
     private int evaluatedCount; // 평가인 수
     private double alcoholPoint;
     private String username;

@@ -26,6 +26,6 @@ public interface UserService {
     boolean removeUser(String userId);
 
     // 매너 도수 누적
-    boolean averageOfMannerPoint(String userId, double mannerPointSum);  // userId, 넘기기
+    boolean averageOfMannerPoint(String userId, double mannerPoint);  // userId, 넘기기
 
 }

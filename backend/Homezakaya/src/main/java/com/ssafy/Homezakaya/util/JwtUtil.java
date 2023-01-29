@@ -13,7 +13,6 @@ public class JwtUtil {
     public String createToken(String claimId, String data) throws UnsupportedEncodingException {
         return Jwts.builder().setHeaderParam("alg", "HS256").setHeaderParam("type", "JWT").claim(claimId, data).signWith(io.jsonwebtoken.SignatureAlgorithm.HS256, SALT.getBytes("UTF-8")).compact();
     }
-
     // 유효성 검사
     public void valid(String token) throws Exception {
         Jwts.parser().setSigningKey(SALT.getBytes("UTF-8")).parseClaimsJws(token);

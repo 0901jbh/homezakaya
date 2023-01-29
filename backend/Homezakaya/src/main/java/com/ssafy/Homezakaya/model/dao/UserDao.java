@@ -15,10 +15,10 @@ public interface UserDao {
     // 회원 정보 등록 (회원가입)
     void insertUser(UserDto user);
 
-    // 회원 정보 조회 (로그인 id 로 나자신 정보 조회)
+    // 회원 정보 조회 (로그인 id 로 나자신 정보 조회), userId 중복체크
     UserDto selectUserById(String userId);
 
-    // 아이디, 닉네임 중복체크용 전체 회원 목록
+    // nickname 중복체크용 전체 회원 목록 조회
     UserDto selectUserByNickname(String nickname);
 
     // 회원 정보 수정

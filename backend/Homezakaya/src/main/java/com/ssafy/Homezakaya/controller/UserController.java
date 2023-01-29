@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Objects;
@@ -89,7 +91,7 @@ public class UserController {
 
     // 로그인 (jwt 토큰만 생성)
     @PostMapping("/login")
-    public ResponseEntity<HashMap<String, Object>> login(UserDto user) {
+    public ResponseEntity<HashMap<String, Object>> login(@RequestBody UserDto user, HttpServletRequest request, HttpServletResponse response) {
         HashMap<String, Object> result = new HashMap<>();
         HttpStatus status = null;
 
@@ -103,14 +105,14 @@ public class UserController {
                 result.put("mannerPoint", loginUser.getMannerPoint());
                 result.put("alcoholPoint", loginUser.getAlcoholPoint());
 
-//                System.out.println(result.get("access-token"));
+                HttpSession session = request.getSession();
+                session.setAttribute("loginUser", loginUser);
 
                 status = HttpStatus.OK; // 200
             } else {
                 result.put("message", FAIL);    //
                 status = HttpStatus.NOT_FOUND;  // 404
             }
-
         } catch (Exception e) {
             result.put("message", FAIL);
             status = HttpStatus.INTERNAL_SERVER_ERROR;  // 500

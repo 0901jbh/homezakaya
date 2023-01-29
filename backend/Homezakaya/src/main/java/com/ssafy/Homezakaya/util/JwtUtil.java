@@ -18,5 +18,4 @@ public class JwtUtil {
     public void valid(String token) throws Exception {
         Jwts.parser().setSigningKey(SALT.getBytes("UTF-8")).parseClaimsJws(token);
     }
-
 }

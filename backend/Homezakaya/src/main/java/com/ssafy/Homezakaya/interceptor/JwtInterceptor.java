@@ -12,14 +12,13 @@ import javax.servlet.http.HttpServletResponse;
 public class JwtInterceptor implements HandlerInterceptor {
     // header 정보
     private static final String HEADER_AUTH = "access-token";
-
     @Autowired
     private JwtUtil jwtUtil;
-
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        if (request.getMethod().equals("OPTIONS"))
+        if (request.getMethod().equals("OPTIONS")){
             return true;
+        }
 
         final String token = request.getHeader(HEADER_AUTH);
         System.out.println("token = " + token);

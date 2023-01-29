@@ -30,7 +30,6 @@
         WHERE userId = #{userId}
     </select>
 
-    <!-- 중복 체크 -->
     <select id="selectUserByNickname" parameterType="String" resultMap="userResultMap">
         SELECT *
         FROM User
@@ -53,7 +52,6 @@
         WHERE userId = #{userId}
     </delete>
 
-    <!-- 매너도수 -->
     <update id="updateMannerPoint" parameterType="UserDto">
         UPDATE User
         SET mannerPointSum = #{mannerPointSum},

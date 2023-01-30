@@ -3,4 +3,11 @@ body {
   height: 100vh;
   margin: 0;
   background: linear-gradient(180deg, #b4b4b4 0%, rgba(255, 255, 255, 0) 100%);
+  --el-color-primary: #9d0101;
+  --el-color-primary-dark-2: #6e0000;
+  --el-color-primary-light-3: #a92121;
+  --el-color-primary-light-5: #c16161;
+  --el-color-primary-light-7: #da8181;
+  --el-color-primary-light-8: #e7a1a1;
+  --el-color-primary-light-9: #f3c1c1;
 }

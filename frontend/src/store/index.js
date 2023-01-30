@@ -1,6 +1,10 @@
 import { createStore } from 'vuex';
+import { userModule } from "@/store/modules/userModule.js";
+import { friendModule } from "@/store/modules/friendModule.js";
+import { roomModule } from "@/store/modules/roomModule.js";
+import { userInRoomModule } from "@/store/modules/userInRoomModule.js";
 
-const store = createStore({
+export default createStore({
   state: { // 변수들의 집합
     name:'taehyoung',
   },
@@ -23,7 +27,11 @@ const store = createStore({
         console.log(err)
       })
     },
+  },
+  modules: {
+    roomModule,
+    friendModule,
+    roomModule,
+    userInRoomModule,
   }
 })
-
-export default store;

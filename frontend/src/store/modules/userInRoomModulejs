@@ -1,0 +1,11 @@
+export const userInRoomModule = {
+  state: () => ({
+  }),
+  mutations: {
+  },
+  getters: {
+  },
+  actions: {
+  }
+};
+ 

@@ -13,7 +13,7 @@
         <RoomsIndexItem />
       </div>
     </div>
-    <FriendsItem />
+    <FriendIndex />
   </div>
   <footer>
     <FooterItem />
@@ -25,7 +25,7 @@ import { RouterLink, RouterView } from 'vue-router'
 import UserHeader from '../menu/UserHeader.vue'
 import FooterItem from '../menu/FooterItem.vue'
 import RoomsIndexItem from './components/RoomsIndexItem.vue'
-import FriendsItem from './components/FriendsItem.vue'
+import FriendIndex from './components/FriendIndex.vue'
 import InfoItem from '../menu/InfoItem.vue'
 
 </script>

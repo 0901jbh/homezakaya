@@ -27,10 +27,16 @@ public class FriendController {
     @GetMapping("/{userId}")
     public ResponseEntity<List<UserDto>> getFriendsList(@PathVariable("userId") String userId) {
         List<UserDto> list = friendService.getFriendsById(userId);
-        if(list == null){
-            return new ResponseEntity<List<UserDto>>(list, HttpStatus.NOT_FOUND);
-        }else {
-            return new ResponseEntity<List<UserDto>>(list, HttpStatus.OK);
+        try {
+            if(list == null){
+                return new ResponseEntity<List<UserDto>>(list, HttpStatus.NOT_FOUND);
+            }else {
+                return new ResponseEntity<List<UserDto>>(list, HttpStatus.OK);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<List<UserDto>>(list, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -49,8 +55,8 @@ public class FriendController {
                 return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
             }
             else {
-                resultMap.put("message", FAIL);
-                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
+                resultMap.put("message", "유저 아이디 또는 친구 관계가 존재하지 않음");
+                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NOT_FOUND);
             }
 
         } catch (Exception e) {
@@ -70,12 +76,13 @@ public class FriendController {
             result = friendService.createFriend(friendDto);
             if (result == 1) {
                 resultMap.put("message", SUCCESS);
+                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.CREATED);
+            }else {
+                resultMap.put("message", "존재하지 않는 유저");
+                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NOT_FOUND);
             }
-            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
-
         } catch (Exception e) {
             e.printStackTrace();
-            resultMap.put("message", FAIL);
             return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -84,7 +91,18 @@ public class FriendController {
     @GetMapping("/request/{userId}")
     public ResponseEntity<List<UserDto>> getFriendsReqList(@PathVariable("userId") String userId) throws SQLException {
         List<UserDto> list = friendService.getFriendReqById(userId);
-        return new ResponseEntity<List<UserDto>>(list, HttpStatus.OK);
+        try {
+            if(list == null){
+                return new ResponseEntity<List<UserDto>>(list, HttpStatus.NOT_FOUND);
+            }else {
+                return new ResponseEntity<List<UserDto>>(list, HttpStatus.OK);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<List<UserDto>>(list, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
     // 친구 요청 수락
@@ -96,12 +114,13 @@ public class FriendController {
             result = friendService.modifyFriend(friendDto);
             if (result == 1) {
                 resultMap.put("message", SUCCESS);
+                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.CREATED);
+            }else{
+                resultMap.put("message", "존재하지 않는 유저");
+                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NOT_FOUND);
             }
-            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
-
         } catch (Exception e) {
             e.printStackTrace();
-            resultMap.put("message", FAIL);
             return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -109,7 +128,6 @@ public class FriendController {
     // 친구 요청 거절/취소
     @DeleteMapping("/request/{userAId}/{userBId}")
     public ResponseEntity<?> friendReqReject(@PathVariable String userAId, @PathVariable String userBId) {
-
         int result = 0;
         Map<String, Object> resultMap = new HashMap<>();
         FriendDto fDto = new FriendDto(userAId, userBId, false);
@@ -117,14 +135,15 @@ public class FriendController {
             result = friendService.removeFriendReq(fDto);
             if (result == 1) {
                 resultMap.put("message", SUCCESS);
-            } else if (result == 0) {
-                resultMap.put("message", FAIL);
+                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+            } else {
+                resultMap.put("message", "유저아이디 또는 요청이 존재하지 않음");
+                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NOT_FOUND);
             }
-            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+
 
         } catch (Exception e) {
             e.printStackTrace();
-            resultMap.put("message", FAIL);
             return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

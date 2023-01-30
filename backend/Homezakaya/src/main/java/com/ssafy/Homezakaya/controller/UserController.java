@@ -92,7 +92,7 @@ public class UserController {
     // 로그인 (jwt 토큰만 생성)
     @PostMapping("/login")
     public ResponseEntity<HashMap<String, Object>> login(@RequestBody UserDto user, HttpServletRequest request, HttpServletResponse response) {
-        HashMap<String, Object> result = new HashMap<>();
+        HashMap<String, Object> result = new HashMap<>();   
         HttpStatus status = null;
 
         UserDto loginUser = userService.getUser(user.getUserId());

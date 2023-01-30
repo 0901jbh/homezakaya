@@ -45,6 +45,13 @@ public class FriendServiceImpl implements FriendService{
     // 친구 요청(A->B)
     @Override
     public int createFriend(FriendDto friendDto) {
+        // 존재하는 유저인지 확인하기
+        UserDto userDto1 = fDao.selectUserById(friendDto.getUserAId());
+        UserDto userDto2 = fDao.selectUserById(friendDto.getUserBId());
+        if(userDto2 == null || userDto1 == null){
+            return 0;
+        }
+
         FriendDto friendDto2 = new FriendDto(friendDto.getUserBId(), friendDto.getUserAId(), friendDto.isConnected());
         // B->A 요청이 존재하는지 확인
         if(fDao.selectFriendReq(friendDto2) != null) // 1. 존재한다면
@@ -66,12 +73,22 @@ public class FriendServiceImpl implements FriendService{
     // 친구 요청 리스트 조회
     @Override
     public List<UserDto> getFriendReqById(String userId) {
-        return fDao.selectFriendReqById(userId);
+        UserDto userDto = fDao.selectUserById(userId);
+        if( userDto == null){
+            return null;
+        }else return fDao.selectFriendReqById(userId);
     }
 
     // 친구 요청 수락
     @Override
     public int modifyFriend(FriendDto friendDto) {
+        // 존재하는 유저인지 확인하기
+        UserDto userDto1 = fDao.selectUserById(friendDto.getUserAId());
+        UserDto userDto2 = fDao.selectUserById(friendDto.getUserBId());
+        if(userDto2 == null || userDto1 == null){
+            return 0;
+        }
+
         // B->A 관계 true로 update
         fDao.updateFriend(new FriendDto(friendDto.getUserBId(), friendDto.getUserAId(), true));
         // A->B (true) insert
@@ -83,6 +100,13 @@ public class FriendServiceImpl implements FriendService{
     // 친구 요청 거절/취소
     @Override
     public int removeFriendReq(FriendDto friendDto) {
+        // 존재하는 유저인지 확인하기
+        UserDto userDto1 = fDao.selectUserById(friendDto.getUserAId());
+        UserDto userDto2 = fDao.selectUserById(friendDto.getUserBId());
+        if(userDto2 == null || userDto1 == null){
+            return 0;
+        }
+
         return fDao.deleteFriend(friendDto);
     }
 

@@ -18,9 +18,10 @@ CREATE TABLE IF NOT EXISTS User (
     password VARCHAR(45) NOT NULL,
     nickname VARCHAR(45) NOT NULL,
     email VARCHAR(45) NOT NULL,
-    birthDate DATE NOT NULL,
+    birthDate VARCHAR(45) NOT NULL,
     gender VARCHAR(20) NOT NULL,
-    mannerPoint DOUBLE NOT NULL,
+    mannerPoint DOUBLE NULL,
+    evaluatedCount INT NULL,
     alcoholPoint DOUBLE NOT NULL,
     username VARCHAR(20) NOT NULL,
     PRIMARY KEY (userId)
@@ -33,7 +34,9 @@ CREATE TABLE IF NOT EXISTS Friend (
     userAId VARCHAR(45) NOT NULL,
     userBId VARCHAR(45) NOT NULL,
     isConnected BOOLEAN NOT NULL,
-    PRIMARY KEY (userAId)
+    PRIMARY KEY (userAId, userBId),
+    FOREIGN KEY (userAId) REFERENCES User (userId) on delete cascade,
+    FOREIGN KEY (userBId) REFERENCES User (userId) on delete cascade
     );
 
 

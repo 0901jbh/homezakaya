@@ -1,6 +1,6 @@
 <template>
   <header>
-    <HeaderItem />
+    <UserHeader />
   </header>
   <div class="container">
     <div class="signup-title">회원 정보 수정</div>
@@ -81,7 +81,7 @@
 <script setup>
 import { reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import HeaderItem from '../menu/HeaderItem.vue'
+import UserHeader from '../menu/UserHeader.vue'
 import FooterItem from '../menu/FooterItem.vue'
 
 const form = reactive({

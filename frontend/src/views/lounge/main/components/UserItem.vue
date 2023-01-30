@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p>This is MyFriendItem</p>
+    <p>This is UserItem</p>
   </div>
 </template>
 
@@ -11,6 +11,6 @@
 <style scoped>
 div {
   border: solid 5px black;
-  height: 10vh;
+  width: 100%;
 }
 </style>

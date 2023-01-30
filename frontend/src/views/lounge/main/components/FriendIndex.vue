@@ -5,26 +5,22 @@
 		<input id="user" type="radio" name="tab_item">
 		<label class="tab_item" id="tab_second" for="user">User</label>
     <div class="tab_content" id="friend_content">
-			<MyFriendRequestItem/>
-			<div v-for="i in 10	" :key="i">
-				<MyFriendItem/>
-			</div>
+			<FriendRequestItem/>
+      <UserItem v-for="i in 10" :key="i"/>
     </div>
     <div class="tab_content" id="user_content">
 			<form action="">
       	<input type="text">
 				<button value="submit">검색</button>
 			</form>
-			<div v-for="i in 10	" :key="i">
-				<MyFriendItem/>
-			</div>
+      <UserItem v-for="i in 10	" :key="i"/>
 		</div>
 	</div>
 </template>
 
 <script setup>
-import MyFriendItem from './MyFriendItem.vue'
-import MyFriendRequestItem from './MyFriendRequestItem.vue'
+import UserItem from './UserItem.vue'
+import FriendRequestItem from './FriendRequestItem.vue'
 
 </script>
 

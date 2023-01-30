@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 @RequestMapping("/api/users")
@@ -28,65 +29,83 @@ public class UserController {
 
     // 회원 정보 등록
     @PostMapping
-    public ResponseEntity<String> createUser(@RequestBody UserDto user) {
+    public ResponseEntity<?> createUser(@RequestBody UserDto user) {
+        Map<String, Object> resultMap = new HashMap<>();
         userService.createUser(user);
-        return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        resultMap.put("message", SUCCESS);
+        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.CREATED);
     }
 
     // id 중복확인
     @GetMapping("/id/{userId}")
-    public ResponseEntity<String> checkId(@PathVariable String userId) {
-        UserDto user = userService.getUser(userId);
+    public ResponseEntity<?> checkId(@PathVariable String userId) {
+        Map<String, Object> resultMap = new HashMap<>();
         if (userService.getUser(userId) != null) {
-            return new ResponseEntity<String>(FAIL, HttpStatus.BAD_REQUEST);  // 400
+            resultMap.put("message", "중복된 id입니다.");
+            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.CONFLICT); // 409
         }
-        return new ResponseEntity<String>(SUCCESS, HttpStatus.OK);  // 200
+        resultMap.put("message", SUCCESS);
+        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);  // 200
     }
 
     // nickname 중복확인
     @GetMapping("/nickname/{nickname}")
-    public ResponseEntity<String> checkNickName(@PathVariable String nickname) {
+    public ResponseEntity<?> checkNickName(@PathVariable String nickname) {
+        Map<String, Object> resultMap = new HashMap<>();
         if (userService.checkNickname(nickname) != null) {
-            return new ResponseEntity<String>(FAIL, HttpStatus.BAD_REQUEST);
+            resultMap.put("message", "중복된 닉네임입니다.");
+            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.CONFLICT);
         }
-        return new ResponseEntity<String>(SUCCESS, HttpStatus.OK);
+        resultMap.put("message", SUCCESS);
+        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
     }
 
     // 회원 정보 조회
     @GetMapping("/{userId}")
     public ResponseEntity<?> getUser(@PathVariable String userId) {
+        Map<String, Object> resultMap = new HashMap<>();
         if (userService.getUser(userId) == null) {
-            return new ResponseEntity<String>(FAIL, HttpStatus.NOT_FOUND);
-        } else {
-            return new ResponseEntity<UserDto>(userService.getUser(userId), HttpStatus.OK);
+            resultMap.put("message", "존재하지 않는 id입니다.");
+            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NOT_FOUND);
         }
+        return new ResponseEntity<UserDto>(userService.getUser(userId), HttpStatus.OK);
     }
 
     // 회원 정보 수정
-    @PutMapping("/{userId}")
+    @PutMapping
     public ResponseEntity<?> modifyUser(@RequestBody UserDto user) {
+        Map<String, Object> resultMap = new HashMap<>();
         if (userService.modifyUser(user)) {
-            return new ResponseEntity<String>(SUCCESS, HttpStatus.OK);
+            resultMap.put("message", SUCCESS);
+            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
         } else {
-            return new ResponseEntity<String>(FAIL, HttpStatus.NOT_FOUND);
+            resultMap.put("message", FAIL);
+            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NOT_FOUND);
         }
     }
 
     // 회원 정보 삭제
     @DeleteMapping("/{userId}")
-    public ResponseEntity<String> removeUser(@PathVariable String userId) {
+    public ResponseEntity<?> removeUser(@PathVariable String userId) {
+        Map<String, Object> resultMap = new HashMap<>();
         if (userService.removeUser(userId)) {
-            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(FAIL, HttpStatus.NO_CONTENT);
+            resultMap.put("message", SUCCESS);
+            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+        }else{
+            resultMap.put("message", "존재하지 않는 Id");
+            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NOT_FOUND);
         }
+
     }
 
     // 매너 도수 갱신
     @PutMapping("/point/{userId}")
-    public ResponseEntity<String> averageOfMannerPoint(@PathVariable String userId, double mannerPointSum) {
-        userService.averageOfMannerPoint(userId, mannerPointSum);
-        return new ResponseEntity<String>(SUCCESS, HttpStatus.OK);
+    public ResponseEntity<?> averageOfMannerPoint(@PathVariable String userId, @RequestBody UserDto user) {
+        Map<String, Object> resultMap = new HashMap<>();
+        double mannerPoint = user.getMannerPoint();
+        userService.averageOfMannerPoint(userId, mannerPoint);
+        resultMap.put("message", SUCCESS);
+        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
     }
 
     // 로그인 (jwt 토큰만 생성)
@@ -112,8 +131,8 @@ public class UserController {
 
                 status = HttpStatus.OK; // 200
             } else {
-                result.put("message", FAIL);    //
-                status = HttpStatus.NOT_FOUND;  // 404
+                result.put("message", "로그인 실패");    //
+                status = HttpStatus.UNAUTHORIZED;  // 401
             }
         } catch (Exception e) {
             result.put("message", FAIL);
@@ -125,9 +144,10 @@ public class UserController {
     // 로그아웃
     @GetMapping("/logout")
     public ResponseEntity<?> logOut(HttpSession session) {
+        HashMap<String, Object> result = new HashMap<>();
         if (session != null) {
             session.invalidate();
         }
-        return new ResponseEntity<String>(HttpStatus.OK);  // 200
+        return new ResponseEntity<HashMap<String, Object>>(result, HttpStatus.OK);  // 200
     }
 }

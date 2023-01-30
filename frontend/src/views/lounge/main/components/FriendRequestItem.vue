@@ -24,14 +24,14 @@ const deleteRequest = ()=>{
 
 <style scoped>
 .wrapper {
-  /* border: solid 5px black; */
   width: 100%;
   height: 15%;
   color: white;
   background: linear-gradient(180deg, #A44242 202.91%, rgba(0, 0, 0, 0.709847) 260.73%, rgba(84, 84, 84, 0) 302.91%);
-  border-radius: 30px;
+  border-radius: 20px;
   padding: 7%;
   font-size: 1rem;
+  margin: 2.5% 0;
 }
 .first-line{
   display: flex;

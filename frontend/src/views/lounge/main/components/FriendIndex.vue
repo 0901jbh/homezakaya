@@ -9,18 +9,32 @@
       <UserItem v-for="i in 10" :key="i"/>
     </div>
     <div class="tab_content" id="user_content">
-			<form action="">
-      	<input type="text">
-				<button value="submit">검색</button>
-			</form>
-      <UserItem v-for="i in 10	" :key="i"/>
+      <!-- <div class="search-wrapper"> -->
+      <input 
+        class="search-bar"
+        type="text" 
+        v-model="search.userInput" 
+        @keyup.enter="searchUser"
+        placeholder="press enter key for search">
+        <!-- <div class="search-btn">검색</div> -->
+      <!-- </div> -->
+      <UserItem v-for="i in 10" :key="i"/>
 		</div>
 	</div>
 </template>
 
 <script setup>
+import { ref } from 'vue' 
 import UserItem from './UserItem.vue'
 import FriendRequestItem from './FriendRequestItem.vue'
+
+const search = ref({
+  userInput: '',
+})
+
+const searchUser = () => {
+  console.log("searchUser !!")
+}
 
 </script>
 
@@ -63,10 +77,10 @@ input[name="tab_item"] {
 /* 탭 컨텐츠 스타일 */
 .tab_content {
   display: none;
-  padding: 40px 40px 0;
+  padding: 20px 20px 0;
   clear: both;
   overflow: hidden;
-	height: 79%;
+	height: 83%;
 	background: #FFFFFF;
   border: 0.3rem solid #000000;
   border-radius: 30px;
@@ -92,4 +106,33 @@ input[name="tab_item"] {
   background-color: #333333;
   color: #fff;
 }
+/* .search-wrapper{
+  width: 100%;
+  display: grid;
+  grid-template-columns: 8fr 3fr;
+} */
+.search-bar{
+  /* height: 70%; */
+  width: 100%;
+  font-size: 1.3rem;
+  padding: 2% 5%;
+  margin-bottom: 2.5%;
+  border: 0;
+  border-radius: 15px;
+  outline: none;
+  background-color: rgb(233, 233, 233);
+}
+/* .search-btn{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70%;
+  width: 100%;  
+  border: solid black 0.2rem;
+  border-radius: 10px;
+  text-decoration: none;
+  color: white;
+  background:black;
+  cursor:pointer;
+} */
 </style>

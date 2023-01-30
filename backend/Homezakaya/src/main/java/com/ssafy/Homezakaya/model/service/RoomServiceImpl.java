@@ -24,6 +24,10 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    public RoomDto getRoom(int roomId){
+        return  roomDao.selectRoom(roomId);
+    }
+    @Override
     public RoomDto checkPassword(RoomDto room){
         return roomDao.checkPassword(room);
     }

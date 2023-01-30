@@ -9,18 +9,15 @@ public interface UserService {
 
     // 회원 정보 등록
     void createUser(UserDto user);
-    
-    // id 중복체크
-    UserDto checkId(String userId);
+
+    // 회원 정보 조회, id 중복체크
+    UserDto getUser(String userId);
 
     // 닉네임 중복체크
     UserDto checkNickname(String nickname);
 
     // 회원 정보 수정
     boolean modifyUser(UserDto user);
-
-    // 회원 정보 조회
-    UserDto getUser(String userId);
 
     // 회원 정보 삭제
     boolean removeUser(String userId);

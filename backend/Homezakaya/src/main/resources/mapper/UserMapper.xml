@@ -3,19 +3,6 @@
 
 <mapper namespace="com.ssafy.Homezakaya.model.dao.UserDao">
 
-    <resultMap id="userResultMap" type="UserDto">
-        <id column="userId" property="userId"/>
-        <result column="password" property="password"/>
-        <result column="nickname" property="nickname"/>
-        <result column="email" property="email"/>
-        <result column="birthDate" property="birthDate"/>
-        <result column="gender" property="gender"/>
-        <result column="mannerPoint" property="mannerPoint"/>
-        <result column="evaluatedCount" property="evaluatedCount"/>
-        <result column="alcoholPoint" property="alcoholPoint"/>
-        <result column="username" property="username"/>
-    </resultMap>
-
     <insert id="insertUser" parameterType="UserDto">
         INSERT INTO User(userId, password, nickname, email, birthDate, gender, mannerPoint, evaluatedCount,
                          alcoholPoint, username)
@@ -24,13 +11,13 @@
                 #{username})
     </insert>
 
-    <select id="selectUserById" parameterType="String" resultMap="userResultMap">
+    <select id="getUser" parameterType="String" resultType="UserDto">
         SELECT *
         FROM User
         WHERE userId = #{userId}
     </select>
 
-    <select id="selectUserByNickname" parameterType="String" resultMap="userResultMap">
+    <select id="checkNickname" parameterType="String" resultType="UserDto">
         SELECT *
         FROM User
         WHERE nickname = #{nickname}
@@ -38,11 +25,13 @@
 
     <update id="updateUser" parameterType="UserDto">
         UPDATE User
-        SET password=#{password},
-            nickname=#{nickname},
-            email=#{email},
-            birthDate=#{birthDate},
-            alcoholPoint=#{alcoholPoint},
+        <set>
+            <if test="password != null">password = #{password},</if>
+            <if test="nickname != null">nickname = #{nickname},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="birthDate != null">birthDate = #{birthDate},</if>
+            <if test="alcoholPoint != null">alcoholPoint = #{alcoholPoint},</if>
+        </set>
         WHERE userId = #{userId}
     </update>
 

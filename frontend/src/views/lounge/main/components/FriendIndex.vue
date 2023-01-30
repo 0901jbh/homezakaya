@@ -6,26 +6,24 @@
 		<label class="tab_item" id="tab_second" for="user">User</label>
     <div class="tab_content" id="friend_content">
 			<FriendRequestItem/>
-      <UserItem v-for="i in 10" :key="i"/>
+      <FriendItem v-for="i in 10" :key="i"/>
     </div>
     <div class="tab_content" id="user_content">
-      <!-- <div class="search-wrapper"> -->
       <input 
         class="search-bar"
         type="text" 
         v-model="search.userInput" 
         @keyup.enter="searchUser"
         placeholder="press enter key for search">
-        <!-- <div class="search-btn">검색</div> -->
-      <!-- </div> -->
       <UserItem v-for="i in 10" :key="i"/>
 		</div>
 	</div>
 </template>
 
 <script setup>
-import { ref } from 'vue' 
+import { ref } from 'vue'
 import UserItem from './UserItem.vue'
+import FriendItem from './FriendItem.vue'
 import FriendRequestItem from './FriendRequestItem.vue'
 
 const search = ref({
@@ -50,9 +48,11 @@ const searchUser = () => {
 .tab_item {
   width: 40%;
   height: 8%;
-  border-bottom: 3px solid #333333;
+  font-size: 1.3rem;
+  font-weight: 700;
 	border-radius: 30px;
   background-color: #f8f8f8;
+  box-shadow: -4px -4px 15px rgba(255, 255, 255, 0.5), 4px 4px 15px rgba(0, 0, 0, 0.5), inset 4px 4px 15px rgba(255, 255, 255, 0.5);
   line-height: 50px;
   font-size: 16px;
   text-align: center;
@@ -67,6 +67,7 @@ const searchUser = () => {
 }
 .tab_item:hover {
   opacity: 0.75;
+  cursor: pointer;
 }
 
 /* 라디오 버튼 UI삭제*/
@@ -103,14 +104,9 @@ input[name="tab_item"] {
 
 /* 선택된 탭 스타일 */
 .tabs input:checked + .tab_item {
-  background-color: #333333;
+  background-color: black;
   color: #fff;
 }
-/* .search-wrapper{
-  width: 100%;
-  display: grid;
-  grid-template-columns: 8fr 3fr;
-} */
 .search-bar{
   /* height: 70%; */
   width: 100%;
@@ -122,17 +118,4 @@ input[name="tab_item"] {
   outline: none;
   background-color: rgb(233, 233, 233);
 }
-/* .search-btn{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 70%;
-  width: 100%;  
-  border: solid black 0.2rem;
-  border-radius: 10px;
-  text-decoration: none;
-  color: white;
-  background:black;
-  cursor:pointer;
-} */
 </style>

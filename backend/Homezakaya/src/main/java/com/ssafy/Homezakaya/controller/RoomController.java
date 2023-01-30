@@ -32,8 +32,12 @@ public class RoomController {
         return ResponseEntity.ok(rooms);
     }
 
+    @GetMapping("/{roomId}")
+    public ResponseEntity<?> getRoom(@PathVariable int roomId) {
+        RoomDto room = roomService.getRoom(roomId);
+        return ResponseEntity.ok(room);
+    }
 
-    //비번, 입장, 퇴장
     @GetMapping("/password")
     public ResponseEntity<?> checkPassword(@RequestBody RoomDto room){
         RoomDto res = roomService.checkPassword(room);

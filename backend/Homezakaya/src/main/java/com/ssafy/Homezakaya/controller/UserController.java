@@ -92,21 +92,23 @@ public class UserController {
     // 로그인 (jwt 토큰만 생성)
     @PostMapping("/login")
     public ResponseEntity<HashMap<String, Object>> login(@RequestBody UserDto user, HttpServletRequest request, HttpServletResponse response) {
-        HashMap<String, Object> result = new HashMap<>();   
+        HashMap<String, Object> result = new HashMap<>();
         HttpStatus status = null;
 
         UserDto loginUser = userService.getUser(user.getUserId());
         try {
             if (loginUser != null && user.getPassword().equals(loginUser.getPassword())) {
-                // nickname 매너도수, 알콜도수
+                // nickname 매너도수, 알콜도수 확인
                 result.put("access-token", jwtUtil.createToken("userId", user.getUserId()));
                 result.put("message", SUCCESS);
                 result.put("nickname", loginUser.getNickname());
                 result.put("mannerPoint", loginUser.getMannerPoint());
                 result.put("alcoholPoint", loginUser.getAlcoholPoint());
 
+                // 세션
                 HttpSession session = request.getSession();
                 session.setAttribute("loginUser", loginUser);
+                session.setAttribute("access-token", jwtUtil.createToken("userId", user.getUserId()));
 
                 status = HttpStatus.OK; // 200
             } else {

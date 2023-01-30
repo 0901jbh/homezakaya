@@ -18,12 +18,19 @@ public class RoomController {
 
     @PostMapping
     public ResponseEntity<?> createRoom(@RequestBody RoomDto room) {
-        boolean res = roomService.createRoom(room);
-
-        if(res)
-            return ResponseEntity.ok(room);
-        else
+        int roomId = roomService.createRoom(room);
+        try{
+            if(roomId > 0) {
+                RoomDto newRoom = roomService.getRoom(roomId);
+                return ResponseEntity.ok(newRoom);
+            }
+            else
+                return ResponseEntity.notFound().build();
+        }catch (Exception e){
+            e.printStackTrace();
             return ResponseEntity.internalServerError().build();
+        }
+
     }
 
     @GetMapping()

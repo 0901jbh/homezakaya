@@ -1,6 +1,8 @@
 <template>
   <div class="head">
-    <div class="title">Homezakaya</div>
+    <RouterLink to="/rooms" style="text-decoration:none;">
+      <div class="title">Homezakaya</div>
+    </RouterLink>
     <!-- <div class="info">
       <img src="../../../assets/profile.png" alt="profile img" style="width:60px; height:60px;">
     </div> -->
@@ -41,6 +43,16 @@
 </script>
 
 <style scoped>
+@font-face {
+  font-family: 'dokdo';
+  src: url('../../../assets/fonts/Dokdo-Regular.ttf')
+}
+
+@font-face {
+  font-family: 'eastsea';
+  src: url('../../../assets/fonts/EastSeaDokdo-Regular.ttf')
+}
+
 .head {
   background-color: black;
   height: 8vh;
@@ -51,6 +63,7 @@
 }
 
 .title {
+  font-family: 'dokdo';
   color: white;
   font-size: 5vh;
   font-weight: 600;

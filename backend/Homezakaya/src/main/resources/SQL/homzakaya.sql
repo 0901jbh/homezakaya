@@ -18,9 +18,10 @@ CREATE TABLE IF NOT EXISTS User (
     password VARCHAR(45) NOT NULL,
     nickname VARCHAR(45) NOT NULL,
     email VARCHAR(45) NOT NULL,
-    birthDate DATE NOT NULL,
+    birthDate VARCHAR(45) NOT NULL,
     gender VARCHAR(20) NOT NULL,
-    mannerPoint DOUBLE NOT NULL,
+    mannerPoint DOUBLE NULL,
+    evaluatedCount INT NULL,
     alcoholPoint DOUBLE NOT NULL,
     username VARCHAR(20) NOT NULL,
     PRIMARY KEY (userId)
@@ -33,15 +34,17 @@ CREATE TABLE IF NOT EXISTS Friend (
     userAId VARCHAR(45) NOT NULL,
     userBId VARCHAR(45) NOT NULL,
     isConnected BOOLEAN NOT NULL,
-    PRIMARY KEY (userAId)
+    PRIMARY KEY (userAId, userBId),
+    FOREIGN KEY (userAId) REFERENCES User (userId) on delete cascade,
+    FOREIGN KEY (userBId) REFERENCES User (userId) on delete cascade
     );
 
 
 -- TABLE Room
 
 CREATE TABLE IF NOT EXISTS Room (
-                                    roomId INT NOT NULL,
-                                    title VARCHAR(45) NOT NULL,
+    roomId INT AUTO_INCREMENT,
+    title VARCHAR(45) NOT NULL,
     password VARCHAR(45) NULL,
     category VARCHAR(45) NOT NULL,
     hostId VARCHAR(45) NOT NULL,
@@ -68,10 +71,9 @@ CREATE TABLE IF NOT EXISTS UserInRoom (
 
 
 -- TABLE Sentence
-
 CREATE TABLE IF NOT EXISTS Sentence (
-                                        sentenceId INT NOT NULL,
-                                        content VARCHAR(255) NOT NULL,
+    sentenceId INT AUTO_INCREMENT,
+    content VARCHAR(255) NOT NULL,
     PRIMARY KEY (sentenceId)
     );
 
@@ -79,7 +81,7 @@ CREATE TABLE IF NOT EXISTS Sentence (
 -- TABLE Topic
 
 CREATE TABLE IF NOT EXISTS Topic (
-                                     topicId INT NOT NULL,
-                                     content VARCHAR(255) NOT NULL,
+     topicId INT AUTO_INCREMENT,
+     content VARCHAR(255) NOT NULL,
     PRIMARY KEY (topicId)
     );

@@ -48,10 +48,11 @@ CREATE TABLE IF NOT EXISTS Room (
     password VARCHAR(45) NULL,
     category VARCHAR(45) NOT NULL,
     hostId VARCHAR(45) NOT NULL,
-    createdTime TIMESTAMP NOT NULL DEFAULT NOW(),
-    personLimit DOUBLE NOT NULL,
-    personCount DOUBLE NOT NULL,
-    PRIMARY KEY (roomId)
+    createdTime DATETIME NOT NULL,
+    personLimit INT NOT NULL,
+    personCount INT NOT NULL default 0,
+    PRIMARY KEY (roomId),
+    FOREIGN KEY (hostId) REFERENCES User (userId) on delete cascade
     );
 
 
@@ -61,12 +62,8 @@ CREATE TABLE IF NOT EXISTS UserInRoom (
     userId VARCHAR(45) NOT NULL,
     roomId INT NOT NULL,
     PRIMARY KEY (userId),
-    FOREIGN KEY (userId)
-    REFERENCES User (userId)
-    ON DELETE CASCADE,
-    FOREIGN KEY (roomId)
-    REFERENCES Room (roomId)
-    ON DELETE CASCADE
+    FOREIGN KEY (userId) REFERENCES User (userId) ON DELETE CASCADE,
+    FOREIGN KEY (roomId) REFERENCES Room (roomId) ON DELETE CASCADE
     );
 
 
@@ -81,7 +78,7 @@ CREATE TABLE IF NOT EXISTS Sentence (
 -- TABLE Topic
 
 CREATE TABLE IF NOT EXISTS Topic (
-     topicId INT AUTO_INCREMENT,
-     content VARCHAR(255) NOT NULL,
+    topicId INT AUTO_INCREMENT,
+    content VARCHAR(255) NOT NULL,
     PRIMARY KEY (topicId)
     );

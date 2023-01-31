@@ -15,7 +15,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/friends")
-@CrossOrigin("*")
 public class FriendController {
     private static final String SUCCESS = "success";
     private static final String FAIL = "fail";

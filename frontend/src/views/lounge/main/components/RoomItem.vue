@@ -13,9 +13,9 @@
 			<div class="popup-content">
 				<div>해당 방은 비공개방입니다.</div>
         <div>비밀번호를 입력해주세요.</div>
-        <div><input type="text"></div>
+        <div><input class="password-input" type="text" v-model="userInput"></div>
         <div>
-          <div>Enter</div>
+          <div @click="enterRoom">Enter</div>
           <div>Cancel</div>
         </div>
 			</div>
@@ -32,15 +32,27 @@ import { useStore } from 'vuex';
 const props = defineProps({
   room: Object
 })
+const data = ref({
+  userInput: '',
+  check: true,
+})
 const store = useStore()
 
-const enterRoom = () => {
+const isPrivate = onBeforeMount(() => {
   if (props.room.password != '') {
-    privatePopOpen()
-  } else {
+    data.value.check = false
+  }
+})
+
+const enterRoom = () => {
+  if (data.value.check) {
     store.dispatch('roomModule/enterRoom', props.room.roomId)
+  } else {
+    privatePopOpen()
   }
 }
+
+
 
 const privatePopOpen = () => {
 	document.getElementsByClassName("private-modal-wrap")[0].style.display ='block';
@@ -109,5 +121,17 @@ const privatePopClose = () => {
 	font-size: 1.3rem;
 	padding: 0 5%;
 	padding-top: 1%;
+}
+
+.password-input{
+  height: 5%;
+  width: 100%;
+  font-size: 1.3rem;
+  padding: 2% 5%;
+  margin-bottom: 2.5%;
+  border: 0;
+  border-radius: 15px;
+  outline: none;
+  background-color: rgb(233, 233, 233);
 }
 </style>

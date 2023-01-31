@@ -29,4 +29,6 @@ public interface UserDao {
 
     // 매너 도수 누적
     int updateMannerPoint(UserDto user);
+
+    int addTokenInfo(UserDto user);
 }

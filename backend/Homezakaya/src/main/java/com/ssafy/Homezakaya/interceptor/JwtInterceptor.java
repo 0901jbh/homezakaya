@@ -25,7 +25,7 @@ public class JwtInterceptor implements HandlerInterceptor {
 
         // 토큰이 있다면
         if (token != null) {
-            jwtUtil.valid(token);
+            jwtUtil.checkAndGetClaims(token);
             return true;
         }
         throw new Exception("유효하지 않은 접근이다.");

@@ -10,10 +10,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 @RequestMapping("/api/users")
 @RestController
@@ -91,7 +90,7 @@ public class UserController {
         if (userService.removeUser(userId)) {
             resultMap.put("message", SUCCESS);
             return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
-        }else{
+        } else {
             resultMap.put("message", "존재하지 않는 Id");
             return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NOT_FOUND);
         }
@@ -110,43 +109,48 @@ public class UserController {
 
     // 로그인 (jwt 토큰만 생성)
     @PostMapping("/login")
-    public ResponseEntity<HashMap<String, Object>> login(@RequestBody UserDto user, HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<HashMap<String, Object>> login(@RequestBody UserDto user, HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
         HashMap<String, Object> result = new HashMap<>();
         HttpStatus status = null;
 
         UserDto loginUser = userService.getUser(user.getUserId());
-        try {
-            if (loginUser != null && user.getPassword().equals(loginUser.getPassword())) {
-                // nickname 매너도수, 알콜도수 확인
-                result.put("access-token", jwtUtil.createToken("userId", user.getUserId()));
-                result.put("message", SUCCESS);
-                result.put("nickname", loginUser.getNickname());
-                result.put("mannerPoint", loginUser.getMannerPoint());
-                result.put("alcoholPoint", loginUser.getAlcoholPoint());
 
-                // 세션
-                HttpSession session = request.getSession();
-                session.setAttribute("loginUser", loginUser);
-                session.setAttribute("access-token", jwtUtil.createToken("userId", user.getUserId()));
+        if (loginUser != null && user.getPassword().equals(loginUser.getPassword())) {
+            // 인증 성공 시 accessToken, refreshToken 생성
+            String accessToken = jwtUtil.createAccessToken("id", user.getUserId());
+            String refreshToken = jwtUtil.createRefreshToken("id", user.getUserId());
+            result.put("access-token", accessToken);
 
-                status = HttpStatus.OK; // 200
-            } else {
-                result.put("message", "로그인 실패");    //
-                status = HttpStatus.UNAUTHORIZED;  // 401
-            }
-        } catch (Exception e) {
-            result.put("message", FAIL);
-            status = HttpStatus.INTERNAL_SERVER_ERROR;  // 500
+            // 토큰 정보 저장
+            loginUser.setRefreshToken(refreshToken);
+            userService.addTokenInfo(loginUser);
+            Map<String, Object> info = jwtUtil.checkAndGetClaims(accessToken);
+
+            status = HttpStatus.OK; // 200
+        } else {
+            result.put("message", "로그인 실패");
+            status = HttpStatus.UNAUTHORIZED;  // 401
         }
+
         return new ResponseEntity<HashMap<String, Object>>(result, status);
     }
 
     // 로그아웃
     @GetMapping("/logout")
-    public ResponseEntity<?> logOut(HttpSession session) {
+    public ResponseEntity<?> logOut(@RequestBody UserDto user, HttpServletResponse response) throws Exception {
         HashMap<String, Object> result = new HashMap<>();
-        if (session != null) {
-            session.invalidate();
+
+        // refresh token 유효성 검사
+        String refreshToken = userService.getUser(user.getUserId()).getRefreshToken();
+        jwtUtil.checkAndGetClaims(refreshToken);
+        System.out.println(refreshToken);
+
+        if (user.getRefreshToken().equals(refreshToken)) {
+            // 새로운 토큰 발급 및 배포
+            String accessToken = jwtUtil.createAccessToken("id", user.getUserId());
+            result.put("access-token", accessToken);
+            Map<String, Object> info = jwtUtil.checkAndGetClaims(accessToken);
+            result.putAll(info);
         }
         return new ResponseEntity<HashMap<String, Object>>(result, HttpStatus.OK);  // 200
     }

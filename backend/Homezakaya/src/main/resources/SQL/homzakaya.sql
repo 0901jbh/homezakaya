@@ -4,9 +4,9 @@ USE homezakaya;
 
 -- DROP
 DROP table IF EXISTS UserInRoom;
-DROP table IF EXISTS User;
 DROP table IF EXISTS Friend;
 DROP table IF EXISTS Room;
+DROP table IF EXISTS User;
 DROP table IF EXISTS Sentence;
 DROP table IF EXISTS Topic;
 

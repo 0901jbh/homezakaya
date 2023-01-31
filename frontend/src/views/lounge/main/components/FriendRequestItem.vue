@@ -1,15 +1,15 @@
 <template>
   <div class="wrapper">
     <div class="first-line">
-      <div>전병현 님께서</div>
+      <div>{{ props.request.nickname }} 님께서</div>
       <button class="cancel" type="button" @click="deleteRequestOpen">X</button>
     </div>
     <div class="second-line">친구요청을 보냈습니다.</div>
     <div class="third-line">
       <img src="../../../../assets/beer.png" alt="맥주 이미지" style="width:10%; height:15%; ">
-      <div>4.5</div>
+      <div>{{ props.request.mannerPoint }}</div>
       <img src="../../../../assets/dokuri.png" alt="사케 이미지" style="width:10%; height:15%; ">
-      <div>0.5잔</div>
+      <div>{{ props.request.alcoholPoint }}잔</div>
       <div class="approve" type="button" @click="approveRequest">수락</div>
     </div>
   </div>
@@ -41,9 +41,24 @@
 </template>
 
 <script setup>
-const deleteRequest = ()=>{
+import { defineProps } from "vue";
+import { useStore } from 'vuex';
+
+const props = defineProps({
+  request: Object
+})
+
+const store = useStore()
+
+const deleteRequest = () => {
   console.log('deleteRequest!')
+  store.dispatch('friendModule/deleteRequest', props.request)
   deleteRequestClose()
+}
+
+const approveRequest = () => {
+  console.log('approveRequest!')
+  store.dispatch('friendModule/approveRequest', props.request)
 }
 
 const deleteRequestOpen = () => {

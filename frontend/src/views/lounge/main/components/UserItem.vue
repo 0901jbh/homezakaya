@@ -3,15 +3,15 @@
     <div class="first-line">
       <div class="user-state"></div>
       <div class="name-and-cancel">
-        <div>내가진짜전병현임</div>
+        <div>{{ props.user.nickname }}</div>
       </div>
     </div>
     <div class="second-line">
       <img src="../../../../assets/beer.png" alt="맥주 이미지" style="width:10%; height:15%; ">
-      <div>4.5</div>
+      <div>{{ props.user.mannerPoint }}</div>
       <img src="../../../../assets/dokuri.png" alt="사케 이미지" style="width:10%; height:15%; ">
-      <div>0.5잔</div>
-      <div class="request-friend" type="button" @click="requestFriendOpen">친구요청</div>
+      <div>{{ props.user.alcoholPoint }}잔</div>
+      <div class="request-friend" type="button" @click="sendRequest">친구요청</div>
     </div>
   </div>
   <div class="request-friend-modal-bg" @click="requestFriendClose"></div>
@@ -36,16 +36,25 @@
 </template>
 
 <script setup>
-const requestFriend = ()=>{
+import { defineProps } from "vue";
+import { useStore } from 'vuex'
+
+const props = defineProps({
+  user: Object
+})
+const store = useStore()
+
+const sendRequest = () => {
   console.log('send the Request!')
-  requestFriendClose()
+  store.dispatch('friendModule/sendRequest', props.user)
+  requestFriendOpen()
 }
 
+// 친구 요청 완료창
 const requestFriendOpen = () => {
 	document.getElementsByClassName("request-friend-modal-wrap")[0].style.display ='block';
 	document.getElementsByClassName("request-friend-modal-bg")[0].style.display ='block';
 }
-
 const requestFriendClose = () => {
     document.getElementsByClassName("request-friend-modal-wrap")[0].style.display ='none';
     document.getElementsByClassName("request-friend-modal-bg")[0].style.display ='none';

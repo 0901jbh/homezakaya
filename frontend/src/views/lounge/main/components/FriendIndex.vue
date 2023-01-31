@@ -5,8 +5,16 @@
 		<input id="user" type="radio" name="tab_item">
 		<label class="tab_item" id="tab_second" for="user">User</label>
     <div class="tab_content" id="friend_content">
-			<FriendRequestItem/>
-      <FriendItem v-for="i in 10" :key="i"/>
+			<FriendRequestItem 
+        v-for="request in data.requests" 
+        :key="request"
+        :request="request"
+      />
+      <FriendItem 
+        v-for="friend in data.friends"
+        :key="friend"
+        :friend="friend"
+      />
     </div>
     <div class="tab_content" id="user_content">
       <input 
@@ -15,25 +23,46 @@
         v-model="search.userInput" 
         @keyup.enter="searchUser"
         placeholder="press enter key for search">
-      <UserItem v-for="i in 10" :key="i"/>
+      <UserItem 
+        v-for="user in data.searchUsers" 
+        :key="user" 
+        :user="user"
+      />
 		</div>
 	</div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onBeforeMount, computed } from 'vue'
 import UserItem from './UserItem.vue'
 import FriendItem from './FriendItem.vue'
 import FriendRequestItem from './FriendRequestItem.vue'
+import { useStore } from 'vuex'
 
-const search = ref({
+const data = ref({
   userInput: '',
+  requests: [],
+  friends: [],
+  searchUsers: [],
+})
+
+const store = useStore()
+
+data.requests = computed(() => store.getters["friendModule/getRequests"])
+data.friends = computed(() => store.getters["friendModule/getFriends"])
+data.searchUsers = computed(() => store.getters["friendModule/getSearchUsers"])
+
+const getRequests = onBeforeMount(() => {
+  store.dispatch("friendModule/getRequests")
+})
+
+const getFriend = onBeforeMount(() => {
+  store.dispatch("friendModule/getFriends")
 })
 
 const searchUser = () => {
-  console.log("searchUser !!")
+  store.dispatch("userModule/searchUser", data.userInput)
 }
-
 </script>
 
 <style scoped>

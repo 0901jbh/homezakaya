@@ -19,107 +19,148 @@ export const roomModule = {
     // },
   },
   getters: {
-    getRooms(state){
-      return state.rooms;
-    },
-    getRoom(state){
-      return state.room;
-    },
-    // getRoomId(state){
-    //   return state.roomId;
-    // },
   },
   actions: {
-    createRoom({ dispatch }, payload){
+    createRoom(context, payload){
       axios.post(`/api/rooms`, payload).then(({ status, data }) => {
-        if(status == 200){
+        if(status == 201){
           console.log(data);
-          dispatch("getRoom", data.roomId);
+          context.dispatch("getRoom", data.roomId);
         }
-        else if(status == 204){
+        else if(status == 404){
           console.log("방이 없음.");
         }
       }).catch(err => {
         console.log(err);
       });
     },
-    getRooms({ commit }){
+    getRooms(context, payload){
       axios.get(`/api/rooms`).then(({ status, data }) => {
         if(status == 200){
           console.log(data);
-          commit("SET_ROOMS", data);
+          context.commit("SET_ROOMS", data);
         }
-        else if(status == 204){
+        else if(status == 404){
           console.log("방이 없음.");
         }
       }).catch(err => {
         console.log(err);
       });
     },
-    getRoom({ commit }, payload){
+    getRoom(context, payload){
       axios.get(`/api/rooms/${payload}`).then(({ status, data }) => {
         if(status == 200){
           console.log(data);
-          commit("SET_ROOM", data);
+          context.commit("SET_ROOM", data);
         }
-        else if(status == 204){
+        else if(status == 404){
           console.log("방이 없음.");
         }
       }).catch(err => {
         console.log(err);
       });
     },
-    checkPassword(state , payload){
-      axios.post(`/api/rooms/password`, payload).then(({ status, data }) => {
+    checkPassword(context , payload){
+      return axios.post(`/api/rooms/password`, payload).then(({ status, data }) => {
         if(status == 200){
           console.log("비밀번호 일치");
+          return true;
         }
-        else if(status == 204){
-          console.log("비밀번호 불일치");
+        else{
+          if(status == 401){
+            console.log("비밀번호 불일치");
+          }
+          else if(status == 404){
+            console.log("방이 없음.");
+          }
+          return false;
         }
       }).catch(err => {
         console.log(err);
       });
     },
-    // getRooms({ commit }){
-    //   axios.get(`/api/rooms`).then(({ status, data }) => {
-    //     if(status == 200){
-    //       console.log(data);
-    //       commit("SET_ROOMS", data);
-    //     }
-    //     else if(status == 204){
-    //       console.log("방이 없음.");
-    //     }
-    //   }).catch(err => {
-    //     console.log(err);
-    //   });
-    // },
-    // getRooms({ commit }){
-    //   axios.get(`/api/rooms`).then(({ status, data }) => {
-    //     if(status == 200){
-    //       console.log(data);
-    //       commit("SET_ROOMS", data);
-    //     }
-    //     else if(status == 204){
-    //       console.log("방이 없음.");
-    //     }
-    //   }).catch(err => {
-    //     console.log(err);
-    //   });
-    // },
-    // getRooms({ commit }){
-    //   axios.get(`/api/rooms`).then(({ status, data }) => {
-    //     if(status == 200){
-    //       console.log(data);
-    //       commit("SET_ROOMS", data);
-    //     }
-    //     else if(status == 204){
-    //       console.log("방이 없음.");
-    //     }
-    //   }).catch(err => {
-    //     console.log(err);
-    //   });
-    // },
+    enterRoom(context, payload){
+      axios.put(`api/rooms/enter/${payload}`).then(({ status, data }) => {
+        if(status == 200){
+          console.log("입장 성공");
+          console.log(data);
+        }
+        else if(status == 404){
+          console.log("방이 없음");
+        }
+      }).catch(err => {
+        console.log(err);
+      });
+    },
+    quitRoom(context, payload){
+      axios.put(`api/rooms/quit/${payload}`).then(({ status, data }) => {
+        if(status == 200){
+          console.log("퇴장 성공");
+          console.log(data);
+          if(data.personCount == 0){
+            context.dispatch("removeRoom", payload);
+          }
+        }
+        else if(status == 404){
+          console.log("방이 없음");
+        }
+      }).catch(err => {
+        console.log(err);
+      });
+    },
+    removeRoom(context, payload){
+      axios.delete(`api/rooms/${payload}`).then(({ status }) => {
+        if(status == 204){
+          console.log("방 삭제 성공");
+        }
+        else if(status == 404){
+          console.log("방이 없음.");
+        }
+      }).catch(err => {
+        console.log(err);
+      });
+    },
+    createUserInRoom(context, payload){
+      axios.post(`api/userinroom`, payload).then(({ status, data }) => {
+        if(status == 201){
+          console.log("유저인룸 생성 성공");
+        }
+        else if(status == 404){
+          console.log("방이 없음.");
+        }
+        else if(status == 409){
+          console.log("방이 없음.");
+        }
+      }).catch(err => {
+        console.log(err);
+      });
+    },
+    removeUserInRoom(context, payload){
+      axios.delete(`api/userinroom/${payload}`).then(({ status, data }) => {
+        if(status == 204){
+          console.log("유저인룸 삭제 성공");
+        }
+        else if(status == 404){
+          console.log("방이 없음.");
+        }
+      }).catch(err => {
+        console.log(err);
+      });
+    },
+    getRoomId(context, payload){
+      return axios.get(`api/userinroom/${payload}`).then(({ status, data }) => {
+        if(status == 201){
+          console.log(data);
+          return data;
+        }
+        else if(status == 404){
+          console.log("방이 없음.");
+        }
+        return -1;
+      }).catch(err => {
+        console.log(err);
+      });
+    },
   }
 };
  

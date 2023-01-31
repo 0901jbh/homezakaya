@@ -22,19 +22,19 @@ public class RoomController {
 
     @PostMapping
     public ResponseEntity<?> createRoom(@RequestBody RoomDto room) {
-        int roomId = roomService.createRoom(room);
+        room.setCreatedTime(LocalDateTime.now());
+        boolean res = roomService.createRoom(room);
         try{
-            if(roomId > 0) {
-                RoomDto newRoom = roomService.getRoom(roomId);
-                return ResponseEntity.ok(newRoom);
+            if(res) {
+                return new ResponseEntity<>(room, HttpStatus.CREATED);
             }
-            else
+            else {
                 return ResponseEntity.notFound().build();
+            }
         }catch (Exception e){
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
-
     }
 
     @GetMapping
@@ -42,21 +42,18 @@ public class RoomController {
         Map<String, Object> resultMap = new HashMap<>();
         List<RoomDto> rooms = roomService.getRooms();
         resultMap.put("roomList", rooms);
-        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+        return new ResponseEntity<>(rooms, HttpStatus.OK);
     }
 
     @GetMapping("/{roomId}")
     public ResponseEntity<?> getRoom(@PathVariable int roomId) {
-        Map<String, Object> resultMap = new HashMap<>();
         RoomDto room = roomService.getRoom(roomId);
         try{
             if(room != null) {
-                resultMap.put("message", SUCCESS);
-                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+                return new ResponseEntity<>(room, HttpStatus.OK);
             }
             else
-                resultMap.put("message", "존재하지 않는 roomId");
-                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }catch (Exception e){
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
@@ -65,7 +62,6 @@ public class RoomController {
 
     @PostMapping("/password")
     public ResponseEntity<?> checkPassword(@RequestBody RoomDto room){
-
         Map<String, Object> resultMap = new HashMap<>();
         try{
             if(roomService.getRoom(room.getRoomId()) == null){
@@ -92,33 +88,42 @@ public class RoomController {
     @PutMapping("/enter/{roomId}")
     public ResponseEntity<?> enterRoom(@PathVariable int roomId) {
         Map<String, Object> resultMap = new HashMap<>();
-        if(roomService.getRoom(roomId) == null){
+        RoomDto room = roomService.getRoom(roomId);
+        if(room == null){
             resultMap.put("message", "존재하지 않는 roomId");
             return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NOT_FOUND);
         }
-        boolean res = roomService.enterRoom(roomId);
 
-        if (res) {
-            resultMap.put("message", SUCCESS);
-            resultMap.put("personCount", roomService.getRoom(roomId).getPersonCount());
-            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
-        } else {
-            return ResponseEntity.internalServerError().build();
+        if(room.getPersonLimit() > room.getPersonCount()){
+            boolean res = roomService.enterRoom(roomId);
+            if (res) {
+                resultMap.put("message", SUCCESS);
+                resultMap.put("personCount", room.getPersonCount() + 1);
+                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+            } else {
+                return ResponseEntity.internalServerError().build();
+            }
+        }
+        else{
+            resultMap.put("message", "꽉 찬 방");
+            resultMap.put("personCount", room.getPersonCount());
+            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.CONFLICT);
         }
     }
 
     @PutMapping("/quit/{roomId}")
     public ResponseEntity<?> quitRoom(@PathVariable int roomId){
         Map<String, Object> resultMap = new HashMap<>();
-        if(roomService.getRoom(roomId) == null){
+        RoomDto room = roomService.getRoom(roomId);
+        if(room == null){
             resultMap.put("message", "존재하지 않는 roomId");
             return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NOT_FOUND);
         }
-        boolean res = roomService.quitRoom(roomId);
 
+        boolean res = roomService.quitRoom(roomId);
         if(res){
             resultMap.put("message", SUCCESS);
-            resultMap.put("personCount", roomService.getRoom(roomId).getPersonCount());
+            resultMap.put("personCount", room.getPersonCount() - 1);
             return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
         }
         else

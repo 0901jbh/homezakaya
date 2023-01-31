@@ -5,7 +5,7 @@ import com.ssafy.Homezakaya.model.dto.RoomDto;
 import java.util.List;
 
 public interface RoomService {
-    int createRoom(RoomDto room);
+    boolean createRoom(RoomDto room);
     List<RoomDto> getRooms();
     RoomDto getRoom(int roomId);
     String getPassword(int roomId);

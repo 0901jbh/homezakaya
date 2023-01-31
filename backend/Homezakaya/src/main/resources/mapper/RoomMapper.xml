@@ -4,8 +4,8 @@
 <mapper namespace="com.ssafy.Homezakaya.model.dao.RoomDao">
     <insert id="insertRoom" parameterType="RoomDto" >
         insert into room(title, password, category, hostId, createdTime, personLimit, personCount) values(#{title}, #{password}, #{category}, #{hostId}, #{createdTime}, #{personLimit}, #{personCount})
-        <selectKey resultType="int" keyProperty="roomId" order="AFTER">
-            SELECT LAST_INSERT_ID()
+        <selectKey resultType="HashMap" keyProperty="roomId,createdTime" order="AFTER">
+            SELECT roomId, createdTime from room where roomId = LAST_INSERT_ID()
         </selectKey>
     </insert>
 

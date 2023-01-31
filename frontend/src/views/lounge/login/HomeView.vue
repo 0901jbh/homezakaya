@@ -59,8 +59,10 @@ const form = reactive({
 
 const onSubmit = () => {
   store.dispatch("roomModule/checkPassword", {
-    roomId: 4,
-    password: "12234"
+    roomId: 2,
+    password: "12324"
+  }).then(res => {
+    console.log(res);
   });
   console.log('submit!');
 }

@@ -10,11 +10,11 @@
     </insert>
 
     <select id="selectRooms" resultType="RoomDto">
-        select * from room
+        select roomId, title, category, hostId, createdTime, personLimit, personCount from room
     </select>
 
     <select id="selectRoom" resultType="RoomDto" parameterType="int">
-        select * from room where roomId = #{roomId}
+        select roomId, title, category, hostId, createdTime, personLimit, personCount from room where roomId = #{roomId}
     </select>
 
     <select id="checkPassword" resultType="RoomDto" parameterType="RoomDto">

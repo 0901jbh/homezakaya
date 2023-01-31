@@ -45,14 +45,14 @@ public class RoomController {
         return ResponseEntity.ok(room);
     }
 
-    @GetMapping("/password")
+    @PostMapping("/password")
     public ResponseEntity<?> checkPassword(@RequestBody RoomDto room){
         RoomDto res = roomService.checkPassword(room);
 
         if(res != null)
-            return ResponseEntity.ok(res);
+            return ResponseEntity.ok().build();
         else
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/enter/{roomId}")

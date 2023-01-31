@@ -4,6 +4,7 @@
       <div class="user-state"></div>
       <div class="name-and-cancel">
         <div>내가진짜전병현임</div>
+        <button class="delete-friend" type="button" @click="deleteFriendOpen">X</button>
       </div>
     </div>
     <div class="second-line">
@@ -11,21 +12,28 @@
       <div>4.5</div>
       <img src="../../../../assets/dokuri.png" alt="사케 이미지" style="width:10%; height:15%; ">
       <div>0.5잔</div>
-      <div class="request-friend" type="button" @click="requestFriendOpen">친구요청</div>
+      <div class="follow-friend" type="button" @click="followFriend">따라가기</div>
     </div>
   </div>
-  <div class="request-friend-modal-bg" @click="requestFriendClose"></div>
-	<div class="request-friend-modal-wrap">
-		<div class="request-popup">
+
+  <!-- 친구 삭제 팝업창 -->
+  <div class="delete-friend-modal-bg" @click="deleteFriendClose"></div>
+	<div class="delete-friend-modal-wrap">
+		<div class="delete-popup">
 			<div class="popup-header">
-				<div class="popup-header-title">Send the Request</div>
+				<div class="popup-header-title">Delete Friend</div>
 			</div>
 			<div class="popup-content">
-				<div>친구요청을 보냈습니다.</div>
+				<div>친구를 삭제하시겠습니까?</div>
         <div class="btn-wrapper">
           <div class="btn">
             <RouterLink to="/rooms" style="text-decoration:none;">
-              <el-button type="info" size="large" @click="requestFriendClose">확인</el-button>
+              <el-button type="info" size="large" @click="deleteFriend">예</el-button>
+            </RouterLink>
+          </div>
+          <div class="btn">
+            <RouterLink to="/rooms" style="text-decoration:none;">
+              <el-button type="info" size="large" @click="deleteFriendClose">아니요</el-button>
             </RouterLink>
           </div>
         </div>
@@ -36,19 +44,19 @@
 </template>
 
 <script setup>
-const requestFriend = ()=>{
-  console.log('send the Request!')
-  requestFriendClose()
+const deleteFriend = ()=>{
+  console.log('deleteFriend!')
+  deleteFriendClose()
 }
 
-const requestFriendOpen = () => {
-	document.getElementsByClassName("request-friend-modal-wrap")[0].style.display ='block';
-	document.getElementsByClassName("request-friend-modal-bg")[0].style.display ='block';
+const deleteFriendOpen = () => {
+	document.getElementsByClassName("delete-friend-modal-wrap")[0].style.display ='block';
+  document.getElementsByClassName("delete-friend-modal-bg")[0].style.display ='block';
 }
 
-const requestFriendClose = () => {
-    document.getElementsByClassName("request-friend-modal-wrap")[0].style.display ='none';
-    document.getElementsByClassName("request-friend-modal-bg")[0].style.display ='none';
+const deleteFriendClose = () => {
+    document.getElementsByClassName("delete-friend-modal-wrap")[0].style.display ='none';
+    document.getElementsByClassName("delete-friend-modal-bg")[0].style.display ='none';
 }
 </script>
 
@@ -81,13 +89,23 @@ const requestFriendClose = () => {
   display: flex;
   justify-content: space-between;
 }
+.delete-friend{
+  color:white;
+  border: none;
+  text-decoration: none;
+  background:none;
+  cursor:pointer;
+}
+.delete-friend:hover {
+  color: red;
+}
 .second-line{
   padding-top: 2%;
   display: flex;
   justify-content: space-around;
   align-items: flex-end;
 }
-.request-friend{
+.follow-friend{
   display: flex;
   justify-content: center;
   align-items: center;
@@ -97,11 +115,12 @@ const requestFriendClose = () => {
   border-radius: 20px;
   cursor:pointer;
 } 
-.request-friend:hover{
+.follow-friend:hover{
   background: #823D3D;
 }
-/* 친구 요청 확인창 */
-.request-friend-modal-bg {
+
+/* 친구 삭제 팝업창 */
+.delete-friend-modal-bg {
 	display:none;
 	width:100%;
 	height:100%;
@@ -110,9 +129,8 @@ const requestFriendClose = () => {
 	left:0;
 	right:0;
 	z-index:999;
-	transition: 0.5s ease-out;
 }
-.request-friend-modal-wrap {
+.delete-friend-modal-wrap {
 	display:none;
 	position:absolute;
 	top:50%;
@@ -125,12 +143,11 @@ const requestFriendClose = () => {
 	border-radius: 2rem;
 	z-index:1000;
 }
-.request-popup {
+.delete-popup {
 	display: grid;
 	height: 100%;
 	width: 100%;
 	grid-template-rows: 1fr 11fr;
-	transition: 0.5s ease-out;
 }
 .popup-header {
 	background-color: black;
@@ -169,4 +186,5 @@ const requestFriendClose = () => {
   background-color: rgb(118, 118, 118) !important;
   transition: 0.2s;
 }
+/* 친구삭제 팝업창 end */
 </style>

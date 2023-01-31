@@ -5,8 +5,8 @@
 				<div>+</div>
 			</div>
 		</div>
-		<div class="room" v-for="i in 6" :key="i">
-			<RoomItem class="room-wrapper" />
+		<div class="room" v-for="room in form.rooms" :key="room">
+			<RoomItem class="room-wrapper" :room="room"/>
 		</div>
 	</div>
 	<!-- 방 생성 팝업창 -->
@@ -23,16 +23,16 @@
 					</el-form-item>
 					<div>
 						<el-form-item label="주종">
-							<el-select v-model="form.kindOfDrink" placeholder="주종을 선택해주세요">
-								<el-option label="자유" value="free" />
-								<el-option label="소주" value="soju" />
-								<el-option label="맥주" value="beer" />
-								<el-option label="양주" value="liquor" />
-								<el-option label="사케" value="sake" />
+							<el-select v-model="form.category" placeholder="주종을 선택해주세요">
+								<el-option label="자유" value="자유" />
+								<el-option label="소주" value="소주" />
+								<el-option label="맥주" value="맥주" />
+								<el-option label="양주" value="양주" />
+								<el-option label="사케" value="사케" />
 							</el-select>
 						</el-form-item>
 						<el-form-item label="인원">
-							<el-select v-model="form.limitOfPeople" placeholder="인원 수를 선택해주세요">
+							<el-select v-model="form.personLimit" placeholder="인원 수를 선택해주세요">
 								<el-option label="2" value=2 />
 								<el-option label="3" value=3 />
 								<el-option label="4" value=4 />
@@ -55,7 +55,7 @@
 					<el-form-item style="width:100%;">
 						<div class="btn">
 							<RouterLink to="/room" style="text-decoration:none;"><el-button type="info" size="large"
-									@click="onSubmit">Create</el-button></RouterLink>
+									@click="createRoom">Create</el-button></RouterLink>
 						</div>
 						<div class="btn">
 							<RouterLink to="/rooms" style="text-decoration:none;"><el-button type="info" size="large"
@@ -72,19 +72,42 @@
 
 <script setup>
 import RoomItem from './RoomItem.vue'
-import {reactive} from 'vue'
+import { computed, onBeforeMount, ref } from 'vue'
+import { useStore } from 'vuex'
 
-const form = reactive({
+const form = ref({
   	title: '',
-  	kindOfDrink: 'free',
-  	limitOfPeople: 2,
-  	private: false,
+  	category: '자유',
+  	personLimit: 2,
 	password: '',
+	private: false,
+	hostId: store.state.userModule.userId,
+	personCount: 1,
+	// createdTime: null,
+	rooms: [],
 })
 
-const onSubmit = () => {
-  console.log('submit!')
+const store = useStore()
+
+const createRoom = () => {
+  	console.log('submit!');
+	// form.createdTime = new Date();
+  	store.dispatch("roomModule/createRoom", {
+		title: form.title,
+		password: form.password,
+		category: form.category,
+		personLimit: form.personLimit,
+		hostId: form.hostId,
+		personCount: form.personCount,
+		// createdTime: form.createdTime,
+	});
 }
+
+form.rooms = computed(() => store.state.roomModule.rooms)
+
+const getRooms = onBeforeMount(() => {
+	store.dispatch("roomModule/getRooms")
+})
 
 const popOpen = () => {
 	document.getElementsByClassName("modal-wrap")[0].style.display ='block';

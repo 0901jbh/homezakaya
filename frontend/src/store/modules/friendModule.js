@@ -33,7 +33,7 @@ export const friendModule = {
   actions: {
     // 친구 목록 조회
     getFriends(context, payload){
-      axios.get(`/api/friends/${store.userModule.state.userId}`)
+      axios.get(`/api/friends/${payload}`)
       .then(({status, data}) => {
         if(status == 200){
           context.commit("SET_FRIENDS", data)
@@ -51,7 +51,7 @@ export const friendModule = {
     },
     // 친구 삭제
     deleteFriend(context, payload){
-      axios.delete(`/api/friends/${store.userModule.state.userId}/${payload.userId}`)
+      axios.delete(`/api/friends/${payload.userAId}/${payload.userBId}`)
       .then(({ status, data }) => {
         if (status == 200){
           this.getFriends()
@@ -70,8 +70,8 @@ export const friendModule = {
     // 친구 요청 신청
     sendRequest(context, payload){
       axios.post(`/api/friends/request`, {
-        "userAId": store.userModule.state.userId,
-        "userBId": payload.userId,
+        "userAId": payload.userAId,
+        "userBId": payload.userBId,
       }).then(({ status, data }) => {
         if (status == 201){
           this.getRequest()
@@ -89,7 +89,7 @@ export const friendModule = {
     },
     // 친구 요청 조회
     getRequests(context, payload){
-      axios.get(`/api/friends/request${store.userModule.state.userId}`)
+      axios.get(`/api/friends/request/${payload}`)
       .then(({status, data}) => {
         if (status == 200) {
           context.commit('SET_REQUESTS', data)
@@ -108,8 +108,8 @@ export const friendModule = {
     // 친구 요청 수락
     approveRequest(context, payload){
       axios.put(`/api/friends/request`, {
-        "userAId": store.userModule.state.userId,
-        "userBId": payload.userId,
+        "userAId": payload.userAId,
+        "userBId": payload.userBId,
       })
       .then(({status, data}) => {
         if (status == 201) {
@@ -128,7 +128,7 @@ export const friendModule = {
     },
     // 친구 요청 거절
     deleteRequest(context, payload){
-      axios.put(`/api/friends/request/${store.userModule.state.userId}/${payload.userId}`)
+      axios.put(`/api/friends/request/${payload.userAId}/${payload.userBId}`)
       .then(({status, data}) => {
         if (status == 200) {
           this.getRequests()

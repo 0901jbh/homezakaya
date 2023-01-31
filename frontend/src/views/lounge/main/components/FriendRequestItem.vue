@@ -52,13 +52,19 @@ const store = useStore()
 
 const deleteRequest = () => {
   console.log('deleteRequest!')
-  store.dispatch('friendModule/deleteRequest', props.request)
+  store.dispatch('friendModule/deleteRequest', {
+    userAId: store.state.userModule.userId,
+    userBId: props.request.userId
+  })
   deleteRequestClose()
 }
 
 const approveRequest = () => {
   console.log('approveRequest!')
-  store.dispatch('friendModule/approveRequest', props.request)
+  store.dispatch('friendModule/approveRequest', {
+    userAId: store.state.userModule.userId,
+    userBId: props.request.userId
+  })
 }
 
 const deleteRequestOpen = () => {

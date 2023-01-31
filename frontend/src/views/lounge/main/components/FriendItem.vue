@@ -55,7 +55,10 @@ const store = useStore()
 
 const deleteFriend = ()=>{
   console.log('deleteFriend!')
-  store.dispatch("friendModule/deleteFriend", props.friend)
+  store.dispatch("friendModule/deleteFriend", {
+    userAId: store.state.userModule.userId,
+    userBId: props.friend.userId
+  })
   deleteFriendClose()
 }
 

@@ -46,7 +46,10 @@ const store = useStore()
 
 const sendRequest = () => {
   console.log('send the Request!')
-  store.dispatch('friendModule/sendRequest', props.user)
+  store.dispatch('friendModule/sendRequest', {
+    userAId: store.state.userModule.userId,
+    userBId: props.user.userId
+  })
   requestFriendOpen()
 }
 

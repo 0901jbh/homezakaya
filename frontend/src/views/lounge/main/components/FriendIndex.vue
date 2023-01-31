@@ -20,7 +20,7 @@
       <input 
         class="search-bar"
         type="text" 
-        v-model="search.userInput" 
+        v-model="data.userInput" 
         @keyup.enter="searchUser"
         placeholder="press enter key for search">
       <UserItem 
@@ -53,15 +53,15 @@ data.friends = computed(() => store.getters["friendModule/getFriends"])
 data.searchUsers = computed(() => store.getters["friendModule/getSearchUsers"])
 
 const getRequests = onBeforeMount(() => {
-  store.dispatch("friendModule/getRequests")
+  store.dispatch("friendModule/getRequests", store.state.userModule.userId)
 })
 
-const getFriend = onBeforeMount(() => {
-  store.dispatch("friendModule/getFriends")
+const getFriends = onBeforeMount(() => {
+  store.dispatch("friendModule/getFriends", store.state.userModule.userId)
 })
 
 const searchUser = () => {
-  store.dispatch("userModule/searchUser", data.userInput)
+  store.dispatch("friendModule/searchUser", data.userInput)
 }
 </script>
 
@@ -137,7 +137,7 @@ input[name="tab_item"] {
   color: #fff;
 }
 .search-bar{
-  /* height: 70%; */
+  height: 5%;
   width: 100%;
   font-size: 1.3rem;
   padding: 2% 5%;

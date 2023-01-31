@@ -75,10 +75,10 @@ import RoomItem from './RoomItem.vue'
 import {reactive} from 'vue'
 
 const form = reactive({
-  title: '',
-  kindOfDrink: 'free',
-	limitOfPeople: 2,
-	private: false,
+  	title: '',
+  	kindOfDrink: 'free',
+  	limitOfPeople: 2,
+  	private: false,
 	password: '',
 })
 

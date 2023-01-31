@@ -3,15 +3,15 @@
     <div class="first-line">
       <div class="user-state"></div>
       <div class="name-and-cancel">
-        <div>내가진짜전병현임</div>
+        <div>{{ props.friend.nickname }}</div>
         <button class="delete-friend" type="button" @click="deleteFriendOpen">X</button>
       </div>
     </div>
     <div class="second-line">
       <img src="../../../../assets/beer.png" alt="맥주 이미지" style="width:10%; height:15%; ">
-      <div>4.5</div>
+      <div>{{ props.friend.mannerPoint }}</div>
       <img src="../../../../assets/dokuri.png" alt="사케 이미지" style="width:10%; height:15%; ">
-      <div>0.5잔</div>
+      <div>{{ props.friend.alcoholPoint }}잔</div>
       <div class="follow-friend" type="button" @click="followFriend">따라가기</div>
     </div>
   </div>
@@ -44,8 +44,21 @@
 </template>
 
 <script setup>
+import { defineProps } from 'vue';
+import { useStore } from 'vuex';
+
+const props = defineProps({
+  friend:Object
+})
+
+const store = useStore()
+
 const deleteFriend = ()=>{
   console.log('deleteFriend!')
+  store.dispatch("friendModule/deleteFriend", {
+    userAId: store.state.userModule.userId,
+    userBId: props.friend.userId
+  })
   deleteFriendClose()
 }
 

@@ -38,7 +38,6 @@ public class RoomController {
         return ResponseEntity.ok(room);
     }
 
-    //비번, 입장, 퇴장
     @PostMapping("/password")
     public ResponseEntity<?> checkPassword(@RequestBody RoomDto room){
         RoomDto res = roomService.checkPassword(room);

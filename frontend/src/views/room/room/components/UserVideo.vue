@@ -1,7 +1,7 @@
 <template>
-	<div v-if="streamManager">
+	<div id="video" v-if="streamManager">
 		<ov-video :stream-manager="streamManager" />
-		<div>
+		<div id="nametag">
 			<p>{{ clientData }}</p>
 		</div>
 	</div>
@@ -36,3 +36,12 @@ export default {
 	},
 };
 </script>
+
+<style>
+#video {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin: 5%;
+}
+</style>

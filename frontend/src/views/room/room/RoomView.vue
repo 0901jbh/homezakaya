@@ -26,29 +26,55 @@
 
     <!-- <div id="session" v-if="session"> -->
     <div id="session">
-      <div id="session-header">
-        <h1 id="session-title">{{ mySessionId }}</h1>
-        <input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="leaveSession"
-          value="Leave session" />
-      </div>
       <!-- <div id="main-video" class="col-md-6">
         <user-video :stream-manager="mainStreamManager" />
       </div> -->
       <div id="container" style="display: flex;">
-        <div id="video-container" class="col-md-8" style="width:80vw;">
+        <div id="video-container" :class="{
+          'under-one': true,
+          'under-two': this.subscribers.length >= 1,
+          'under-four': this.subscribers.length >= 2,
+          'under-six': this.subscribers.length >= 4,
+          'under-eight': this.subscribers.length >= 6,
+        }" style="width:80vw;">
           <user-video :stream-manager="publisher" @click.native="updateMainVideoStreamManager(publisher)" />
           <user-video v-for="sub in subscribers" :key="sub.stream.connection.connectionId" :stream-manager="sub"
             @click.native="updateMainVideoStreamManager(sub)" />
         </div>
         <div id="chatting-container" class="col-md-4" style="width:20vw;">
-          <div v-for="message in messages" :key="message.id">
-            {{ message.username }}: {{ message.text }}
+          <div id="chats" ref="message_scroll">
+            <div v-for="message in messages" :key="message.id">
+              <!-- 내 채팅 -->
+              <div id="msg_mine" class="msg_box" v-if="message.username == myUserName">
+                <div class="username">
+                  {{ message.username }}
+                </div>
+                <div class="msg">
+                  {{ message.text }}
+                </div>
+              </div>
+              <!-- 남의 채팅 -->
+              <div id="msg_not_mine" class="msg_box" v-else>
+                <div class="username">
+                  {{ message.username }}
+                </div>
+                <div class="msg">
+                  {{ message.text }}
+                </div>
+              </div>
+            </div>
           </div>
-          <form @submit.prevent="sendMessage">
+          <form id="send-form" @submit.prevent="sendMessage">
             <input v-model="newMessage" placeholder="Type your message here" />
-            <button>Send</button>
+            <img src="../../../assets/message.png" alt="message img" @click="sendMessage"
+              style="width:30px; height:30px;">
           </form>
         </div>
+      </div>
+      <div id="option-footer">
+        <h1 id="session-title">{{ mySessionId }}</h1>
+        <input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="leaveSession"
+          value="Leave session" />
       </div>
     </div>
   </div>
@@ -90,6 +116,8 @@ export default {
       messages: [],
       messageData: null,
       eventData: null,
+
+      headCountMax: 8,
     };
   },
 
@@ -161,7 +189,11 @@ export default {
             id: Date.now(),
             username: this.eventData.username,
             text: this.eventData.content,
-          })
+          });
+          this.$nextTick(() => {
+            let msgscr = this.$refs.message_scroll;
+            msgscr.scrollTo({ top: msgscr.scrollHeight, behavior: 'smooth' });
+          });
         });
 
         // First param is the token. Second param can be retrieved by every user on event
@@ -265,6 +297,82 @@ export default {
 </script>
 
 <style>
+body {
+  background: #121212;
+}
+
+#container {
+  height: 80vh;
+}
+
+#container>div {
+  margin: 20px;
+}
+
+#chatting-container {
+  display: flex;
+  flex-direction: column;
+  background: #e9e9e9;
+  border-radius: 30px;
+}
+
+#chats {
+  height: 90%;
+  overflow-y: scroll;
+  margin: 5%;
+  margin-bottom: 0;
+}
+
+#chats::-webkit-scrollbar {
+  display: none;
+}
+
+.msg_box {
+  width: 60%;
+  margin-top: 5%;
+  padding: 5%;
+  border-radius: 10px;
+}
+
+#msg_mine {
+  background: #eb9999;
+  margin-left: auto;
+  border-top-right-radius: 0;
+}
+
+#msg_not_mine {
+  background: #272727;
+  color: white;
+  border-top-left-radius: 0;
+}
+
+.username {
+  font-size: 12px;
+}
+
+#send-form {
+  display: flex;
+  background: #282828;
+  border-radius: 10px;
+  align-self: flex-end;
+  width: 90%;
+  height: 10%;
+  justify-content: space-evenly;
+  align-items: center;
+  margin: 5%;
+}
+
+#send-form input {
+  width: 70%;
+  margin: auto;
+  background: #3b3b3b;
+  color: white;
+}
+
+#send-form img {
+  margin: auto;
+}
+
 html {
   position: relative;
   min-height: 100%;
@@ -306,9 +414,6 @@ nav i.fa:hover {
   color: #a9a9a9;
 }
 
-#main-container {
-  padding-bottom: 80px;
-}
 
 /*vertical-center {
 	position: relative;
@@ -427,10 +532,6 @@ a:hover .demo-logo {
   margin-top: 15px;
 }
 
-#session-header {
-  margin-bottom: 20px;
-}
-
 #session-title {
   display: inline-block;
 }
@@ -440,19 +541,50 @@ a:hover .demo-logo {
   margin-top: 20px;
 }
 
+#video-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 #video-container video {
-  position: relative;
   float: left;
-  width: 50%;
   cursor: pointer;
 }
 
-#video-container video+div {
+.under-one {
+  justify-content: center !important;
+}
+
+.under-one video {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.under-two video {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.under-four video {
+  max-width: 33%;
+  max-height: 50%;
+}
+
+.under-six video {
+  width: 50%;
+}
+
+.under-eight video {
+  width: 50%;
+}
+
+/* #video-container video+div {
   float: left;
   width: 50%;
   position: relative;
   margin-left: -50%;
-}
+} */
 
 #video-container p {
   display: inline-block;
@@ -462,6 +594,8 @@ a:hover .demo-logo {
   color: #777777;
   font-weight: bold;
   border-bottom-right-radius: 4px;
+  border-bottom-left-radius: 4px;
+  margin: 0;
 }
 
 video {
@@ -479,6 +613,7 @@ video {
   color: #777777;
   font-weight: bold;
   border-bottom-right-radius: 4px;
+  border-bottom-left-radius: 4px;
 }
 
 #session img {

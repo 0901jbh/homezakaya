@@ -17,19 +17,19 @@
         select roomId, title, category, hostId, createdTime, personLimit, personCount from room where roomId = #{roomId}
     </select>
 
-    <select id="checkPassword" resultType="RoomDto" parameterType="RoomDto">
-        select * from room where roomId = #{roomId} and password = #{password}
+    <select id="selectPassword" resultType="String" parameterType="int">
+        select password from room where roomId = #{roomId}
     </select>
 
-    <update id="enterRoom" parameterType="Integer">
+    <update id="enterRoom" parameterType="int">
         update room set personCount = personCount + 1 where roomId = #{roomId}
     </update>
 
-    <update id="quitRoom" parameterType="Integer">
+    <update id="quitRoom" parameterType="int">
         update room set personCount = personCount - 1 where roomId = #{roomId}
     </update>
 
-    <delete id="deleteRoom" parameterType="Integer">
+    <delete id="deleteRoom" parameterType="int">
         delete from room where roomId = #{no}
     </delete>
 

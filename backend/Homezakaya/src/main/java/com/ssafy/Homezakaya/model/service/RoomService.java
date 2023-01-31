@@ -8,7 +8,7 @@ public interface RoomService {
     int createRoom(RoomDto room);
     List<RoomDto> getRooms();
     RoomDto getRoom(int roomId);
-    RoomDto checkPassword(RoomDto room);
+    String getPassword(int roomId);
     boolean enterRoom(int roomId);
     boolean quitRoom(int roomId);
     boolean removeRoom(int roomId);

@@ -48,6 +48,9 @@
 import HeaderItem from '../menu/HeaderItem.vue'
 import FooterItem from '../menu/FooterItem.vue'
 import { reactive } from 'vue'
+import { useStore } from 'vuex'
+
+const store = useStore();
 
 const form = reactive({
   id: '',
@@ -55,7 +58,7 @@ const form = reactive({
 })
 
 const onSubmit = () => {
-  console.log('submit!')
+  console.log('submit!');
 }
 </script>
 

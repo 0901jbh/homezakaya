@@ -7,7 +7,7 @@ import store from './store'
 import axios from 'axios'
 import './assets/main.css'
 
-axios.defaults.baseURL = 'http://localhost:8888' // axios baseURL
+axios.defaults.baseURL = 'http://localhost:8080' // axios baseURL
 
 const app = createApp(App)
 

@@ -30,9 +30,9 @@
           <RouterLink class="MyInfo_edit content" to="/edit" style="text-decoration:none;">
             정보수정
           </RouterLink>
-          <div class="MyInfo_logout content">
+          <RouterLink class="MyInfo_logout content" to="/" style="text-decoration:none;">
             로그아웃
-          </div>
+          </RouterLink>
         </div>
       </template>
     </el-popover>

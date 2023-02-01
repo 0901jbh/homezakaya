@@ -14,7 +14,7 @@ public class RoomServiceImpl implements RoomService {
     private RoomDao roomDao;
 
     @Override
-    public boolean insertRoom(RoomDto room){
+    public boolean createRoom(RoomDto room){
         return roomDao.insertRoom(room) > 0;
     }
 
@@ -24,8 +24,13 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public boolean checkPassword(RoomDto room){
-        return roomDao.checkPassword(room) > 0;
+    public RoomDto getRoom(int roomId){
+        return  roomDao.selectRoom(roomId);
+    }
+
+    @Override
+    public String getPassword(int roomId){
+        return roomDao.selectPassword(roomId);
     }
 
     @Override
@@ -39,7 +44,7 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public boolean deleteRoom(int roomId){
+    public boolean removeRoom(int roomId){
         return roomDao.deleteRoom(roomId) > 0;
     }
 }

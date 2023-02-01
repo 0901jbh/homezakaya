@@ -10,7 +10,7 @@
         delete from userinroom where userId = #{userId}
     </delete>
 
-    <select id="selectRoomIdByUserId" resultType="String">
+    <select id="selectRoomIdByUserId" resultType="Integer" parameterType="String">
         select roomId from userinroom where userId = #{userId}
     </select>
 

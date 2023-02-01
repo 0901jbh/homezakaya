@@ -12,17 +12,17 @@ public class UserInRoomServiceImpl implements UserInRoomService {
     private UserInRoomDao userInRoomDao;
 
     @Override
-    public boolean insertUserInRoom(UserInRoomDto userInRoom) {
+    public boolean createUserInRoom(UserInRoomDto userInRoom) {
         return userInRoomDao.insertUserInRoom(userInRoom) > 0;
     }
 
     @Override
-    public boolean deleteUserInRoom(String userId) {
+    public boolean removeUserInRoom(String userId) {
         return userInRoomDao.deleteUserInRoom(userId) > 0;
     }
 
     @Override
-    public int getRoomId(String userId) {
+    public Integer getRoomId(String userId) {
         return userInRoomDao.selectRoomIdByUserId(userId);
     }
 }

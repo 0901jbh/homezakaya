@@ -7,5 +7,5 @@ import org.apache.ibatis.annotations.Mapper;
 public interface UserInRoomDao {
     int insertUserInRoom(UserInRoomDto userInRoom);
     int deleteUserInRoom(String userId);
-    int selectRoomIdByUserId(String userId);
+    Integer selectRoomIdByUserId(String userId);
 }

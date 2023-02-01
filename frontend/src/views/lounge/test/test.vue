@@ -9,6 +9,8 @@ import { useStore } from 'vuex'
 const store = useStore();
 
 const startBtn = () => {
+    store.dispatch("gameModule/getSentence");
+    store.dispatch("gameModule/getTopic");
     store.dispatch("gameModule/startVideo", "video");
 }
 </script>

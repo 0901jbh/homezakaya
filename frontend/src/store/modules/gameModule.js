@@ -5,15 +5,50 @@ export const gameModule = {
   namespaced: true,
   state: () => ({
     interval: Object,
+    sentence: String,
+    topic: String,
   }),
   mutations: {
     SET_INTERVAL(state, payload){
       state.interval = payload;
-    }
+    },
+    SET_SENTENCE(state, payload){
+      state.sentence = payload;
+    },
+    SET_TOPIC(state, payload){
+      state.topic = payload;
+    },
   },
   getters: {
   },
   actions: {
+    //문장 가져오기
+    getSentence(context, payload){
+      axios.get(`api/games/sentence`).then(({ status, data }) => {
+        if(status == 200){
+          console.log(data);
+          context.commit("SET_SENTENCE", data.content);
+        }
+      }).catch(err => {
+        if(err.response.status == 404){
+          console.log("노문장");
+        }
+      });
+    },
+    //주제 가져오기
+    getTopic(context, payload){
+      axios.get(`api/games/topic`).then(({ status, data }) => {
+        if(status == 200){
+          console.log(data);
+          context.commit("SET_TOPIC", data.content);
+        }
+      }).catch(err => {
+        if(err.response.status == 404){
+          console.log("노주제");
+        }
+      });
+    },
+    //웃참
     startVideo(context, payload) {
       console.log("시작");
       const video = document.getElementById(payload);

@@ -48,4 +48,17 @@
         WHERE userId = #{userId}
     </update>
 
+    <update id="addTokenInfo" parameterType="UserDto">
+        UPDATE User
+        SET refreshToken = #{refreshToken}
+        WHERE userId = #{userId}
+    </update>
+
+    <update id="deleteTokenInfo" parameterType="UserDto">
+        UPDATE User
+        SET refreshToken = #{refreshToken}
+        WHERE userId = #{userId}
+    </update>
+
+
 </mapper>

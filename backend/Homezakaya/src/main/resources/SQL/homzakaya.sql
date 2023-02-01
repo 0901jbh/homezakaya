@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS User (
     evaluatedCount INT NULL,
     alcoholPoint DOUBLE NOT NULL,
     username VARCHAR(20) NOT NULL,
+    refreshToken VARCHAR(255) NULL,
     PRIMARY KEY (userId)
     );
 

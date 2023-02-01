@@ -57,7 +57,7 @@ const form = reactive({
   password: '',
 })
 
-const onSubmit = () => {
+function onSubmit() {
   store.dispatch("roomModule/getRoomId", "ssafy");
   console.log('submit!');
 }

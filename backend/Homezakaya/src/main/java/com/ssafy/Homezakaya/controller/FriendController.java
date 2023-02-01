@@ -3,6 +3,7 @@ package com.ssafy.Homezakaya.controller;
 import com.ssafy.Homezakaya.model.dto.FriendDto;
 import com.ssafy.Homezakaya.model.dto.UserDto;
 import com.ssafy.Homezakaya.model.service.FriendService;
+import com.ssafy.Homezakaya.model.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,11 +23,21 @@ public class FriendController {
     @Autowired
     private FriendService friendService;
 
+    @Autowired
+    private UserService userService;
+
     // 친구 목록 조회(친구리스트 반환)
     @GetMapping("/{userId}")
-    public ResponseEntity<List<UserDto>> getFriendsList(@PathVariable("userId") String userId) {
+    public ResponseEntity<?> getFriendsList(@PathVariable("userId") String userId) {
         List<UserDto> list = friendService.getFriendsById(userId);
+        Map<String, Object> resultMap = new HashMap<>();
         try {
+            // 아이디가 존재하지 않음
+            if(userService.getUser(userId) == null){
+                resultMap.put("message", "존재하지 않는 userId");
+                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NOT_FOUND);
+            }
+
             if(list == null){
                 return new ResponseEntity<List<UserDto>>(list, HttpStatus.NOT_FOUND);
             }else {
@@ -46,15 +57,22 @@ public class FriendController {
 
         int result = 0;
         Map<String, Object> resultMap = new HashMap<>();
-        FriendDto fDto = new FriendDto(userAId, userBId, true);
+
         try {
+            // 아이디가 존재하지 않음
+            if(userService.getUser(userAId) == null || userService.getUser(userBId) == null){
+                resultMap.put("message", "존재하지 않는 userId");
+                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NOT_FOUND);
+            }
+
+            FriendDto fDto = new FriendDto(userAId, userBId, true);
             result = friendService.removeFriend(fDto);
             if (result == 1) {
                 resultMap.put("message", SUCCESS);
                 return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
             }
             else {
-                resultMap.put("message", "유저 아이디 또는 친구 관계가 존재하지 않음");
+                resultMap.put("message", "친구 관계가 존재하지 않음");
                 return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NOT_FOUND);
             }
 
@@ -70,15 +88,23 @@ public class FriendController {
     public ResponseEntity<?> friendRequest(@RequestBody FriendDto friendDto) {
         int result = 0;
         Map<String, Object> resultMap = new HashMap<>();
-
         try {
+            String userAId = friendDto.getUserAId();
+            String userBId = friendDto.getUserBId();
+
+            // 아이디가 존재하지 않음
+            if(userService.getUser(userAId) == null || userService.getUser(userBId) == null){
+                resultMap.put("message", "존재하지 않는 userId");
+                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NOT_FOUND);
+            }
+
             result = friendService.createFriend(friendDto);
             if (result == 1) {
                 resultMap.put("message", SUCCESS);
                 return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.CREATED);
             }else {
-                resultMap.put("message", "존재하지 않는 유저");
-                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NOT_FOUND);
+                resultMap.put("message", "이미 존재하는 관계입니다.");
+                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.CONFLICT);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -88,18 +114,21 @@ public class FriendController {
 
     // 친구 요청 리스트 조회
     @GetMapping("/request/{userId}")
-    public ResponseEntity<List<UserDto>> getFriendsReqList(@PathVariable("userId") String userId) throws SQLException {
-        List<UserDto> list = friendService.getFriendReqById(userId);
+    public ResponseEntity<?> getFriendsReqList(@PathVariable("userId") String userId) throws SQLException {
+        Map<String, Object> resultMap = new HashMap<>();
         try {
-            if(list == null){
-                return new ResponseEntity<List<UserDto>>(list, HttpStatus.NOT_FOUND);
-            }else {
-                return new ResponseEntity<List<UserDto>>(list, HttpStatus.OK);
+            // 아이디가 존재하지 않음
+            if(userService.getUser(userId) == null){
+                resultMap.put("message", "존재하지 않는 userId");
+                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NOT_FOUND);
             }
+
+            List<UserDto> list = friendService.getFriendReqById(userId);
+            return new ResponseEntity<List<UserDto>>(list, HttpStatus.OK);
 
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<List<UserDto>>(list, HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.internalServerError().build();
         }
 
     }
@@ -110,17 +139,26 @@ public class FriendController {
         Map<String, Object> resultMap = new HashMap<>();
         int result = 0;
         try {
+            String userAId = friendDto.getUserAId();
+            String userBId = friendDto.getUserBId();
+
+            // 아이디가 존재하지 않음
+            if(userService.getUser(userAId) == null || userService.getUser(userBId) == null){
+                resultMap.put("message", "존재하지 않는 userId");
+                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NOT_FOUND);
+            }
+
             result = friendService.modifyFriend(friendDto);
             if (result == 1) {
                 resultMap.put("message", SUCCESS);
                 return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.CREATED);
             }else{
-                resultMap.put("message", "존재하지 않는 유저");
+                resultMap.put("message", "친구 요청이 존재하지 않음");
                 return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NOT_FOUND);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.internalServerError().build();
         }
     }
 
@@ -129,17 +167,22 @@ public class FriendController {
     public ResponseEntity<?> friendReqReject(@PathVariable String userAId, @PathVariable String userBId) {
         int result = 0;
         Map<String, Object> resultMap = new HashMap<>();
-        FriendDto fDto = new FriendDto(userAId, userBId, false);
+
         try {
+            // 아이디가 존재하지 않음
+            if(userService.getUser(userAId) == null || userService.getUser(userBId) == null){
+                resultMap.put("message", "존재하지 않는 userId");
+                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NOT_FOUND);
+            }
+            FriendDto fDto = new FriendDto(userAId, userBId, false);
             result = friendService.removeFriendReq(fDto);
             if (result == 1) {
                 resultMap.put("message", SUCCESS);
                 return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
             } else {
-                resultMap.put("message", "유저아이디 또는 요청이 존재하지 않음");
+                resultMap.put("message", "친구 요청이 존재하지 않음");
                 return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NOT_FOUND);
             }
-
 
         } catch (Exception e) {
             e.printStackTrace();

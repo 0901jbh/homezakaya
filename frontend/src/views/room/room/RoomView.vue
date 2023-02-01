@@ -78,8 +78,44 @@
           value="Leave session" /> -->
         <div class="content" @click="clickMuteVideo">video.M</div>
         <div class="content" @click="clickMuteAudio">audio.M</div>
-        <div class="content">game</div>
-        <div class="content">Invite</div>
+        <el-popover :width="300"
+          popper-style="background: rgb(235 153 153); border: rgb(235 153 153); box-shadow: rgb(14 18 22 / 35%) 0px 10px 38px -10px, rgb(14 18 22 / 20%) 0px 10px 20px -15px; padding: 15px;"
+          trigger="click">
+          <template #reference>
+            <div class="content">game</div>
+          </template>
+          <template #default>
+            <div class="game" v-for="game in games"
+              style="display: flex; justify-content: space-evenly; align-items: center; margin: 10px;">
+              <p class="game_name" align="right"
+                style="width: 80%; margin: 0; margin-right: 10px; font-size: 20px; color: white; align-self:center;">
+                {{ game }}
+              </p>
+              <div class="content" style="width: 20%; text-decoration:none;">
+                start
+              </div>
+            </div>
+          </template>
+        </el-popover>
+        <el-popover :width="300"
+          popper-style="background: rgb(235 153 153); border: rgb(235 153 153); box-shadow: rgb(14 18 22 / 35%) 0px 10px 38px -10px, rgb(14 18 22 / 20%) 0px 10px 20px -15px; padding: 15px;"
+          trigger="click">
+          <template #reference>
+            <div class="content">Invite</div>
+          </template>
+          <template #default>
+            <div class="online_friend" v-for="friend in friends"
+              style="display: flex; justify-content: space-evenly; align-items: center; margin: 10px;">
+              <p class="friend_nickname" align="right"
+                style="width: 80%; margin: 0; margin-right: 10px; font-size: 20px; color: white; align-self:center;">
+                {{ friend }}
+              </p>
+              <div class="content" style="width: 20%; text-decoration:none;">
+                Invite
+              </div>
+            </div>
+          </template>
+        </el-popover>
         <div class="content" @click="leaveSession">Exit</div>
       </div>
     </div>
@@ -125,6 +161,9 @@ export default {
 
       headCountMax: 8,
       headCount: 1,
+
+      games: ['할머니 게임', '나 안취했어', '랜덤 대화주제'],
+      friends: ['친구1', '친구2', '친구3', '이름이긴친구우우'],
     };
   },
 
@@ -567,7 +606,7 @@ a:hover .demo-logo {
   /* border-style: solid;
   border-width: 5px; */
   float: left;
-  cursor: pointer;
+  /* cursor: pointer; */
 }
 
 .under-one {
@@ -644,14 +683,14 @@ a:hover .demo-logo {
   vertical-align: baseline;
 }
 
-#session #video-container img {
+/* #session #video-container img {
   position: relative;
   float: left;
   width: 50%;
   cursor: pointer;
   object-fit: cover;
   height: 180px;
-}
+} */
 
 /* xs ans md screen resolutions*/
 
@@ -712,8 +751,6 @@ a:hover .demo-logo {
 
   width: 5%;
   height: 3vh;
-  left: 52px;
-  top: 105px;
 
   color: black;
   font-size: 2rem;
@@ -723,5 +760,21 @@ a:hover .demo-logo {
   border-radius: 53px;
 
   cursor: pointer;
+}
+
+.online_friend .content {
+  font-size: 1rem;
+  font-weight: 500;
+  width: 30%;
+  height: 2vh;
+  padding: 5px 10px;
+}
+
+.game .content {
+  font-size: 1rem;
+  font-weight: 500;
+  width: 30%;
+  height: 2vh;
+  padding: 5px 10px;
 }
 </style>

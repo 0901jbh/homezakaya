@@ -54,7 +54,7 @@
 					</el-form-item>
 					<el-form-item style="width:100%;">
 						<div class="btn">
-							<RouterLink to="/room" style="text-decoration:none;"><el-button type="info" size="large"
+							<RouterLink to="/rooms" style="text-decoration:none;"><el-button type="info" size="large"
 									@click="createRoom">Create</el-button></RouterLink>
 						</div>
 						<div class="btn">
@@ -75,10 +75,12 @@ import RoomItem from './RoomItem.vue'
 import { computed, onBeforeMount, ref } from 'vue'
 import { useStore } from 'vuex'
 
+const store = useStore()
+
 const form = ref({
-  	title: '',
-  	category: '자유',
-  	personLimit: 2,
+	title: '',
+	category: '자유',
+	personLimit: 2,
 	password: '',
 	private: false,
 	hostId: store.state.userModule.userId,
@@ -87,23 +89,22 @@ const form = ref({
 	rooms: [],
 })
 
-const store = useStore()
-
 const createRoom = () => {
-  	console.log('submit!');
 	// form.createdTime = new Date();
+	console.log(form.value.title)
+	console.log(form.title)
   	store.dispatch("roomModule/createRoom", {
-		title: form.title,
-		password: form.password,
-		category: form.category,
-		personLimit: form.personLimit,
-		hostId: form.hostId,
-		personCount: form.personCount,
+		title: form.value.title,
+		password: form.value.password,
+		category: form.value.category,
+		personLimit: form.value.personLimit,
+		hostId: form.value.hostId,
+		personCount: form.value.personCount,
 		// createdTime: form.createdTime,
 	});
 }
 
-form.rooms = computed(() => store.state.roomModule.rooms)
+form.value.rooms = computed(() => store.state.roomModule.rooms)
 
 const getRooms = onBeforeMount(() => {
 	store.dispatch("roomModule/getRooms")

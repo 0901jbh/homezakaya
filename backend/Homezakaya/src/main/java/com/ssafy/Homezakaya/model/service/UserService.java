@@ -25,4 +25,7 @@ public interface UserService {
     // 매너 도수 누적
     boolean averageOfMannerPoint(String userId, double mannerPoint);  // userId, 넘기기
 
+    void addTokenInfo(UserDto user);
+
+    void removeTokenInfo(UserDto user);
 }

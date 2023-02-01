@@ -28,11 +28,10 @@ export const roomModule = {
           console.log(data);
           context.dispatch("getRoom", data.roomId);
         }
-        else if(status == 404){
-          console.log("방이 없음.");
-        }
       }).catch(err => {
-        console.log(err);
+        if(err.response.status == 404){
+          console.log("노방");
+        }
       });
     },
     // 방 목록 조회
@@ -42,11 +41,10 @@ export const roomModule = {
           console.log(data.roomList);
           context.commit("SET_ROOMS", data.roomList);
         }
-        else if(status == 404){
-          console.log("방이 없음.");
-        }
       }).catch(err => {
-        console.log(err);
+        if(err.response.status == 404){
+          console.log("노방");
+        }
       });
     },
     // 특정 방 조회
@@ -56,11 +54,10 @@ export const roomModule = {
           console.log(data);
           context.commit("SET_ROOM", data);
         }
-        else if(status == 404){
-          console.log("방이 없음.");
-        }
       }).catch(err => {
-        console.log(err);
+        if(err.response.status == 404){
+          console.log("노방");
+        }
       });
     },
     // 비공개방 비밀번호 확인
@@ -70,17 +67,14 @@ export const roomModule = {
           console.log("비밀번호 일치");
           return true;
         }
-        else{
-          if(status == 401){
-            console.log("비밀번호 불일치");
-          }
-          else if(status == 404){
-            console.log("방이 없음.");
-          }
-          return false;
-        }
       }).catch(err => {
-        console.log(err);
+        if(err.response.status == 401){
+          console.log("비밀번호 불일치");
+        }
+        else if(err.response.status == 404){
+          console.log("노방");
+        }
+        return false;
       });
     },
     // 방 입장
@@ -88,13 +82,16 @@ export const roomModule = {
       axios.put(`api/rooms/enter/${payload}`).then(({ status, data }) => {
         if(status == 200){
           console.log("입장 성공");
-          console.log(data);
-        }
-        else if(status == 404){
-          console.log("방이 없음");
+          console.log(data.personCount);
         }
       }).catch(err => {
-        console.log(err);
+        if(err.response.status == 404){
+          console.log("노방");
+        }
+        else if(err.response.status == 409){
+          console.log("풀방");
+        }
+        return false;
       });
     },
     // 방 퇴장
@@ -107,11 +104,10 @@ export const roomModule = {
             context.dispatch("removeRoom", payload);
           }
         }
-        else if(status == 404){
-          console.log("방이 없음");
-        }
       }).catch(err => {
-        console.log(err);
+        if(err.response.status == 404){
+          console.log("노방");
+        }
       });
     },
     // 방 삭제
@@ -120,11 +116,10 @@ export const roomModule = {
         if(status == 204){
           console.log("방 삭제 성공");
         }
-        else if(status == 404){
-          console.log("방이 없음.");
-        }
       }).catch(err => {
-        console.log(err);
+        if(err.response.status == 404){
+          console.log("노방");
+        }
       });
     },
     
@@ -133,14 +128,14 @@ export const roomModule = {
         if(status == 201){
           console.log("유저인룸 생성 성공");
         }
-        else if(status == 404){
-          console.log("방이 없음.");
-        }
-        else if(status == 409){
-          console.log("방이 없음.");
-        }
       }).catch(err => {
-        console.log(err);
+        if(err.response.status == 404){
+          console.log(err.response.data);
+          console.log("노방");
+        }
+        else if(err.response.status == 409){
+          console.log("이미 참여한 방");
+        }
       });
     },
     removeUserInRoom(context, payload){
@@ -148,25 +143,23 @@ export const roomModule = {
         if(status == 204){
           console.log("유저인룸 삭제 성공");
         }
-        else if(status == 404){
-          console.log("방이 없음.");
-        }
       }).catch(err => {
-        console.log(err);
+        if(err.response.status == 404){
+          console.log("노방");
+        }
       });
     },
     getRoomId(context, payload){
       return axios.get(`api/userinroom/${payload}`).then(({ status, data }) => {
-        if(status == 201){
+        if(status == 200){
           console.log(data);
           return data;
         }
-        else if(status == 404){
-          console.log("방이 없음.");
+      }).catch(err => {
+        if(err.response.status == 404){
+          console.log("노방");
         }
         return -1;
-      }).catch(err => {
-        console.log(err);
       });
     },
   }

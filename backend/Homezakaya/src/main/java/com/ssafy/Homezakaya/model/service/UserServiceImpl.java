@@ -2,6 +2,7 @@ package com.ssafy.Homezakaya.model.service;
 
 import com.ssafy.Homezakaya.model.dao.UserDao;
 import com.ssafy.Homezakaya.model.dto.UserDto;
+import com.ssafy.Homezakaya.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -53,4 +54,15 @@ public class UserServiceImpl implements UserService {
 
         return userDao.updateMannerPoint(originUser) == 1;
     }
+
+    @Override
+    public void addTokenInfo(UserDto user) {
+        userDao.addTokenInfo(user);
+    }
+
+    @Override
+    public void removeTokenInfo(UserDto user) {
+        userDao.deleteTokenInfo(user);
+    }
+
 }

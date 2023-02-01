@@ -12,6 +12,7 @@
     "element-plus": "^2.2.28",
     "face-api.js": "^0.22.2",
     "nvm": "0.0.4",
+    "openvidu-browser": "^2.25.0",
     "vue": "^3.2.45",
     "vue-router": "^4.1.6",
     "vuex": "^4.1.0"

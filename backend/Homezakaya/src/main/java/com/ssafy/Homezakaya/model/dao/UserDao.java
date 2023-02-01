@@ -31,4 +31,6 @@ public interface UserDao {
     int updateMannerPoint(UserDto user);
 
     int addTokenInfo(UserDto user);
+
+    int deleteTokenInfo(UserDto user);
 }

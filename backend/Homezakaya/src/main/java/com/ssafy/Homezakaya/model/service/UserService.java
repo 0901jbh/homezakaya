@@ -27,4 +27,5 @@ public interface UserService {
 
     void addTokenInfo(UserDto user);
 
+    void removeTokenInfo(UserDto user);
 }

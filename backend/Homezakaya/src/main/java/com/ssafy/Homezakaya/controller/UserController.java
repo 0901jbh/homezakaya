@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
@@ -107,7 +108,7 @@ public class UserController {
         return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
     }
 
-    // 로그인 (jwt 토큰만 생성)
+    // 로그인
     @PostMapping("/login")
     public ResponseEntity<HashMap<String, Object>> login(@RequestBody UserDto user, HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
         HashMap<String, Object> result = new HashMap<>();
@@ -119,12 +120,14 @@ public class UserController {
             // 인증 성공 시 accessToken, refreshToken 생성
             String accessToken = jwtUtil.createAccessToken("id", user.getUserId());
             String refreshToken = jwtUtil.createRefreshToken("id", user.getUserId());
+
+            // 토큰 정보 전달
             result.put("access-token", accessToken);
 
             // 토큰 정보 저장
             loginUser.setRefreshToken(refreshToken);
             userService.addTokenInfo(loginUser);
-            Map<String, Object> info = jwtUtil.checkAndGetClaims(accessToken);
+//            Map<String, Object> info = jwtUtil.checkAndGetClaims(accessToken);
 
             status = HttpStatus.OK; // 200
         } else {
@@ -137,20 +140,35 @@ public class UserController {
 
     // 로그아웃
     @GetMapping("/logout")
-    public ResponseEntity<?> logOut(@RequestBody UserDto user, HttpServletResponse response) throws Exception {
+    public ResponseEntity<?> logOut(@RequestParam String userId) throws Exception {
+        HashMap<String, Object> result = new HashMap<>();
+        // DB에서 refresh token 삭제
+        // session 정보 삭제 - front
+        UserDto loginUser = userService.getUser(userId);
+        loginUser.setRefreshToken("");
+        userService.removeTokenInfo(loginUser);
+
+        result.put("message", "로그아웃 성공");
+        return new ResponseEntity<HashMap<String, Object>>(result, HttpStatus.OK);  // 200
+    }
+
+    // 토큰 갱신 (session에서 정보 받아와야 함)
+    @PostMapping("/refresh") // api check
+    public ResponseEntity<?> refresh(@RequestBody UserDto user, HttpServletResponse response) throws Exception {
         HashMap<String, Object> result = new HashMap<>();
 
         // refresh token 유효성 검사
-        String refreshToken = userService.getUser(user.getUserId()).getRefreshToken();
-        jwtUtil.checkAndGetClaims(refreshToken);
-        System.out.println(refreshToken);
+        jwtUtil.checkAndGetClaims(user.getRefreshToken());
 
-        if (user.getRefreshToken().equals(refreshToken)) {
+        if (user.getRefreshToken().equals(userService.getUser(user.getUserId()).getRefreshToken())) {
             // 새로운 토큰 발급 및 배포
             String accessToken = jwtUtil.createAccessToken("id", user.getUserId());
             result.put("access-token", accessToken);
-            Map<String, Object> info = jwtUtil.checkAndGetClaims(accessToken);
-            result.putAll(info);
+            // 유효성 검사
+            jwtUtil.checkAndGetClaims(accessToken);
+
+//            Map<String, Object> info = jwtUtil.checkAndGetClaims(accessToken);
+//            result.putAll(info);
         }
         return new ResponseEntity<HashMap<String, Object>>(result, HttpStatus.OK);  // 200
     }

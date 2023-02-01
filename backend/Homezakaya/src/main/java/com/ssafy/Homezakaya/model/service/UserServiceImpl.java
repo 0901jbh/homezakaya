@@ -60,4 +60,9 @@ public class UserServiceImpl implements UserService {
         userDao.addTokenInfo(user);
     }
 
+    @Override
+    public void removeTokenInfo(UserDto user) {
+        userDao.deleteTokenInfo(user);
+    }
+
 }

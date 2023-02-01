@@ -37,11 +37,23 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 #video {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	margin: 5%;
+	padding: 10px;
+}
+
+#nametag p {
+	display: inline-block;
+	background: #f8f8f8;
+	padding-left: 5px;
+	padding-right: 5px;
+	color: #777777;
+	font-weight: bold;
+	border-bottom-right-radius: 4px;
+	border-bottom-left-radius: 4px;
+	margin: 0;
 }
 </style>

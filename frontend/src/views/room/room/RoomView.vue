@@ -31,17 +31,18 @@
       </div> -->
       <div id="container" style="display: flex;">
         <div id="video-container" :class="{
-          'under-one': true,
-          'under-two': this.subscribers.length >= 1,
-          'under-four': this.subscribers.length >= 2,
-          'under-six': this.subscribers.length >= 4,
-          'under-eight': this.subscribers.length >= 6,
-        }" style="width:80vw;">
-          <user-video :stream-manager="publisher" @click.native="updateMainVideoStreamManager(publisher)" />
-          <user-video v-for="sub in subscribers" :key="sub.stream.connection.connectionId" :stream-manager="sub"
-            @click.native="updateMainVideoStreamManager(sub)" />
+          'under-one': this.headCount == 1,
+          'under-two': this.headCount == 2,
+          'under-four': this.headCount == 3 || this.headCount == 4,
+          'under-six': this.headCount == 5 || this.headCount == 6,
+          'under-eight': this.headCount == 7 || this.headCount == 8,
+        }">
+          <user-video class="video" :stream-manager="publisher"
+            @click.native="updateMainVideoStreamManager(publisher)" />
+          <user-video class="video" v-for="sub in subscribers" :key="sub.stream.connection.connectionId"
+            :stream-manager="sub" @click.native="updateMainVideoStreamManager(sub)" />
         </div>
-        <div id="chatting-container" class="col-md-4" style="width:20vw;">
+        <div id="chatting-container" class="col-md-4">
           <div id="chats" ref="message_scroll">
             <div v-for="message in messages" :key="message.id">
               <!-- 내 채팅 -->
@@ -72,9 +73,14 @@
         </div>
       </div>
       <div id="option-footer">
-        <h1 id="session-title">{{ mySessionId }}</h1>
-        <input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="leaveSession"
-          value="Leave session" />
+        <!-- <h1 id="session-title">{{ mySessionId }}</h1> -->
+        <!-- <input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="leaveSession"
+          value="Leave session" /> -->
+        <div class="content" @click="clickMuteVideo">video.M</div>
+        <div class="content" @click="clickMuteAudio">audio.M</div>
+        <div class="content">game</div>
+        <div class="content">Invite</div>
+        <div class="content" @click="leaveSession">Exit</div>
       </div>
     </div>
   </div>
@@ -118,6 +124,7 @@ export default {
       eventData: null,
 
       headCountMax: 8,
+      headCount: 1,
     };
   },
 
@@ -145,6 +152,22 @@ export default {
       }
     },
 
+    clickMuteVideo() {
+      if (this.publisher.stream.videoActive) {
+        this.publisher.publishVideo(false)
+      } else {
+        this.publisher.publishVideo(true)
+      }
+    },
+
+    clickMuteAudio() {
+      if (this.publisher.stream.audioActive) {
+        this.publisher.publishAudio(false)
+      } else {
+        this.publisher.publishAudio(true)
+      }
+    },
+
     joinSession() {
       // --- 1) Get an OpenVidu object ---
       this.OV = new OpenVidu();
@@ -158,6 +181,7 @@ export default {
       this.session.on("streamCreated", ({ stream }) => {
         const subscriber = this.session.subscribe(stream);
         this.subscribers.push(subscriber);
+        this.headCount++;
       });
 
       // On every Stream destroyed...
@@ -166,6 +190,7 @@ export default {
         if (index >= 0) {
           this.subscribers.splice(index, 1);
         }
+        this.headCount--;
       });
 
       // On every asynchronous exception...
@@ -208,7 +233,7 @@ export default {
             let publisher = this.OV.initPublisher(undefined, {
               audioSource: undefined, // The source of audio. If undefined default microphone
               videoSource: undefined, // The source of video. If undefined default webcam
-              publishAudio: false, // Whether you want to start publishing with your audio unmuted or not
+              publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
               publishVideo: true, // Whether you want to start publishing with your video enabled or not
               resolution: "640x480", // The resolution of your video
               frameRate: 30, // The frame rate of your video
@@ -296,9 +321,10 @@ export default {
 
 </script>
 
-<style>
-body {
+<style scoped>
+#main-container {
   background: #121212;
+  height: 90vh;
 }
 
 #container {
@@ -314,6 +340,7 @@ body {
   flex-direction: column;
   background: #e9e9e9;
   border-radius: 30px;
+  width: 20vw;
 }
 
 #chats {
@@ -439,24 +466,6 @@ nav i.fa:hover {
     0 0 8px rgba(0, 136, 170, 0.6);
 }
 
-input.btn {
-  font-weight: bold;
-}
-
-.btn {
-  font-weight: bold !important;
-}
-
-.btn-success {
-  background-color: #06d362 !important;
-  border-color: #06d362;
-}
-
-.btn-success:hover {
-  background-color: #1abd61 !important;
-  border-color: #1abd61;
-}
-
 .footer {
   position: absolute;
   bottom: 0;
@@ -542,12 +551,21 @@ a:hover .demo-logo {
 }
 
 #video-container {
+  /* border-style: solid;
+  border-width: 5px; */
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
+  align-content: center;
   align-items: center;
+  align-self: center;
+  width: 80vw;
+  height: 75vh;
+  flex-wrap: wrap;
 }
 
-#video-container video {
+#video-container .video {
+  /* border-style: solid;
+  border-width: 5px; */
   float: left;
   cursor: pointer;
 }
@@ -556,27 +574,29 @@ a:hover .demo-logo {
   justify-content: center !important;
 }
 
-.under-one video {
-  max-width: 100%;
-  max-height: 100%;
+.under-one .video {
+  max-width: 80%;
+  max-height: 90%;
 }
 
-.under-two video {
-  max-width: 100%;
-  max-height: 100%;
+.under-two .video {
+  max-width: 40%;
+  max-height: 90%;
 }
 
-.under-four video {
-  max-width: 33%;
-  max-height: 50%;
+.under-four .video {
+  max-width: 40%;
+  max-height: 45%;
 }
 
-.under-six video {
-  width: 50%;
+.under-six .video {
+  max-width: 30%;
+  max-height: 45%;
 }
 
-.under-eight video {
-  width: 50%;
+.under-eight .video {
+  max-width: 23%;
+  max-height: 45%;
 }
 
 /* #video-container video+div {
@@ -586,7 +606,7 @@ a:hover .demo-logo {
   margin-left: -50%;
 } */
 
-#video-container p {
+/* #video-container p {
   display: inline-block;
   background: #f8f8f8;
   padding-left: 5px;
@@ -596,11 +616,11 @@ a:hover .demo-logo {
   border-bottom-right-radius: 4px;
   border-bottom-left-radius: 4px;
   margin: 0;
-}
+} */
 
-video {
+.video {
   width: 100%;
-  height: auto;
+  height: 100%;
 }
 
 #main-video p {
@@ -675,5 +695,33 @@ video {
   #join-dialog {
     max-width: inherit;
   }
+}
+
+#option-footer {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.content {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 15px 35px;
+  gap: 10px;
+
+  width: 5%;
+  height: 3vh;
+  left: 52px;
+  top: 105px;
+
+  color: black;
+  font-size: 2rem;
+  font-weight: 700;
+  background: white;
+  box-shadow: -4px -4px 15px rgba(255, 255, 255, 0.5), 4px 4px 15px rgba(0, 0, 0, 0.5), inset 4px 4px 15px rgba(255, 255, 255, 0.5);
+  border-radius: 53px;
+
+  cursor: pointer;
 }
 </style>

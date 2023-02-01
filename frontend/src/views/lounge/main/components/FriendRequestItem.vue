@@ -80,7 +80,7 @@ const deleteRequestClose = () => {
 
 <style scoped>
 .wrapper {
-  width: 100%;
+  width: 86%;
   height: 15%;
   color: white;
   background: linear-gradient(180deg, #A44242 202.91%, rgba(0, 0, 0, 0.709847) 260.73%, rgba(84, 84, 84, 0) 302.91%);
@@ -88,6 +88,10 @@ const deleteRequestClose = () => {
   padding: 7%;
   font-size: 1rem;
   margin: 2.5% 0;
+}
+.wrapper:hover {
+  transform: scale(1.05, 1.05);
+  transition: 0.1s ease-in;
 }
 .first-line{
   display: flex;

@@ -6,7 +6,7 @@
 			</div>
 		</div>
 		<div class="room" v-for="room in form.rooms" :key="room">
-			<RoomItem class="room-wrapper" :room="room"/>
+			<RoomItem :room="room"/>
 		</div>
 	</div>
 	<!-- 방 생성 팝업창 -->
@@ -84,22 +84,18 @@ const form = ref({
 	password: '',
 	private: false,
 	hostId: store.state.userModule.userId,
-	personCount: 1,
 	// createdTime: null,
 	rooms: [],
 })
 
 const createRoom = () => {
 	// form.createdTime = new Date();
-	console.log(form.value.title)
-	console.log(form.title)
-  	store.dispatch("roomModule/createRoom", {
+	store.dispatch("roomModule/createRoom", {
 		title: form.value.title,
 		password: form.value.password,
 		category: form.value.category,
 		personLimit: form.value.personLimit,
 		hostId: form.value.hostId,
-		personCount: form.value.personCount,
 		// createdTime: form.createdTime,
 	});
 }
@@ -168,12 +164,7 @@ const passwordClose = () => {
 .room {
 	width: 30%;
 	height: 40%;
-	background-image: url('../../../../assets/table.png');
-	background-position: center;
-	background-size: contain;
-	background-repeat: no-repeat;
-	margin-right: 2%;
-	margin-bottom: 2%;
+	margin: 1.5%;
 }
 
 .room-wrapper {
@@ -185,19 +176,12 @@ const passwordClose = () => {
 	align-items: center;
 }
 
-.create-room .room {
-	transition: 0.5s ease-out;
-}
-
 .create-room:hover {
-	transform: scale(1.2, 1.2);
+	transform: scale(1.1, 1.1);
+	transition: 0.3s ease-out;
+	cursor: pointer;
 }
 
-.room:hover {
-	transform: scale(1.2, 1.2);
-}
-
-/* test---------------------- */
 .modal-bg {
 	display:none;
 	width:100%;

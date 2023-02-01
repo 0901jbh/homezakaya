@@ -48,9 +48,9 @@ const data = ref({
 
 const store = useStore()
 
-data.requests = computed(() => store.getters["friendModule/getRequests"])
-data.friends = computed(() => store.getters["friendModule/getFriends"])
-data.searchUsers = computed(() => store.getters["friendModule/getSearchUsers"])
+data.value.requests = computed(() => store.getters["friendModule/getRequests"])
+data.value.friends = computed(() => store.getters["friendModule/getFriends"])
+data.value.searchUsers = computed(() => store.getters["friendModule/getSearchUsers"])
 
 const getRequests = onBeforeMount(() => {
   store.dispatch("friendModule/getRequests", store.state.userModule.userId)
@@ -61,7 +61,7 @@ const getFriends = onBeforeMount(() => {
 })
 
 const searchUser = () => {
-  store.dispatch("friendModule/searchUser", data.userInput)
+  store.dispatch("friendModule/searchUser", data.value.userInput)
 }
 </script>
 

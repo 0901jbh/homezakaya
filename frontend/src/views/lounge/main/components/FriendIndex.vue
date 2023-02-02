@@ -27,6 +27,7 @@
         v-for="user in data.searchUsers" 
         :key="user" 
         :user="user"
+        :friends="data.friends"
       />
 		</div>
 	</div>
@@ -121,7 +122,7 @@ input[name="tab_item"] {
 #friend:checked ~ #friend_content,
 #user:checked ~ #user_content {
   display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	flex-wrap: wrap;
 	overflow-y: scroll;
 }
@@ -138,7 +139,7 @@ input[name="tab_item"] {
 }
 .search-bar{
   height: 5%;
-  width: 100%;
+  width: 90%;
   font-size: 1.3rem;
   padding: 2% 5%;
   margin-bottom: 2.5%;

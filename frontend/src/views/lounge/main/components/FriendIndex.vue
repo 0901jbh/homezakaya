@@ -161,7 +161,7 @@ const notInRoomClose = () => {
 const followEnterRoom = (roomId) => {
 	store.dispatch("roomModule/checkPassword", {
 		roomId: roomId,
-		password: data.value.passwordInput,
+		password: null,
 	}).then((result) => {
 		if (result) {
 			console.log(`${roomId}번에 입장`)
@@ -202,7 +202,6 @@ const enterRoom = (roomId) => {
       followErrorOpen(2)
     }
   })
-	
 }
 
 const followPrivatePopOpen = () => {

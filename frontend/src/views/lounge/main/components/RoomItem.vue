@@ -9,14 +9,14 @@
 	<div class="private-modal-wrap">
 		<div class="private-popup">
 			<div class="private-popup-header">
-				<div class="private-popup-header-title">Private Room {{ props.room.roomId }}</div>
+				<div class="private-popup-header-title">Private Room</div>
 			</div>
 			<div class="private-popup-content">
 				<div style="margin-bottom:3%;">해당 방은 비공개방입니다.</div>
         <div style="margin-bottom:5%;">비밀번호를 입력해주세요.</div>
         <div>
 					<el-form-item label="비밀번호">
-						<el-input v-model="data.userInput" placeholder="비밀번호를 입력해주세요" @input="inputEvent" show-password />
+						<el-input v-model="data.userInput" placeholder="비밀번호를 입력해주세요" show-password />
 					</el-form-item>
 				</div>
         <div>
@@ -95,6 +95,10 @@ const clickEnterBtn = () => {
 const enterRoom = () => {
 	store.dispatch('roomModule/enterRoom', props.room.roomId)
 	router.push({ name: 'room', params: { roomId: props.room.roomId }})
+	store.dispatch('roomModule/createUserInRoom', {
+		userId: store.state.userId,
+		roomId: props.room.roomId,
+	})
 }
 
 const privatePopOpen = () => {

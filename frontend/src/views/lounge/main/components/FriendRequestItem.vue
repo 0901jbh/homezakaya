@@ -45,7 +45,8 @@ import { defineProps } from "vue";
 import { useStore } from 'vuex';
 
 const props = defineProps({
-  request: Object
+  request: Object,
+  idx: Number
 })
 
 const store = useStore()
@@ -68,13 +69,13 @@ const approveRequest = () => {
 }
 
 const deleteRequestOpen = () => {
-	document.getElementsByClassName("delete-request-modal-wrap")[0].style.display ='block';
-	document.getElementsByClassName("delete-request-modal-bg")[0].style.display ='block';
+	document.getElementsByClassName("delete-request-modal-wrap")[props.idx].style.display ='block';
+	document.getElementsByClassName("delete-request-modal-bg")[props.idx].style.display ='block';
 }
 
 const deleteRequestClose = () => {
-    document.getElementsByClassName("delete-request-modal-wrap")[0].style.display ='none';
-    document.getElementsByClassName("delete-request-modal-bg")[0].style.display ='none';
+    document.getElementsByClassName("delete-request-modal-wrap")[props.idx].style.display ='none';
+    document.getElementsByClassName("delete-request-modal-bg")[props.idx].style.display ='none';
 }
 </script>
 
@@ -88,10 +89,10 @@ const deleteRequestClose = () => {
   padding: 7%;
   font-size: 1rem;
   margin: 2.5% 0;
+  transition: 0.1s ease-in;
 }
 .wrapper:hover {
   transform: scale(1.05, 1.05);
-  transition: 0.1s ease-in;
 }
 .first-line{
   display: flex;

@@ -129,6 +129,9 @@ public class UserController {
             userService.addTokenInfo(loginUser);
 //            Map<String, Object> info = jwtUtil.checkAndGetClaims(accessToken);
 
+            // 유저 state를 online으로 변경
+            userService.modifyUserState(user.getUserId(), "online");
+
             status = HttpStatus.OK; // 200
         } else {
             result.put("message", "로그인 실패");
@@ -139,14 +142,17 @@ public class UserController {
     }
 
     // 로그아웃
-    @GetMapping("/logout")
-    public ResponseEntity<?> logOut(@RequestParam String userId) throws Exception {
+    @GetMapping("/logout/{userId}")
+    public ResponseEntity<?> logOut(@PathVariable String userId) throws Exception {
         HashMap<String, Object> result = new HashMap<>();
         // DB에서 refresh token 삭제
         // session 정보 삭제 - front
         UserDto loginUser = userService.getUser(userId);
         loginUser.setRefreshToken("");
         userService.removeTokenInfo(loginUser);
+
+        // 유저 state를 offline으로 변경
+        userService.modifyUserState(userId, "offline");
 
         result.put("message", "로그아웃 성공");
         return new ResponseEntity<HashMap<String, Object>>(result, HttpStatus.OK);  // 200

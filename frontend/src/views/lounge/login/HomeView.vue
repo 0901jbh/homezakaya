@@ -58,7 +58,6 @@ const form = reactive({
 })
 
 const onSubmit = () => {
-  store.dispatch("roomModule/getRoomId", "ssafy");
   console.log('submit!');
 }
 </script>

@@ -21,6 +21,7 @@ export const roomModule = {
   getters: {
   },
   actions: {
+    // 방 만들기
     createRoom(context, payload){
       axios.post(`/api/rooms`, payload).then(({ status, data }) => {
         if(status == 201){
@@ -33,11 +34,12 @@ export const roomModule = {
         }
       });
     },
+    // 방 목록 조회
     getRooms(context, payload){
       axios.get(`/api/rooms`).then(({ status, data }) => {
         if(status == 200){
-          console.log(data);
-          context.commit("SET_ROOMS", data);
+          console.log(data.roomList);
+          context.commit("SET_ROOMS", data.roomList);
         }
       }).catch(err => {
         if(err.response.status == 404){
@@ -45,6 +47,7 @@ export const roomModule = {
         }
       });
     },
+    // 특정 방 조회
     getRoom(context, payload){
       axios.get(`/api/rooms/${payload}`).then(({ status, data }) => {
         if(status == 200){
@@ -57,6 +60,7 @@ export const roomModule = {
         }
       });
     },
+    // 비공개방 비밀번호 확인
     checkPassword(context , payload){
       return axios.post(`/api/rooms/password`, payload).then(({ status, data }) => {
         if(status == 200){
@@ -73,6 +77,7 @@ export const roomModule = {
         return false;
       });
     },
+    // 방 입장
     enterRoom(context, payload){
       axios.put(`api/rooms/enter/${payload}`).then(({ status, data }) => {
         if(status == 200){
@@ -89,6 +94,7 @@ export const roomModule = {
         return false;
       });
     },
+    // 방 퇴장
     quitRoom(context, payload){
       axios.put(`api/rooms/quit/${payload}`).then(({ status, data }) => {
         if(status == 200){
@@ -104,6 +110,7 @@ export const roomModule = {
         }
       });
     },
+    // 방 삭제
     removeRoom(context, payload){
       axios.delete(`api/rooms/${payload}`).then(({ status }) => {
         if(status == 204){
@@ -115,6 +122,7 @@ export const roomModule = {
         }
       });
     },
+    
     createUserInRoom(context, payload){
       axios.post(`api/userinroom`, payload).then(({ status, data }) => {
         if(status == 201){

@@ -2,6 +2,7 @@ package com.ssafy.Homezakaya.controller;
 
 import com.ssafy.Homezakaya.model.dto.RoomDto;
 import com.ssafy.Homezakaya.model.service.RoomServiceImpl;
+import com.ssafy.Homezakaya.model.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,17 +21,24 @@ public class RoomController {
     @Autowired
     private RoomServiceImpl roomService;
 
+    @Autowired
+    private UserServiceImpl userService;
+
+
     @PostMapping
     public ResponseEntity<?> createRoom(@RequestBody RoomDto room) {
-        room.setCreatedTime(LocalDateTime.now());
-        boolean res = roomService.createRoom(room);
+        Map<String, Object> resultMap = new HashMap<>();
         try{
-            if(res) {
-                return new ResponseEntity<>(room, HttpStatus.CREATED);
+            // 존재하지 않는 유저 아이디
+            if(userService.getUser(room.getHostId()) == null){
+                resultMap.put("message", "존재하지 않는 userId");
+                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NOT_FOUND);
             }
-            else {
-                return ResponseEntity.notFound().build();
-            }
+
+            room.setCreatedTime(LocalDateTime.now());
+            boolean res = roomService.createRoom(room);
+            return new ResponseEntity<>(room, HttpStatus.CREATED);
+
         }catch (Exception e){
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();

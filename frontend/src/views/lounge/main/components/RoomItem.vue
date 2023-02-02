@@ -1,5 +1,5 @@
 <template>
-  <div class="room-state" @click="enterRoom">
+  <div class="room-state" @click="clickRoomIcon">
     <div>{{ props.room.title }}</div>
     <div>{{ props.room.category }}</div>
     <div>{{ props.room.personCount }} / {{ props.room.personLimit }}</div>
@@ -9,18 +9,18 @@
 	<div class="private-modal-wrap">
 		<div class="private-popup">
 			<div class="private-popup-header">
-				<div class="private-popup-header-title">Private Room</div>
+				<div class="private-popup-header-title">Private Room {{ props.room.roomId }}</div>
 			</div>
 			<div class="private-popup-content">
 				<div style="margin-bottom:3%;">해당 방은 비공개방입니다.</div>
         <div style="margin-bottom:5%;">비밀번호를 입력해주세요.</div>
         <div>
 					<el-form-item label="비밀번호">
-						<el-input v-model="data.userInput" placeholder="비밀번호를 입력해주세요" show-password />
+						<el-input v-model="data.userInput" placeholder="비밀번호를 입력해주세요" @input="inputEvent" show-password />
 					</el-form-item>
 				</div>
         <div>
-          <el-button type="info" size="large" @click="enterRoom">Enter</el-button>
+          <el-button type="info" size="large" @click="clickEnterBtn">Enter</el-button>
           <el-button type="info" size="large" @click="privatePopClose">Cancel</el-button>
         </div>
 			</div>
@@ -47,77 +47,75 @@
 </template>
 
 <script setup>
-import { defineProps, onBeforeMount, ref, computed, onMounted } from 'vue';
+import { defineProps, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
 const router = useRouter()
-
-const props = defineProps({
-  room: Object
-})
-const data = ref({
-  userInput: '',
-  private: false,
-	room: {},
-})
 const store = useStore()
 
-const room = onBeforeMount(() => {
-	data.value.room = props.room
+const props = defineProps({
+  room: Object,
+	idx: Number
 })
 
-const enterRoom = () => {
-	console.log(`${data.value.room.roomId}번 방입니다.`)
+const data = ref({
+  userInput: '',
+})
 
-	console.log(`${data.value.room.roomId}번방은 비밀번호가 있을까?`)
+const clickRoomIcon = () => {
+	store.dispatch("roomModule/checkPassword", {
+		roomId: props.room.roomId,
+		password: data.value.userInput,
+	}).then((result) => {
+		if (result) {
+			console.log(`${props.room.roomId}번에 입장`)
+			enterRoom()
+		}
+		else {
+			privatePopOpen()
+		}
+	})
+}
 
-	console.log(props.room)
-  if (data.value.room.password != '') {
-    data.value.private = true;
-		console.log('비밀번호가 필요한 비공개방입니다.')
-  }
-
-  if (!data.value.private) {
-		console.log('비밀번호가 필요없는 공개방!')
-    store.dispatch('roomModule/enterRoom', data.value.room.roomId)
-		router.push({ name: 'room', params: { roomId: data.value.room.roomId } })
-	} else if (data.value.userInput == '') {
-		console.log('비밀번호가 필요한 비공개방이기 때문에 비밀번호 입력 필요 !')
-		privatePopOpen()
-	} else {
-		if (store.dispatch('roomModule/checkPassword',{
-			roomId: data.value.room.roomId,
-			password: data.value.userInput
-		})) {
-			console.log("axios 결과 비밀번호가 일치함")
-			store.dispatch('roomModule/enterRoom', data.value.room.roomId)
-			router.push({ name: 'room', params: { roomId: data.value.room.roomId } })
-		} else {
-			console.log("axios 결과 비밀번호가 불일치함")
+const clickEnterBtn = () => {
+	store.dispatch("roomModule/checkPassword", {
+		roomId: props.room.roomId,
+		password: data.value.userInput,
+	}).then((result) => {
+		if (result) {
+			enterRoom()
+		}
+		else {
 			errorOpen()
 		}
-	}
+	})
+}
+
+const enterRoom = () => {
+	store.dispatch('roomModule/enterRoom', props.room.roomId)
+	router.push({ name: 'room', params: { roomId: props.room.roomId } })
 }
 
 const privatePopOpen = () => {
-	document.getElementsByClassName("private-modal-wrap")[0].style.display ='block';
-	document.getElementsByClassName("private-modal-bg")[0].style.display ='block';
+	document.getElementsByClassName("private-modal-wrap")[props.idx].style.display ='block';
+	document.getElementsByClassName("private-modal-bg")[props.idx].style.display ='block';
 }
 
 const privatePopClose = () => {
-    document.getElementsByClassName("private-modal-wrap")[0].style.display ='none';
-    document.getElementsByClassName("private-modal-bg")[0].style.display ='none';
+    document.getElementsByClassName("private-modal-wrap")[props.idx].style.display ='none';
+    document.getElementsByClassName("private-modal-bg")[props.idx].style.display ='none';
 		data.value.userInput = '';
 }
 
 const errorOpen = () => {
-	document.getElementsByClassName("error-modal-wrap")[0].style.display ='block';
-	document.getElementsByClassName("error-modal-bg")[0].style.display ='block';
+	document.getElementsByClassName("error-modal-wrap")[props.idx].style.display ='block';
+	document.getElementsByClassName("error-modal-bg")[props.idx].style.display ='block';
 }
 const errorClose = () => {
-    document.getElementsByClassName("error-modal-wrap")[0].style.display ='none';
-    document.getElementsByClassName("error-modal-bg")[0].style.display ='none';
+    document.getElementsByClassName("error-modal-wrap")[props.idx].style.display ='none';
+    document.getElementsByClassName("error-modal-bg")[props.idx].style.display ='none';
+		data.value.userInput = '';
 }
 
 

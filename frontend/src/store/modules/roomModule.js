@@ -5,7 +5,7 @@ export const roomModule = {
   state: () => ({
     rooms: [],
     room: {},
-    // roomId: Number
+    checkPasswordResult: false,
   }),
   mutations: {
     SET_ROOMS(state, payload) {
@@ -17,8 +17,20 @@ export const roomModule = {
     // SET_ROOM_ID(state, payload){
     //   state.roomId = payload;
     // },
+    // SET_CHECK_PASSWORD_RESULT(state, payload) {
+    //   if (payload == "success") {
+    //     state.checkPasswordResult = true;
+    //     console.log('vuex true')
+    //   } else {
+    //     state.checkPasswordResult = false;
+    //     console.log('vuex false')
+    //   }
+    // },
   },
   getters: {
+    getCheckPasswordResult(state){
+      return state.checkPasswordResult
+    }
   },
   actions: {
     // 방 만들기
@@ -63,19 +75,21 @@ export const roomModule = {
     // 비공개방 비밀번호 확인
     checkPassword(context , payload){
       return axios.post(`/api/rooms/password`, payload).then(({ status, data }) => {
-        console.log(payload)
         if(status == 200){
-          console.log("비밀번호 일치");
-          return true;
+          // context.commit("SET_CHECK_PASSWORD_RESULT", data.message)
+          console.log("비밀번호 일치")
+          return true
         }
       }).catch(err => {
         if(err.response.status == 401){
-          console.log("비밀번호 불일치");
+          // context.commit("SET_CHECK_PASSWORD_RESULT", err.response.message)
+          console.log("비밀번호 불일치")
         }
         else if(err.response.status == 404){
-          console.log("노방");
+          // context.commit("SET_CHECK_PASSWORD_RESULT", err.response.message)
+          console.log("노방")
         }
-        return false;
+        return false
       });
     },
     // 방 입장

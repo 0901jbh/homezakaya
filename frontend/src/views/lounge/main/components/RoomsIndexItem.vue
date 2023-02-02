@@ -5,8 +5,8 @@
 				<div>+</div>
 			</div>
 		</div>
-		<div class="room" v-for="room in form.rooms" :key="room">
-			<RoomItem :room="room"/>
+		<div class="room" v-for="(room, idx) in form.rooms" :key="idx">
+			<RoomItem :room="room" :idx="idx"/>
 		</div>
 	</div>
 	<!-- 방 생성 팝업창 -->

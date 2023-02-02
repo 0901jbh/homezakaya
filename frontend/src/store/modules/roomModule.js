@@ -138,7 +138,6 @@ export const roomModule = {
         }
       });
     },
-    
     createUserInRoom(context, payload){
       axios.post(`api/userinroom`, payload).then(({ status, data }) => {
         if(status == 201){

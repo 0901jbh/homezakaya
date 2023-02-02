@@ -94,7 +94,7 @@ const clickEnterBtn = () => {
 
 const enterRoom = () => {
 	store.dispatch('roomModule/enterRoom', props.room.roomId)
-	router.push({ name: 'room', params: { roomId: props.room.roomId } })
+	router.push({ name: 'room', params: { roomId: props.room.roomId }})
 }
 
 const privatePopOpen = () => {
@@ -117,7 +117,6 @@ const errorClose = () => {
     document.getElementsByClassName("error-modal-bg")[props.idx].style.display ='none';
 		data.value.userInput = '';
 }
-
 
 </script>
 

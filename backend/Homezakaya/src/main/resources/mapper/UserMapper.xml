@@ -4,25 +4,61 @@
 <mapper namespace="com.ssafy.Homezakaya.model.dao.UserDao">
 
     <insert id="insertUser" parameterType="UserDto">
-        INSERT INTO User(userId, password, nickname, email, birthDate, gender, mannerPoint, alcoholPoint, username)
-        VALUES (#{userId}, #{password}, #{nickname}, #{email}, #{birthDate}, #{gender}, #{mannerPoint}, #{alcoholPoint},
+        INSERT INTO user(userId, password, nickname, email, birthDate, gender, mannerPoint, evaluatedCount,
+                         alcoholPoint, username)
+        VALUES (#{userId}, #{password}, #{nickname}, #{email}, #{birthDate}, #{gender}, #{mannerPoint},
+                #{evaluatedCount}, #{alcoholPoint},
                 #{username})
     </insert>
 
-        <select id="selectUserById" parameterType="String">
-            SELECT * FROM User WHERE userId = #{userId}
-        </select>
+    <select id="getUser" parameterType="String" resultType="UserDto">
+        SELECT *
+        FROM user
+        WHERE userId = #{userId}
+    </select>
 
-        <update id="updateUser" parameterType="int">
-            UPDATE User
-            SET user
-        </update>
+    <select id="checkNickname" parameterType="String" resultType="UserDto">
+        SELECT *
+        FROM user
+        WHERE nickname = #{nickname}
+    </select>
 
-        <delete id="deleteUser" parameterType="int">
+    <update id="updateUser" parameterType="UserDto">
+        UPDATE user
+        <set>
+            <if test="password != null">password = #{password},</if>
+            <if test="nickname != null">nickname = #{nickname},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="birthDate != null">birthDate = #{birthDate},</if>
+            <if test="alcoholPoint != null">alcoholPoint = #{alcoholPoint},</if>
+        </set>
+        WHERE userId = #{userId}
+    </update>
 
-        </delete>
+    <delete id="deleteUser" parameterType="String">
+        DELETE
+        FROM user
+        WHERE userId = #{userId}
+    </delete>
 
-    <!--    <select id="averageOfMannerPoint" parameterType="double">-->
+    <update id="updateMannerPoint" parameterType="UserDto">
+        UPDATE user
+        SET mannerPoint = #{mannerPoint},
+            evaluatedCount = #{evaluatedCount}
+        WHERE userId = #{userId}
+    </update>
 
-    <!--    </select>-->
+    <update id="addTokenInfo" parameterType="UserDto">
+        UPDATE user
+        SET refreshToken = #{refreshToken}
+        WHERE userId = #{userId}
+    </update>
+
+    <update id="deleteTokenInfo" parameterType="UserDto">
+        UPDATE user
+        SET refreshToken = #{refreshToken}
+        WHERE userId = #{userId}
+    </update>
+
+
 </mapper>

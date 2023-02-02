@@ -151,7 +151,7 @@ function isCorrect() {
 
 </script>
 
-<style scope>
+<style scoped>
 .container {
   display: flex;
   height: 90vh;

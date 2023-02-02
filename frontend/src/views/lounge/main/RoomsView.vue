@@ -1,6 +1,6 @@
 <template>
   <header>
-    <HeaderItem />
+    <UserHeader />
   </header>
   <div class="container">
     <div class="title-rooms">
@@ -13,9 +13,7 @@
         <RoomsIndexItem />
       </div>
     </div>
-    <!-- <div class="friends"> -->
-    <FriendsItem class="friends" />
-    <!-- </div>   -->
+    <FriendIndex />
   </div>
   <footer>
     <FooterItem />
@@ -24,10 +22,10 @@
 
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-import HeaderItem from '../menu/HeaderItem.vue'
+import UserHeader from '../menu/UserHeader.vue'
 import FooterItem from '../menu/FooterItem.vue'
 import RoomsIndexItem from './components/RoomsIndexItem.vue'
-import FriendsItem from './components/FriendsItem.vue'
+import FriendIndex from './components/FriendIndex.vue'
 import InfoItem from '../menu/InfoItem.vue'
 
 </script>
@@ -80,10 +78,5 @@ import InfoItem from '../menu/InfoItem.vue'
   border-radius: 30px;
   padding: 4vh;
   margin-bottom: 4vh;
-}
-
-.friends {
-  margin: 5vh 4vh;
-  height: 80vh;
 }
 </style>

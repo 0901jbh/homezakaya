@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.Homezakaya.model.dao.UserInRoomDao">
+    <insert id="insertUserInRoom" parameterType="UserInRoomDto" >
+        insert into userinroom(userId, roomId) values(#{userId}, #{roomId})
+    </insert>
+
+    <delete id="deleteUserInRoom" parameterType="String">
+        delete from userinroom where userId = #{userId}
+    </delete>
+
+    <select id="selectRoomIdByUserId" resultType="Integer" parameterType="String">
+        select roomId from userinroom where userId = #{userId}
+    </select>
+
+</mapper>

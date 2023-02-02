@@ -19,6 +19,8 @@ public class UserDto {
     private String birthDate;
     private String gender;
     private double mannerPoint;
+    private int evaluatedCount;
     private double alcoholPoint;
     private String username;
+    private String refreshToken;
 }

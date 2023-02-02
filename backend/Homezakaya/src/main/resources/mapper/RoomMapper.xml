@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.Homezakaya.model.dao.RoomDao">
+    <insert id="insertRoom" parameterType="RoomDto" >
+        insert into room(title, password, category, hostId, createdTime, personLimit, personCount) values(#{title}, #{password}, #{category}, #{hostId}, #{createdTime}, #{personLimit}, #{personCount})
+        <selectKey resultType="int" keyProperty="roomId" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+    <select id="selectRooms" resultType="RoomDto">
+        select roomId, title, category, hostId, createdTime, personLimit, personCount from room
+    </select>
+
+    <select id="selectRoom" resultType="RoomDto" parameterType="int">
+        select roomId, title, category, hostId, createdTime, personLimit, personCount from room where roomId = #{roomId}
+    </select>
+
+    <select id="selectPassword" resultType="String" parameterType="int">
+        select password from room where roomId = #{roomId}
+    </select>
+
+    <update id="enterRoom" parameterType="int">
+        update room set personCount = personCount + 1 where roomId = #{roomId}
+    </update>
+
+    <update id="quitRoom" parameterType="int">
+        update room set personCount = personCount - 1 where roomId = #{roomId}
+    </update>
+
+    <delete id="deleteRoom" parameterType="int">
+        delete from room where roomId = #{no}
+    </delete>
+
+</mapper>

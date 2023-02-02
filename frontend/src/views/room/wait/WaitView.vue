@@ -95,7 +95,7 @@ axios.defaults.headers.post["Content-Type"] = "application/json";
 const APPLICATION_SERVER_URL = "http://localhost:5000/";
 
 export default {
-  name: "RoomView",
+  name: "WaitView",
 
   components: {
     UserVideo,
@@ -109,7 +109,7 @@ export default {
       session: undefined,
       mainStreamManager: undefined,
       publisher: undefined,
-      subscribers: [],
+      // subscribers: [],
 
       // Join form
       mySessionId: this.$route.params.roomId,
@@ -139,27 +139,27 @@ export default {
       this.$router.push({ name: 'room', params: { roomId: this.mySessionId } })
     },
 
-    sendMessage() {
-      if (this.newMessage) {
-        this.messageData = {
-          content: this.newMessage,
-          username: this.myUserName
-        }
-        this.session.signal({
-          data: JSON.stringify(this.messageData),  // Any string (optional)
-          to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
-          type: 'my-chat'             // The type of message (optional)
-        })
-          .then(() => {
-            console.log('Message successfully sent');
-          })
-          .catch(error => {
-            console.error(error);
-          })
-        this.messageData = null
-        this.newMessage = null
-      }
-    },
+    // sendMessage() {
+    //   if (this.newMessage) {
+    //     this.messageData = {
+    //       content: this.newMessage,
+    //       username: this.myUserName
+    //     }
+    //     this.session.signal({
+    //       data: JSON.stringify(this.messageData),  // Any string (optional)
+    //       to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+    //       type: 'my-chat'             // The type of message (optional)
+    //     })
+    //       .then(() => {
+    //         console.log('Message successfully sent');
+    //       })
+    //       .catch(error => {
+    //         console.error(error);
+    //       })
+    //     this.messageData = null
+    //     this.newMessage = null
+    //   }
+    // },
 
     clickMuteVideo() {
       if (this.publisher.stream.videoActive) {
@@ -191,20 +191,20 @@ export default {
       // --- 3) Specify the actions when events take place in the session ---
 
       // On every new Stream received...
-      this.session.on("streamCreated", ({ stream }) => {
-        const subscriber = this.session.subscribe(stream);
-        this.subscribers.push(subscriber);
-        this.headCount++;
-      });
+      // this.session.on("streamCreated", ({ stream }) => {
+      //   const subscriber = this.session.subscribe(stream);
+      //   this.subscribers.push(subscriber);
+      //   this.headCount++;
+      // });
 
       // On every Stream destroyed...
-      this.session.on("streamDestroyed", ({ stream }) => {
-        const index = this.subscribers.indexOf(stream.streamManager, 0);
-        if (index >= 0) {
-          this.subscribers.splice(index, 1);
-        }
-        this.headCount--;
-      });
+      // this.session.on("streamDestroyed", ({ stream }) => {
+      //   const index = this.subscribers.indexOf(stream.streamManager, 0);
+      //   if (index >= 0) {
+      //     this.subscribers.splice(index, 1);
+      //   }
+      //   this.headCount--;
+      // });
 
       // On every asynchronous exception...
       this.session.on("exception", ({ exception }) => {
@@ -218,21 +218,21 @@ export default {
 
         // Receiver of the message (usually before calling 'session.connect')
 
-        this.session.on('signal:my-chat', (event) => {
-          console.log(event.data); // Message
-          console.log(event.from); // Connection object of the sender
-          console.log(event.type); // The type of message ("my-chat")
-          this.eventData = JSON.parse(event.data)
-          this.messages.push({
-            id: Date.now(),
-            username: this.eventData.username,
-            text: this.eventData.content,
-          });
-          this.$nextTick(() => {
-            let msgscr = this.$refs.message_scroll;
-            msgscr.scrollTo({ top: msgscr.scrollHeight, behavior: 'smooth' });
-          });
-        });
+        // this.session.on('signal:my-chat', (event) => {
+        //   console.log(event.data); // Message
+        //   console.log(event.from); // Connection object of the sender
+        //   console.log(event.type); // The type of message ("my-chat")
+        //   this.eventData = JSON.parse(event.data)
+        //   this.messages.push({
+        //     id: Date.now(),
+        //     username: this.eventData.username,
+        //     text: this.eventData.content,
+        //   });
+        //   this.$nextTick(() => {
+        //     let msgscr = this.$refs.message_scroll;
+        //     msgscr.scrollTo({ top: msgscr.scrollHeight, behavior: 'smooth' });
+        //   });
+        // });
 
         // First param is the token. Second param can be retrieved by every user on event
         // 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
@@ -278,7 +278,7 @@ export default {
       this.session = undefined;
       this.mainStreamManager = undefined;
       this.publisher = undefined;
-      this.subscribers = [];
+      // this.subscribers = [];
       this.OV = undefined;
 
       // Remove beforeunload listener

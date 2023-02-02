@@ -37,6 +37,7 @@ export default {
 			const { isHost } = this.getConnectionData();
 			return isHost;
 		},
+		// isHost 값을 주는 것 보다는 hostId와 clientId가 일치하는지 직접 비교하는게 나을듯
 	},
 
 	methods: {

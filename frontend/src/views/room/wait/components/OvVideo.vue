@@ -20,6 +20,6 @@ export default {
 video {
 	max-height: 90%;
 	max-width: 100%;
-	cursor: pointer;
+	/* cursor: pointer; */
 }
 </style>

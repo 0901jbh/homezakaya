@@ -1,9 +1,9 @@
 <template>
 	<div id="video" v-if="streamManager">
-		<ov-video :stream-manager="streamManager" @click="userInfo" />
+		<ov-video :stream-manager="streamManager" />
 		<div id="nametag">
-			<img v-if="isHost" src="../../../../assets/crown.png" alt="crown img"
-				style="display: inline-block; width:20px; height:20px; padding-right: 5px;" />
+			<!-- <img v-if="isHost" src="../../../../assets/crown.png" alt="crown img"
+				style="display: inline-block; width:20px; height:20px; padding-right: 5px;" /> -->
 			<p>{{ clientId }}</p>
 			<p>{{ clientNick }}</p>
 		</div>
@@ -44,9 +44,9 @@ export default {
 			const { connection } = this.streamManager.stream;
 			return JSON.parse(connection.data);
 		},
-		userInfo() {
-			console.log("클릭")
-		}
+		// userInfo() {
+		// 	console.log("클릭")
+		// }
 	},
 };
 </script>

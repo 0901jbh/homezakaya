@@ -26,10 +26,10 @@
 
     <!-- <div id="session" v-if="session"> -->
     <div id="session">
-      <!-- <div id="main-video" class="col-md-6">
+      <div id="container">
         <user-video :stream-manager="mainStreamManager" />
-      </div> -->
-      <div id="container" style="display: flex;">
+      </div>
+      <!-- <div id="container" style="display: flex;">
         <div id="video-container" :class="{
           'under-one': this.headCount == 1,
           'under-two': this.headCount == 2,
@@ -45,7 +45,6 @@
         <div id="chatting-container" class="col-md-4">
           <div id="chats" ref="message_scroll">
             <div v-for="message in messages" :key="message.id">
-              <!-- 내 채팅 -->
               <div id="msg_mine" class="msg_box" v-if="message.username == myUserName">
                 <div class="username">
                   {{ message.username }}
@@ -54,7 +53,6 @@
                   {{ message.text }}
                 </div>
               </div>
-              <!-- 남의 채팅 -->
               <div id="msg_not_mine" class="msg_box" v-else>
                 <div class="username">
                   {{ message.username }}
@@ -71,51 +69,14 @@
               style="width:30px; height:30px;">
           </form>
         </div>
-      </div>
+      </div> -->
       <div id="option-footer">
         <!-- <h1 id="session-title">{{ mySessionId }}</h1> -->
         <!-- <input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="leaveSession"
           value="Leave session" /> -->
         <div class="content" @click="clickMuteVideo">video.M</div>
         <div class="content" @click="clickMuteAudio">audio.M</div>
-        <el-popover :width="300"
-          popper-style="background: rgb(235 153 153); border: rgb(235 153 153); box-shadow: rgb(14 18 22 / 35%) 0px 10px 38px -10px, rgb(14 18 22 / 20%) 0px 10px 20px -15px; padding: 15px;"
-          trigger="click">
-          <template #reference>
-            <div class="content">game</div>
-          </template>
-          <template #default>
-            <div class="game" v-for="game in games"
-              style="display: flex; justify-content: space-evenly; align-items: center; margin: 10px;">
-              <p class="game_name" align="right"
-                style="width: 80%; margin: 0; margin-right: 10px; font-size: 20px; color: white; align-self:center;">
-                {{ game }}
-              </p>
-              <div class="content" style="width: 20%; text-decoration:none;">
-                start
-              </div>
-            </div>
-          </template>
-        </el-popover>
-        <el-popover :width="300"
-          popper-style="background: rgb(235 153 153); border: rgb(235 153 153); box-shadow: rgb(14 18 22 / 35%) 0px 10px 38px -10px, rgb(14 18 22 / 20%) 0px 10px 20px -15px; padding: 15px;"
-          trigger="click">
-          <template #reference>
-            <div class="content">Invite</div>
-          </template>
-          <template #default>
-            <div class="online_friend" v-for="friend in friends"
-              style="display: flex; justify-content: space-evenly; align-items: center; margin: 10px;">
-              <p class="friend_nickname" align="right"
-                style="width: 80%; margin: 0; margin-right: 10px; font-size: 20px; color: white; align-self:center;">
-                {{ friend }}
-              </p>
-              <div class="content" style="width: 20%; text-decoration:none;">
-                Invite
-              </div>
-            </div>
-          </template>
-        </el-popover>
+        <div class="content" @click="enterRoom">Enter</div>
         <div class="content" @click="leaveSession">Exit</div>
       </div>
     </div>
@@ -155,18 +116,7 @@ export default {
       myUserId: "id" + Math.floor(Math.random() * 100),
       myUserName: "nickname" + Math.floor(Math.random() * 100),
 
-      newMessage: null,
-      messages: [],
-      messageData: null,
-      eventData: null,
-
-      headCountMax: 8,
-      headCount: 1,
-
-      games: ['할머니 게임', '나 안취했어', '랜덤 대화주제'],
-      friends: ['친구1', '친구2', '친구3', '이름이긴친구우우'],
-
-      isIHost: true,
+      isIHost: false,
       videoActive: false,
       audioActive: false,
     };
@@ -185,6 +135,9 @@ export default {
   // },
 
   methods: {
+    enterRoom() {
+      this.$router.push({ name: 'room', params: { roomId: this.mySessionId } })
+    },
 
     sendMessage() {
       if (this.newMessage) {
@@ -211,16 +164,20 @@ export default {
     clickMuteVideo() {
       if (this.publisher.stream.videoActive) {
         this.publisher.publishVideo(false)
+        this.videoActive = false
       } else {
         this.publisher.publishVideo(true)
+        this.videoActive = true
       }
     },
 
     clickMuteAudio() {
       if (this.publisher.stream.audioActive) {
         this.publisher.publishAudio(false)
+        this.audioActive = false
       } else {
         this.publisher.publishAudio(true)
+        this.audioActive = true
       }
     },
 
@@ -257,7 +214,7 @@ export default {
       // --- 4) Connect to the session with a valid user token ---
 
       // Get a token from the OpenVidu deployment
-      this.getToken(this.mySessionId).then((token) => {
+      this.getToken(this.myUserId).then((token) => {
 
         // Receiver of the message (usually before calling 'session.connect')
 
@@ -289,8 +246,8 @@ export default {
             let publisher = this.OV.initPublisher(undefined, {
               audioSource: undefined, // The source of audio. If undefined default microphone
               videoSource: undefined, // The source of video. If undefined default webcam
-              publishAudio: this.audioActive, // Whether you want to start publishing with your audio unmuted or not
-              publishVideo: this.videoActive, // Whether you want to start publishing with your video enabled or not
+              publishAudio: false, // Whether you want to start publishing with your audio unmuted or not
+              publishVideo: false, // Whether you want to start publishing with your video enabled or not
               resolution: "640x480", // The resolution of your video
               frameRate: 30, // The frame rate of your video
               insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
@@ -350,8 +307,8 @@ export default {
      * Visit https://docs.openvidu.io/en/stable/application-server to learn
      * more about the integration of OpenVidu in your application server.
      */
-    async getToken(mySessionId) {
-      const sessionId = await this.createSession(mySessionId);
+    async getToken(myUserId) {
+      const sessionId = await this.createSession(myUserId);
       return await this.createToken(sessionId);
     },
 
@@ -385,10 +342,6 @@ export default {
 
 #container {
   height: 80vh;
-}
-
-#container>div {
-  margin: 20px;
 }
 
 #chatting-container {

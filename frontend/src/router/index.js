@@ -30,6 +30,11 @@ const router = createRouter({
       component: () => import("../views/room/room/RoomView.vue"),
     },
     {
+      path: "/room/:roomId/wait",
+      name: "wait",
+      component: () => import("../views/room/wait/WaitView.vue"),
+    },
+    {
       path: "/test",
       name: "test",
       component: () => import("../views/lounge/test/test.vue"),

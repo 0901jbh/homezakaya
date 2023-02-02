@@ -1,6 +1,8 @@
 <template>
   <video id="video" width="72" height="56" autoplay muted></video>
   <button @click="startBtn">시작!!!!!!!!</button>
+  <div class="words" contenteditable>
+  </div>
 </template>
 
 <script setup>
@@ -9,9 +11,8 @@ import { useStore } from 'vuex'
 const store = useStore();
 
 const startBtn = () => {
-    store.dispatch("gameModule/getSentence");
-    store.dispatch("gameModule/getTopic");
-    store.dispatch("gameModule/startVideo", "video");
+    // store.dispatch("gameModule/startVideo", "video");
+    store.dispatch("gameModule/stt", ".words");
 }
 </script>
 

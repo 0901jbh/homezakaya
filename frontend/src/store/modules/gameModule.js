@@ -73,7 +73,37 @@ export const gameModule = {
                   console.log("웃었땈ㅋ");
           }
       }, 500));
-  },
+    },
+    stt(context, payload){
+
+      window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+      let recognition = new SpeechRecognition();
+      recognition.interimResults = true;
+      recognition.lang = 'ko-KR';
+
+      let makeNewTextContent = function() {
+        p = document.createElement('p');
+        document.querySelector(payload).appendChild(p);
+      };
+
+      let p = null;
+
+      recognition.start();
+
+      recognition.onstart = function() {
+        makeNewTextContent();
+      };
+
+      recognition.onend = function() {
+        recognition.start();
+      };
+
+      recognition.onresult = function(e) {
+        let texts = Array.from(e.results).map(results => results[0].transcript).join("");
+        p.textContent = texts;
+      }
+    }
   }
 };
  

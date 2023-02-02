@@ -3,7 +3,10 @@ import axios from 'axios'
 export const userModule = {
   namespaced: true,
   state: () => ({
-    userId: "taehyoung",
+    userId: "ssafy",
+    nickname: "aaa",
+    mannerPoint: 3.5,
+    alcoholPoint: 14,
   }),
   mutations: {
 
@@ -12,6 +15,7 @@ export const userModule = {
 
   },
   actions: {
+    
   }
 };
  

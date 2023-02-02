@@ -78,8 +78,8 @@
           value="Leave session" /> -->
         <div class="content" @click="clickMuteVideo">video.M</div>
         <div class="content" @click="clickMuteAudio">audio.M</div>
-        <div class="content">game</div>
-        <div class="content">Invite</div>
+        <div class="content" @click="startBtn">game</div>
+        <div class="content" @click="endBtn">Invite</div>
         <div class="content" @click="leaveSession">Exit</div>
       </div>
     </div>
@@ -96,6 +96,7 @@ import UserVideo from "./components/UserVideo.vue";
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
 const APPLICATION_SERVER_URL = "http://localhost:5000/";
+
 
 export default {
   name: "RoomView",
@@ -151,7 +152,13 @@ export default {
         this.newMessage = null
       }
     },
-
+    startBtn() {
+      // this.$store.dispatch("gameModule/startSmileGame");
+      this.$store.dispatch("gameModule/getSpeech");
+    },
+    endBtn(){
+      this.$store.dispatch("gameModule/stopDetect");
+    },
     clickMuteVideo() {
       if (this.publisher.stream.videoActive) {
         this.publisher.publishVideo(false)

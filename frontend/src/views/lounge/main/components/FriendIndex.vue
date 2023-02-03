@@ -190,12 +190,14 @@ const followEnterPrivateRoom = () => {
 }
 
 const enterRoom = (roomId) => {
-	store.dispatch('roomModule/enterRoom', roomId).then((result) => {
+  store.dispatch('roomModule/createUserInRoom', {
+    userId: store.state.userModule.user.userId,
+    roomId: roomId,
+  })
+	.then((result) => {
     if (result) {
-      store.dispatch('roomModule/createUserInRoom', {
-        userId: store.state.userModule.user.userId,
-        roomId: roomId,
-      }).then((result) => {
+      store.dispatch('roomModule/enterRoom', roomId)
+      .then((result) => {
         if (result) {
           router.push({ name: 'room', params: { roomId: roomId }})
         }

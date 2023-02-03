@@ -279,7 +279,7 @@ export default {
       window.removeEventListener("beforeunload", this.leaveSession);
 
       this.$router.push({ name: 'rooms' });
-      this.$store.dispatch("roomModule/quitRoom", this.$router.params.roomId)
+      this.$store.dispatch("roomModule/quitRoom", this.mySessionId)
       .then((result) => {
         if (result) {
           this.$store.dispatch("roomModule/removeUserInRoom",this.$store.state.userModule.user.userId)

@@ -97,7 +97,7 @@ const enterRoom = () => {
 		if (result) {
 			router.push({ name: 'room', params: { roomId: props.room.roomId }})
 			store.dispatch('roomModule/createUserInRoom', {
-				userId: store.state.userModule.userId,
+				userId: store.state.userModule.user.userId,
 				roomId: props.room.roomId,
 			})
 		}

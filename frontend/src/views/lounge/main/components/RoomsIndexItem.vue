@@ -83,7 +83,7 @@ const form = ref({
 	personLimit: 2,
 	password: '',
 	private: false,
-	hostId: store.state.userModule.userId,
+	hostId: store.state.userModule.user.userId,
 	// createdTime: null,
 	rooms: [],
 })

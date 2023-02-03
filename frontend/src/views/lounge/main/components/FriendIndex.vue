@@ -124,11 +124,11 @@ data.value.friends = computed(() => store.getters["friendModule/getFriends"])
 data.value.searchUsers = computed(() => store.getters["friendModule/getSearchUsers"])
 
 const getRequests = onBeforeMount(() => {
-  store.dispatch("friendModule/getRequests", store.state.userModule.userId)
+  store.dispatch("friendModule/getRequests", store.state.userModule.user.userId)
 })
 
 const getFriends = onBeforeMount(() => {
-  store.dispatch("friendModule/getFriends", store.state.userModule.userId)
+  store.dispatch("friendModule/getFriends", store.state.userModule.user.userId)
 })
 
 const searchUser = () => {
@@ -194,7 +194,7 @@ const enterRoom = (roomId) => {
     if (result) {
       router.push({ name: 'room', params: { roomId: roomId }})
       store.dispatch('roomModule/createUserInRoom', {
-        userId: store.state.userModule.userId,
+        userId: store.state.userModule.user.userId,
         roomId: roomId,
       })
     }

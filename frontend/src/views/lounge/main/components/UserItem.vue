@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper" v-if="props.user.userId != store.state.userModule.userId">
+  <div class="wrapper" v-if="props.user.userId != store.state.userModule.user.userId">
     <div class="first-line">
       <div class="user-state"></div>
       <div class="name-and-cancel">
@@ -58,7 +58,7 @@ props.friends.some(function(element){
 const sendRequest = () => {
   console.log('send the Request!')
   store.dispatch('friendModule/sendRequest', {
-    userAId: store.state.userModule.userId,
+    userAId: store.state.userModule.user.userId,
     userBId: props.user.userId
   })
   requestFriendOpen()

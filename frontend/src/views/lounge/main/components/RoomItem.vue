@@ -95,10 +95,16 @@ const clickEnterBtn = () => {
 const enterRoom = () => {
 	store.dispatch('roomModule/enterRoom', props.room.roomId).then((result) => {
 		if (result) {
-			router.push({ name: 'room', params: { roomId: props.room.roomId }})
 			store.dispatch('roomModule/createUserInRoom', {
 				userId: store.state.userModule.user.userId,
 				roomId: props.room.roomId,
+			}).then((result) => {
+				if (result) {
+					router.push({ name: 'room', params: { roomId: props.room.roomId }})
+				}
+				else {
+					errorOpen(2)
+				}
 			})
 		}
 		else {
@@ -131,6 +137,7 @@ const errorOpen = (state) => {
 	document.getElementsByClassName("error-modal-wrap")[props.idx].style.display ='block';
 	document.getElementsByClassName("error-modal-bg")[props.idx].style.display ='block';
 }
+
 const errorClose = () => {
     document.getElementsByClassName("error-modal-wrap")[props.idx].style.display ='none';
     document.getElementsByClassName("error-modal-bg")[props.idx].style.display ='none';

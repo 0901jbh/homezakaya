@@ -26,10 +26,10 @@
 
     <!-- <div id="session" v-if="session"> -->
     <div id="session">
-      <!-- <div id="main-video" class="col-md-6">
+      <div id="container">
         <user-video :stream-manager="mainStreamManager" />
-      </div> -->
-      <div id="container" style="display: flex;">
+      </div>
+      <!-- <div id="container" style="display: flex;">
         <div id="video-container" :class="{
           'under-one': this.headCount == 1,
           'under-two': this.headCount == 2,
@@ -37,16 +37,14 @@
           'under-six': this.headCount == 5 || this.headCount == 6,
           'under-eight': this.headCount == 7 || this.headCount == 8,
         }">
-          <user-video class="video" :stream-manager="publisher" my-video="true" :im-host="isIHost"
+          <user-video class="video" :stream-manager="publisher"
             @click.native="updateMainVideoStreamManager(publisher)" />
           <user-video class="video" v-for="sub in subscribers" :key="sub.stream.connection.connectionId"
-            :stream-manager="sub" my-video="false" :im-host="isIHost"
-            @click.native="updateMainVideoStreamManager(sub)" />
+            :stream-manager="sub" @click.native="updateMainVideoStreamManager(sub)" />
         </div>
         <div id="chatting-container" class="col-md-4">
           <div id="chats" ref="message_scroll">
             <div v-for="message in messages" :key="message.id">
-              <!-- 내 채팅 -->
               <div id="msg_mine" class="msg_box" v-if="message.username == myUserName">
                 <div class="username">
                   {{ message.username }}
@@ -55,7 +53,6 @@
                   {{ message.text }}
                 </div>
               </div>
-              <!-- 남의 채팅 -->
               <div id="msg_not_mine" class="msg_box" v-else>
                 <div class="username">
                   {{ message.username }}
@@ -72,7 +69,7 @@
               style="width:30px; height:30px;">
           </form>
         </div>
-      </div>
+      </div> -->
       <div id="option-footer">
         <!-- <h1 id="session-title">{{ mySessionId }}</h1> -->
         <!-- <input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="leaveSession"
@@ -87,45 +84,10 @@
             <img v-else src="../../../assets/audio_off.png" alt="audio on img" />
           </div>
         </div>
+        <div id="btns" style="align-self: center;">
+          <div class="content enter_content" @click="enterRoom">Enter</div>
+        </div>
         <div id="btns">
-          <el-popover v-if="isIHost" :width="300"
-            popper-style="background: rgb(235 153 153); border: rgb(235 153 153); box-shadow: rgb(14 18 22 / 35%) 0px 10px 38px -10px, rgb(14 18 22 / 20%) 0px 10px 20px -15px; padding: 15px;"
-            trigger="click">
-            <template #reference>
-              <div class="content">game</div>
-            </template>
-            <template #default>
-              <div class="game" v-for="game in games"
-                style="display: flex; justify-content: space-evenly; align-items: center; margin: 10px;">
-                <p class="game_name" align="right"
-                  style="width: 80%; margin: 0; margin-right: 10px; font-size: 20px; color: white; align-self:center;">
-                  {{ game }}
-                </p>
-                <div class="content_inside" style="width: 20%; text-decoration:none;">
-                  start
-                </div>
-              </div>
-            </template>
-          </el-popover>
-          <el-popover :width="300"
-            popper-style="background: rgb(235 153 153); border: rgb(235 153 153); box-shadow: rgb(14 18 22 / 35%) 0px 10px 38px -10px, rgb(14 18 22 / 20%) 0px 10px 20px -15px; padding: 15px;"
-            trigger="click">
-            <template #reference>
-              <div class="content">Invite</div>
-            </template>
-            <template #default>
-              <div class="online_friend" v-for="friend in friends"
-                style="display: flex; justify-content: space-evenly; align-items: center; margin: 10px;">
-                <p class="friend_nickname" align="right"
-                  style="width: 80%; margin: 0; margin-right: 10px; font-size: 20px; color: white; align-self:center;">
-                  {{ friend }}
-                </p>
-                <div class="content_inside" style="width: 20%; text-decoration:none;">
-                  Invite
-                </div>
-              </div>
-            </template>
-          </el-popover>
           <div class="content" @click="leaveSession">Exit</div>
         </div>
       </div>
@@ -144,9 +106,8 @@ axios.defaults.headers.post["Content-Type"] = "application/json";
 
 const APPLICATION_SERVER_URL = "http://localhost:5000/";
 
-
 export default {
-  name: "RoomView",
+  name: "WaitView",
 
   components: {
     UserVideo,
@@ -158,32 +119,18 @@ export default {
       // OpenVidu objects
       OV: undefined,
       session: undefined,
-      // mainStreamManager: undefined,
+      mainStreamManager: undefined,
       publisher: undefined,
-      subscribers: [],
+      // subscribers: [],
 
       // Join form
       mySessionId: this.$route.params.roomId,
       myUserId: "id" + Math.floor(Math.random() * 100),
       myUserName: "nickname" + Math.floor(Math.random() * 100),
 
-      newMessage: null,
-      messages: [],
-      messageData: null,
-      eventData: null,
-
-      headCountMax: 8,
-      headCount: 1,
-
-      games: ['할머니 게임', '나 안취했어', '랜덤 대화주제'],
-      friends: ['친구1', '친구2', '친구3', '이름이긴친구우우'],
-
-      isIHost: true,
+      isIHost: false,
       videoActive: false,
       audioActive: false,
-
-      muteVideo: false,
-      muteAudio: false,
     };
   },
 
@@ -200,52 +147,49 @@ export default {
   // },
 
   methods: {
+    enterRoom() {
+      this.$router.push({ name: 'room', params: { roomId: this.mySessionId } })
+    },
 
-    sendMessage() {
-      if (this.newMessage) {
-        this.messageData = {
-          content: this.newMessage,
-          username: this.myUserName
-        }
-        this.session.signal({
-          data: JSON.stringify(this.messageData),  // Any string (optional)
-          to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
-          type: 'my-chat'             // The type of message (optional)
-        })
-          .then(() => {
-            console.log('Message successfully sent');
-          })
-          .catch(error => {
-            console.error(error);
-          })
-        this.messageData = null
-        this.newMessage = null
-      }
-    },
-    startBtn() {
-      // this.$store.dispatch("gameModule/startSmileGame");
-      this.$store.dispatch("gameModule/getSpeech");
-    },
-    endBtn() {
-      this.$store.dispatch("gameModule/stopDetect");
-    },
+    // sendMessage() {
+    //   if (this.newMessage) {
+    //     this.messageData = {
+    //       content: this.newMessage,
+    //       username: this.myUserName
+    //     }
+    //     this.session.signal({
+    //       data: JSON.stringify(this.messageData),  // Any string (optional)
+    //       to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+    //       type: 'my-chat'             // The type of message (optional)
+    //     })
+    //       .then(() => {
+    //         console.log('Message successfully sent');
+    //       })
+    //       .catch(error => {
+    //         console.error(error);
+    //       })
+    //     this.messageData = null
+    //     this.newMessage = null
+    //   }
+    // },
+
     clickMuteVideo() {
       if (this.publisher.stream.videoActive) {
         this.publisher.publishVideo(false)
-        this.muteVideo = false
+        this.videoActive = false
       } else {
         this.publisher.publishVideo(true)
-        this.muteVideo = true
+        this.videoActive = true
       }
     },
 
     clickMuteAudio() {
       if (this.publisher.stream.audioActive) {
         this.publisher.publishAudio(false)
-        this.muteAudio = false
+        this.audioActive = false
       } else {
         this.publisher.publishAudio(true)
-        this.muteAudio = true
+        this.audioActive = true
       }
     },
 
@@ -259,20 +203,20 @@ export default {
       // --- 3) Specify the actions when events take place in the session ---
 
       // On every new Stream received...
-      this.session.on("streamCreated", ({ stream }) => {
-        const subscriber = this.session.subscribe(stream);
-        this.subscribers.push(subscriber);
-        this.headCount++;
-      });
+      // this.session.on("streamCreated", ({ stream }) => {
+      //   const subscriber = this.session.subscribe(stream);
+      //   this.subscribers.push(subscriber);
+      //   this.headCount++;
+      // });
 
       // On every Stream destroyed...
-      this.session.on("streamDestroyed", ({ stream }) => {
-        const index = this.subscribers.indexOf(stream.streamManager, 0);
-        if (index >= 0) {
-          this.subscribers.splice(index, 1);
-        }
-        this.headCount--;
-      });
+      // this.session.on("streamDestroyed", ({ stream }) => {
+      //   const index = this.subscribers.indexOf(stream.streamManager, 0);
+      //   if (index >= 0) {
+      //     this.subscribers.splice(index, 1);
+      //   }
+      //   this.headCount--;
+      // });
 
       // On every asynchronous exception...
       this.session.on("exception", ({ exception }) => {
@@ -282,25 +226,25 @@ export default {
       // --- 4) Connect to the session with a valid user token ---
 
       // Get a token from the OpenVidu deployment
-      this.getToken(this.mySessionId).then((token) => {
+      this.getToken(this.myUserId).then((token) => {
 
         // Receiver of the message (usually before calling 'session.connect')
 
-        this.session.on('signal:my-chat', (event) => {
-          console.log(event.data); // Message
-          console.log(event.from); // Connection object of the sender
-          console.log(event.type); // The type of message ("my-chat")
-          this.eventData = JSON.parse(event.data)
-          this.messages.push({
-            id: Date.now(),
-            username: this.eventData.username,
-            text: this.eventData.content,
-          });
-          this.$nextTick(() => {
-            let msgscr = this.$refs.message_scroll;
-            msgscr.scrollTo({ top: msgscr.scrollHeight, behavior: 'smooth' });
-          });
-        });
+        // this.session.on('signal:my-chat', (event) => {
+        //   console.log(event.data); // Message
+        //   console.log(event.from); // Connection object of the sender
+        //   console.log(event.type); // The type of message ("my-chat")
+        //   this.eventData = JSON.parse(event.data)
+        //   this.messages.push({
+        //     id: Date.now(),
+        //     username: this.eventData.username,
+        //     text: this.eventData.content,
+        //   });
+        //   this.$nextTick(() => {
+        //     let msgscr = this.$refs.message_scroll;
+        //     msgscr.scrollTo({ top: msgscr.scrollHeight, behavior: 'smooth' });
+        //   });
+        // });
 
         // First param is the token. Second param can be retrieved by every user on event
         // 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
@@ -314,8 +258,8 @@ export default {
             let publisher = this.OV.initPublisher(undefined, {
               audioSource: undefined, // The source of audio. If undefined default microphone
               videoSource: undefined, // The source of video. If undefined default webcam
-              publishAudio: this.audioActive, // Whether you want to start publishing with your audio unmuted or not
-              publishVideo: this.videoActive, // Whether you want to start publishing with your video enabled or not
+              publishAudio: false, // Whether you want to start publishing with your audio unmuted or not
+              publishVideo: false, // Whether you want to start publishing with your video enabled or not
               resolution: "640x480", // The resolution of your video
               frameRate: 30, // The frame rate of your video
               insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
@@ -323,7 +267,7 @@ export default {
             });
 
             // Set the main video in the page to display our webcam and store our Publisher
-            // this.mainStreamManager = publisher;
+            this.mainStreamManager = publisher;
             this.publisher = publisher;
 
             // --- 6) Publish your stream ---
@@ -344,9 +288,9 @@ export default {
 
       // Empty all properties...
       this.session = undefined;
-      // this.mainStreamManager = undefined;
+      this.mainStreamManager = undefined;
       this.publisher = undefined;
-      this.subscribers = [];
+      // this.subscribers = [];
       this.OV = undefined;
 
       // Remove beforeunload listener
@@ -355,10 +299,10 @@ export default {
       this.$router.push({ name: 'rooms' });
     },
 
-    // updateMainVideoStreamManager(stream) {
-    //   if (this.mainStreamManager === stream) return;
-    //   this.mainStreamManager = stream;
-    // },
+    updateMainVideoStreamManager(stream) {
+      if (this.mainStreamManager === stream) return;
+      this.mainStreamManager = stream;
+    },
 
     /**
      * --------------------------------------------
@@ -375,8 +319,8 @@ export default {
      * Visit https://docs.openvidu.io/en/stable/application-server to learn
      * more about the integration of OpenVidu in your application server.
      */
-    async getToken(mySessionId) {
-      const sessionId = await this.createSession(mySessionId);
+    async getToken(myUserId) {
+      const sessionId = await this.createSession(myUserId);
       return await this.createToken(sessionId);
     },
 
@@ -410,10 +354,6 @@ export default {
 
 #container {
   height: 80vh;
-}
-
-#container>div {
-  margin: 20px;
 }
 
 #chatting-container {
@@ -822,27 +762,23 @@ a:hover .demo-logo {
   cursor: pointer;
 }
 
-.content_inside {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  align-self: center;
-  padding: 15px 20px;
-  gap: 10px;
+.enter_content {
+  margin-right: 180px;
+}
 
-  width: 100px;
-  height: 10px;
-  left: 52px;
-  top: 105px;
-
-  color: white;
+.online_friend .content {
   font-size: 1rem;
-  font-weight: 70;
-  background: rgb(121 65 65);
-  box-shadow: -4px -4px 15px rgba(255, 255, 255, 0.5), 4px 4px 15px rgba(0, 0, 0, 0.5), inset 4px 4px 15px rgba(255, 255, 255, 0.5);
-  border-radius: 53px;
+  font-weight: 500;
+  width: 30%;
+  height: 2vh;
+  padding: 5px 10px;
+}
 
-  cursor: pointer;
+.game .content {
+  font-size: 1rem;
+  font-weight: 500;
+  width: 30%;
+  height: 2vh;
+  padding: 5px 10px;
 }
 </style>

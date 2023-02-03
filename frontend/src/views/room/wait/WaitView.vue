@@ -76,11 +76,11 @@
           value="Leave session" /> -->
         <div id="mute">
           <div class="onoff" @click="clickMuteVideo">
-            <img v-if="muteVideo" src="../../../assets/video_on.png" alt="video on img" />
+            <img v-if="videoActive" src="../../../assets/video_on.png" alt="video on img" />
             <img v-else src="../../../assets/video_off.png" alt="video on img" />
           </div>
           <div class="onoff" @click="clickMuteAudio">
-            <img v-if="muteAudio" src="../../../assets/audio_on.png" alt="audio on img" />
+            <img v-if="audioActive" src="../../../assets/audio_on.png" alt="audio on img" />
             <img v-else src="../../../assets/audio_off.png" alt="audio on img" />
           </div>
         </div>

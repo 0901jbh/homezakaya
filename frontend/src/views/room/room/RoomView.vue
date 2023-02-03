@@ -37,10 +37,11 @@
           'under-six': this.headCount == 5 || this.headCount == 6,
           'under-eight': this.headCount == 7 || this.headCount == 8,
         }">
-          <user-video class="video" :stream-manager="publisher"
+          <user-video class="video" :stream-manager="publisher" my-video="true" :im-host="isIHost"
             @click.native="updateMainVideoStreamManager(publisher)" />
           <user-video class="video" v-for="sub in subscribers" :key="sub.stream.connection.connectionId"
-            :stream-manager="sub" @click.native="updateMainVideoStreamManager(sub)" />
+            :stream-manager="sub" my-video="false" :im-host="isIHost"
+            @click.native="updateMainVideoStreamManager(sub)" />
         </div>
         <div id="chatting-container" class="col-md-4">
           <div id="chats" ref="message_scroll">
@@ -76,47 +77,57 @@
         <!-- <h1 id="session-title">{{ mySessionId }}</h1> -->
         <!-- <input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="leaveSession"
           value="Leave session" /> -->
-        <div class="content" @click="clickMuteVideo">video.M</div>
-        <div class="content" @click="clickMuteAudio">audio.M</div>
-        <el-popover :width="300"
-          popper-style="background: rgb(235 153 153); border: rgb(235 153 153); box-shadow: rgb(14 18 22 / 35%) 0px 10px 38px -10px, rgb(14 18 22 / 20%) 0px 10px 20px -15px; padding: 15px;"
-          trigger="click">
-          <template #reference>
-            <div class="content">game</div>
-          </template>
-          <template #default>
-            <div class="game" v-for="game in games"
-              style="display: flex; justify-content: space-evenly; align-items: center; margin: 10px;">
-              <p class="game_name" align="right"
-                style="width: 80%; margin: 0; margin-right: 10px; font-size: 20px; color: white; align-self:center;">
-                {{ game }}
-              </p>
-              <div class="content" style="width: 20%; text-decoration:none;">
-                start
+        <div id="mute">
+          <div class="onoff" @click="clickMuteVideo">
+            <img v-if="muteVideo" src="../../../assets/video_on.png" alt="video on img" />
+            <img v-else src="../../../assets/video_off.png" alt="video on img" />
+          </div>
+          <div class="onoff" @click="clickMuteAudio">
+            <img v-if="muteAudio" src="../../../assets/audio_on.png" alt="audio on img" />
+            <img v-else src="../../../assets/audio_off.png" alt="audio on img" />
+          </div>
+        </div>
+        <div id="btns">
+          <el-popover v-if="isIHost" :width="300"
+            popper-style="background: rgb(235 153 153); border: rgb(235 153 153); box-shadow: rgb(14 18 22 / 35%) 0px 10px 38px -10px, rgb(14 18 22 / 20%) 0px 10px 20px -15px; padding: 15px;"
+            trigger="click">
+            <template #reference>
+              <div class="content">game</div>
+            </template>
+            <template #default>
+              <div class="game" v-for="game in games"
+                style="display: flex; justify-content: space-evenly; align-items: center; margin: 10px;">
+                <p class="game_name" align="right"
+                  style="width: 80%; margin: 0; margin-right: 10px; font-size: 20px; color: white; align-self:center;">
+                  {{ game }}
+                </p>
+                <div class="content_inside" style="width: 20%; text-decoration:none;">
+                  start
+                </div>
               </div>
-            </div>
-          </template>
-        </el-popover>
-        <el-popover :width="300"
-          popper-style="background: rgb(235 153 153); border: rgb(235 153 153); box-shadow: rgb(14 18 22 / 35%) 0px 10px 38px -10px, rgb(14 18 22 / 20%) 0px 10px 20px -15px; padding: 15px;"
-          trigger="click">
-          <template #reference>
-            <div class="content">Invite</div>
-          </template>
-          <template #default>
-            <div class="online_friend" v-for="friend in friends"
-              style="display: flex; justify-content: space-evenly; align-items: center; margin: 10px;">
-              <p class="friend_nickname" align="right"
-                style="width: 80%; margin: 0; margin-right: 10px; font-size: 20px; color: white; align-self:center;">
-                {{ friend }}
-              </p>
-              <div class="content" style="width: 20%; text-decoration:none;">
-                Invite
+            </template>
+          </el-popover>
+          <el-popover :width="300"
+            popper-style="background: rgb(235 153 153); border: rgb(235 153 153); box-shadow: rgb(14 18 22 / 35%) 0px 10px 38px -10px, rgb(14 18 22 / 20%) 0px 10px 20px -15px; padding: 15px;"
+            trigger="click">
+            <template #reference>
+              <div class="content">Invite</div>
+            </template>
+            <template #default>
+              <div class="online_friend" v-for="friend in friends"
+                style="display: flex; justify-content: space-evenly; align-items: center; margin: 10px;">
+                <p class="friend_nickname" align="right"
+                  style="width: 80%; margin: 0; margin-right: 10px; font-size: 20px; color: white; align-self:center;">
+                  {{ friend }}
+                </p>
+                <div class="content_inside" style="width: 20%; text-decoration:none;">
+                  Invite
+                </div>
               </div>
-            </div>
-          </template>
-        </el-popover>
-        <div class="content" @click="leaveSession">Exit</div>
+            </template>
+          </el-popover>
+          <div class="content" @click="leaveSession">Exit</div>
+        </div>
       </div>
     </div>
   </div>
@@ -146,7 +157,7 @@ export default {
       // OpenVidu objects
       OV: undefined,
       session: undefined,
-      mainStreamManager: undefined,
+      // mainStreamManager: undefined,
       publisher: undefined,
       subscribers: [],
 
@@ -169,6 +180,9 @@ export default {
       isIHost: true,
       videoActive: false,
       audioActive: false,
+
+      muteVideo: false,
+      muteAudio: false,
     };
   },
 
@@ -211,16 +225,20 @@ export default {
     clickMuteVideo() {
       if (this.publisher.stream.videoActive) {
         this.publisher.publishVideo(false)
+        this.muteVideo = false
       } else {
         this.publisher.publishVideo(true)
+        this.muteVideo = true
       }
     },
 
     clickMuteAudio() {
       if (this.publisher.stream.audioActive) {
         this.publisher.publishAudio(false)
+        this.muteAudio = false
       } else {
         this.publisher.publishAudio(true)
+        this.muteAudio = true
       }
     },
 
@@ -298,7 +316,7 @@ export default {
             });
 
             // Set the main video in the page to display our webcam and store our Publisher
-            this.mainStreamManager = publisher;
+            // this.mainStreamManager = publisher;
             this.publisher = publisher;
 
             // --- 6) Publish your stream ---
@@ -319,7 +337,7 @@ export default {
 
       // Empty all properties...
       this.session = undefined;
-      this.mainStreamManager = undefined;
+      // this.mainStreamManager = undefined;
       this.publisher = undefined;
       this.subscribers = [];
       this.OV = undefined;
@@ -330,10 +348,10 @@ export default {
       this.$router.push({ name: 'rooms' });
     },
 
-    updateMainVideoStreamManager(stream) {
-      if (this.mainStreamManager === stream) return;
-      this.mainStreamManager = stream;
-    },
+    // updateMainVideoStreamManager(stream) {
+    //   if (this.mainStreamManager === stream) return;
+    //   this.mainStreamManager = stream;
+    // },
 
     /**
      * --------------------------------------------
@@ -755,43 +773,69 @@ a:hover .demo-logo {
 
 #option-footer {
   display: flex;
+  justify-content: space-between;
+}
+
+#mute {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.onoff {
+  margin-left: 100px;
+  cursor: pointer;
+}
+
+#btns {
+  display: flex;
   justify-content: space-evenly;
 }
 
 .content {
+  font-family: 'dokdo';
+
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
   padding: 15px 35px;
-  gap: 10px;
+  margin-inline: 40px;
 
-  width: 5%;
-  height: 3vh;
+  width: 30px;
+  height: 30px;
 
-  color: black;
+  color: white;
   font-size: 2rem;
-  font-weight: 700;
-  background: white;
+  font-weight: 500;
+  background: black;
   box-shadow: -4px -4px 15px rgba(255, 255, 255, 0.5), 4px 4px 15px rgba(0, 0, 0, 0.5), inset 4px 4px 15px rgba(255, 255, 255, 0.5);
   border-radius: 53px;
+  border: white;
 
   cursor: pointer;
 }
 
-.online_friend .content {
-  font-size: 1rem;
-  font-weight: 500;
-  width: 30%;
-  height: 2vh;
-  padding: 5px 10px;
-}
+.content_inside {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  align-self: center;
+  padding: 15px 20px;
+  gap: 10px;
 
-.game .content {
+  width: 100px;
+  height: 10px;
+  left: 52px;
+  top: 105px;
+
+  color: white;
   font-size: 1rem;
-  font-weight: 500;
-  width: 30%;
-  height: 2vh;
-  padding: 5px 10px;
+  font-weight: 70;
+  background: rgb(121 65 65);
+  box-shadow: -4px -4px 15px rgba(255, 255, 255, 0.5), 4px 4px 15px rgba(0, 0, 0, 0.5), inset 4px 4px 15px rgba(255, 255, 255, 0.5);
+  border-radius: 53px;
+
+  cursor: pointer;
 }
 </style>

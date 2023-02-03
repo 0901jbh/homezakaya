@@ -74,10 +74,22 @@
         <!-- <h1 id="session-title">{{ mySessionId }}</h1> -->
         <!-- <input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="leaveSession"
           value="Leave session" /> -->
-        <div class="content" @click="clickMuteVideo">video.M</div>
-        <div class="content" @click="clickMuteAudio">audio.M</div>
-        <div class="content" @click="enterRoom">Enter</div>
-        <div class="content" @click="leaveSession">Exit</div>
+        <div id="mute">
+          <div class="onoff" @click="clickMuteVideo">
+            <img v-if="muteVideo" src="../../../assets/video_on.png" alt="video on img" />
+            <img v-else src="../../../assets/video_off.png" alt="video on img" />
+          </div>
+          <div class="onoff" @click="clickMuteAudio">
+            <img v-if="muteAudio" src="../../../assets/audio_on.png" alt="audio on img" />
+            <img v-else src="../../../assets/audio_off.png" alt="audio on img" />
+          </div>
+        </div>
+        <div id="btns" style="align-self: center;">
+          <div class="content enter_content" @click="enterRoom">Enter</div>
+        </div>
+        <div id="btns">
+          <div class="content" @click="leaveSession">Exit</div>
+        </div>
       </div>
     </div>
   </div>
@@ -708,28 +720,50 @@ a:hover .demo-logo {
 
 #option-footer {
   display: flex;
+  justify-content: space-between;
+}
+
+#mute {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.onoff {
+  margin-left: 100px;
+  cursor: pointer;
+}
+
+#btns {
+  display: flex;
   justify-content: space-evenly;
 }
 
 .content {
+  font-family: 'dokdo';
+
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
   padding: 15px 35px;
-  gap: 10px;
+  margin-inline: 40px;
 
-  width: 5%;
-  height: 3vh;
+  width: 30px;
+  height: 30px;
 
-  color: black;
+  color: white;
   font-size: 2rem;
-  font-weight: 700;
-  background: white;
+  font-weight: 500;
+  background: black;
   box-shadow: -4px -4px 15px rgba(255, 255, 255, 0.5), 4px 4px 15px rgba(0, 0, 0, 0.5), inset 4px 4px 15px rgba(255, 255, 255, 0.5);
   border-radius: 53px;
+  border: white;
 
   cursor: pointer;
+}
+
+.enter_content {
+  margin-right: 180px;
 }
 
 .online_friend .content {

@@ -150,7 +150,7 @@ export const roomModule = {
           console.log("노방");
         }
         else if(err.response.status == 409){
-          console.log("이미 참여한 방");
+          console.log("이미 참여중인 유저입니다.");
         }
       });
     },

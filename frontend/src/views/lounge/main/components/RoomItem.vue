@@ -66,7 +66,7 @@ const data = ref({
 const clickRoomIcon = () => {
 	store.dispatch("roomModule/checkPassword", {
 		roomId: props.room.roomId,
-		password: false,
+		password: data.value.userInput,
 	}).then((result) => {
 		if (result) {
 			console.log(`${props.room.roomId}번에 입장`)

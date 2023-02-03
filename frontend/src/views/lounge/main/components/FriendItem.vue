@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <div class="first-line">
-      <div class="user-state"></div>
+      <div class="friend-state"></div>
       <div class="name-and-cancel">
         <div>{{ props.friend.nickname }}</div>
         <button class="delete-friend" type="button" @click="deleteFriendOpen">X</button>
@@ -44,7 +44,7 @@
 </template>
 
 <script setup>
-import { defineProps } from 'vue';
+import { defineProps, onMounted } from 'vue';
 import { useStore } from 'vuex';
 
 const props = defineProps({
@@ -54,6 +54,15 @@ const props = defineProps({
 
 const emit = defineEmits(['followFriend'])
 const store = useStore()
+
+onMounted(() => {
+  let friendStateTag = document.getElementsByClassName("friend-state")[props.idx]
+  if (props.friend.state == "offline") {
+    friendStateTag.style.background = "radial-gradient(50% 50% at 50% 50%, #EE1818 0%, rgba(208, 106, 106, 0) 100%)";
+  } else {
+    friendStateTag.style.background = "radial-gradient(50% 50% at 50% 50%, #1CEE18 0%, rgba(108, 208, 106, 0) 100%)";
+  }
+})
 
 const deleteFriend = ()=>{
   console.log('deleteFriend!')
@@ -99,13 +108,10 @@ const deleteFriendClose = () => {
   grid-template-columns: 1fr 8fr;
   align-items: center;
 }
-.user-state{
+.friend-state{
   width: 1rem;
   height: 1rem;
-  /* 온라인 표시 */
   background: radial-gradient(50% 50% at 50% 50%, #1CEE18 0%, rgba(108, 208, 106, 0) 100%);
-  /* 오프라인 표시
-  background: radial-gradient(50% 50% at 50% 50%, #EE1818 0%, rgba(208, 106, 106, 0) 100%); */
 }
 
 .name-and-cancel{
@@ -180,10 +186,6 @@ const deleteFriendClose = () => {
 	border-radius: 1rem 1rem 0 0;
 }
 .popup-content {
-	/* display: flex;
-  justify-content: center;
-	align-items: center;
-	flex-direction: column; */
   display: grid;
   text-align: center;
   grid-template-rows: 2fr 1fr;

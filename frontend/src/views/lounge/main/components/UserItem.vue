@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper" v-if="props.user.userId != store.state.userModule.userId">
+  <div class="wrapper" v-if="props.user.userId != store.state.userModule.user.userId">
     <div class="first-line">
       <div class="user-state"></div>
       <div class="name-and-cancel">
@@ -13,7 +13,6 @@
       <div>{{ props.user.alcoholPoint }}잔</div>
       <div v-if="!isFriend" class="request-friend" type="button" @click="sendRequest">친구 요청</div>
       <div v-if="isFriend" class="request-friend"></div>
-
     </div>
   </div>
   <div class="request-friend-modal-bg" @click="requestFriendClose"></div>
@@ -43,7 +42,8 @@ import { useStore } from 'vuex'
 
 const props = defineProps({
   user: Object,
-  friends: Array
+  friends: Array,
+  idx: Number,
 })
 const store = useStore()
 
@@ -58,7 +58,7 @@ props.friends.some(function(element){
 const sendRequest = () => {
   console.log('send the Request!')
   store.dispatch('friendModule/sendRequest', {
-    userAId: store.state.userModule.userId,
+    userAId: store.state.userModule.user.userId,
     userBId: props.user.userId
   })
   requestFriendOpen()
@@ -66,12 +66,12 @@ const sendRequest = () => {
 
 // 친구 요청 완료창
 const requestFriendOpen = () => {
-	document.getElementsByClassName("request-friend-modal-wrap")[0].style.display ='block';
-	document.getElementsByClassName("request-friend-modal-bg")[0].style.display ='block';
+	document.getElementsByClassName("request-friend-modal-wrap")[props.idx].style.display ='block';
+	document.getElementsByClassName("request-friend-modal-bg")[props.idx].style.display ='block';
 }
 const requestFriendClose = () => {
-    document.getElementsByClassName("request-friend-modal-wrap")[0].style.display ='none';
-    document.getElementsByClassName("request-friend-modal-bg")[0].style.display ='none';
+    document.getElementsByClassName("request-friend-modal-wrap")[props.idx].style.display ='none';
+    document.getElementsByClassName("request-friend-modal-bg")[props.idx].style.display ='none';
 }
 </script>
 

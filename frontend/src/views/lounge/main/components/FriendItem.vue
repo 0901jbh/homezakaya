@@ -48,28 +48,34 @@ import { defineProps } from 'vue';
 import { useStore } from 'vuex';
 
 const props = defineProps({
-  friend:Object
+  friend:Object,
+  idx:Number,
 })
 
+const emit = defineEmits(['followFriend'])
 const store = useStore()
 
 const deleteFriend = ()=>{
   console.log('deleteFriend!')
   store.dispatch("friendModule/deleteFriend", {
-    userAId: store.state.userModule.userId,
+    userAId: store.state.userModule.user.userId,
     userBId: props.friend.userId
   })
   deleteFriendClose()
 }
 
+const followFriend = () => {
+  emit('followFriend', props.friend.userId)
+}
+
 const deleteFriendOpen = () => {
-	document.getElementsByClassName("delete-friend-modal-wrap")[0].style.display ='block';
-  document.getElementsByClassName("delete-friend-modal-bg")[0].style.display ='block';
+	document.getElementsByClassName("delete-friend-modal-wrap")[props.idx].style.display ='block';
+  document.getElementsByClassName("delete-friend-modal-bg")[props.idx].style.display ='block';
 }
 
 const deleteFriendClose = () => {
-    document.getElementsByClassName("delete-friend-modal-wrap")[0].style.display ='none';
-    document.getElementsByClassName("delete-friend-modal-bg")[0].style.display ='none';
+    document.getElementsByClassName("delete-friend-modal-wrap")[props.idx].style.display ='none';
+    document.getElementsByClassName("delete-friend-modal-bg")[props.idx].style.display ='none';
 }
 </script>
 
@@ -83,10 +89,10 @@ const deleteFriendClose = () => {
   padding: 7%;
   font-size: 1rem;
   margin: 2.5% 0;
+  transition: 0.1s ease-in;
 }
 .wrapper:hover {
   transform: scale(1.05, 1.05);
-  transition: 0.1s ease-in;
 }
 .first-line{
   display: grid;

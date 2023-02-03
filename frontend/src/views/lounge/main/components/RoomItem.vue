@@ -9,14 +9,14 @@
 	<div class="private-modal-wrap">
 		<div class="private-popup">
 			<div class="private-popup-header">
-				<div class="private-popup-header-title">Private Room {{ props.room.roomId }}</div>
+				<div class="private-popup-header-title">Private Room</div>
 			</div>
 			<div class="private-popup-content">
 				<div style="margin-bottom:3%;">해당 방은 비공개방입니다.</div>
         <div style="margin-bottom:5%;">비밀번호를 입력해주세요.</div>
         <div>
 					<el-form-item label="비밀번호">
-						<el-input v-model="data.userInput" placeholder="비밀번호를 입력해주세요" @input="inputEvent" show-password />
+						<el-input v-model="data.userInput" placeholder="비밀번호를 입력해주세요" show-password />
 					</el-form-item>
 				</div>
         <div>
@@ -34,7 +34,7 @@
 				<div class="error-popup-header-title">Wrong Password</div>
 			</div>
 			<div class="error-popup-content">
-				<div>비밀번호가 틀렸습니다.</div>
+				<div class="error-sentence">비밀번호가 틀렸습니다.</div>
         <div class="error-btn-wrapper">
           <div class="btn">
 						<el-button type="info" size="large" @click="errorClose">확인</el-button>
@@ -66,7 +66,7 @@ const data = ref({
 const clickRoomIcon = () => {
 	store.dispatch("roomModule/checkPassword", {
 		roomId: props.room.roomId,
-		password: data.value.userInput,
+		password: false,
 	}).then((result) => {
 		if (result) {
 			console.log(`${props.room.roomId}번에 입장`)
@@ -87,14 +87,24 @@ const clickEnterBtn = () => {
 			enterRoom()
 		}
 		else {
-			errorOpen()
+			errorOpen(1)
 		}
 	})
 }
 
 const enterRoom = () => {
-	store.dispatch('roomModule/enterRoom', props.room.roomId)
-	router.push({ name: 'room', params: { roomId: props.room.roomId } })
+	store.dispatch('roomModule/enterRoom', props.room.roomId).then((result) => {
+		if (result) {
+			router.push({ name: 'room', params: { roomId: props.room.roomId }})
+			store.dispatch('roomModule/createUserInRoom', {
+				userId: store.state.userModule.user.userId,
+				roomId: props.room.roomId,
+			})
+		}
+		else {
+			errorOpen(2)
+		}
+	})
 }
 
 const privatePopOpen = () => {
@@ -108,7 +118,16 @@ const privatePopClose = () => {
 		data.value.userInput = '';
 }
 
-const errorOpen = () => {
+const errorOpen = (state) => {
+	let titleTag = document.getElementsByClassName("error-popup-header-title")[props.idx];
+  let sentenceTag = document.getElementsByClassName("error-sentence")[props.idx];
+	if (state == 1) {
+    titleTag.innerHTML = "Wrong Password";
+    sentenceTag.innerHTML = "비밀번호가 틀렸습니다.";
+  } else {
+    titleTag.innerHTML = "Refuse Enter Room";
+    sentenceTag.innerHTML = "입장에 실패했습니다.";
+  }
 	document.getElementsByClassName("error-modal-wrap")[props.idx].style.display ='block';
 	document.getElementsByClassName("error-modal-bg")[props.idx].style.display ='block';
 }
@@ -117,7 +136,6 @@ const errorClose = () => {
     document.getElementsByClassName("error-modal-bg")[props.idx].style.display ='none';
 		data.value.userInput = '';
 }
-
 
 </script>
 

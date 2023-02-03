@@ -94,12 +94,13 @@ export const roomModule = {
     },
     // 방 입장
     enterRoom(context, payload){
-      axios.put(`api/rooms/enter/${payload}`).then(({ status, data }) => {
+      return axios.put(`api/rooms/enter/${payload}`).then(({ status, data }) => {
         console.log(payload)
         if(status == 200){
           console.log("입장 성공");
           console.log(data.personCount);
         }
+        return true
       }).catch(err => {
         if(err.response.status == 404){
           console.log("노방");
@@ -107,7 +108,7 @@ export const roomModule = {
         else if(err.response.status == 409){
           console.log("풀방");
         }
-        return false;
+        return false
       });
     },
     // 방 퇴장
@@ -138,7 +139,6 @@ export const roomModule = {
         }
       });
     },
-    
     createUserInRoom(context, payload){
       axios.post(`api/userinroom`, payload).then(({ status, data }) => {
         if(status == 201){

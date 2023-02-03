@@ -44,9 +44,9 @@ import { ref } from 'vue'
 import { useStore } from 'vuex'
 const store = useStore()
 const data = ref({
-  nickname: store.state.userModule.nickname,
-  mannerPoint: store.state.userModule.mannerPoint,
-  alcoholPoint: store.state.userModule.alcoholPoint,
+  nickname: store.state.userModule.user.nickname,
+  mannerPoint: store.state.userModule.user.mannerPoint,
+  alcoholPoint: store.state.userModule.user.alcoholPoint,
 })
 </script>
 

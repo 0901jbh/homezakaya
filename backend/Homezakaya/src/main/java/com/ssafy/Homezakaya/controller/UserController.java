@@ -118,8 +118,8 @@ public class UserController {
 
         if (loginUser != null && user.getPassword().equals(loginUser.getPassword())) {
             // 인증 성공 시 accessToken, refreshToken 생성
-            String accessToken = jwtUtil.createAccessToken("id", user.getUserId());
-            String refreshToken = jwtUtil.createRefreshToken("id", user.getUserId());
+            String accessToken = jwtUtil.createAccessToken("userInfo", user);
+            String refreshToken = jwtUtil.createRefreshToken("userInfo", user);
 
             // 토큰 정보 전달
             result.put("access-token", accessToken);
@@ -162,7 +162,7 @@ public class UserController {
 
         if (user.getRefreshToken().equals(userService.getUser(user.getUserId()).getRefreshToken())) {
             // 새로운 토큰 발급 및 배포
-            String accessToken = jwtUtil.createAccessToken("id", user.getUserId());
+            String accessToken = jwtUtil.createAccessToken("userInfo", user);
             result.put("access-token", accessToken);
             // 유효성 검사
             jwtUtil.checkAndGetClaims(accessToken);

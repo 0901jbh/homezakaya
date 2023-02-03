@@ -1,5 +1,6 @@
 package com.ssafy.Homezakaya.util;
 
+import com.ssafy.Homezakaya.model.dto.UserDto;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -24,22 +25,22 @@ public class JwtUtil {
     // Access Token 생성.
 
 
-    // 토큰 생성 (데이터 추가로 담기 가능 :배열 등 사용)
-    public String createAccessToken(String claimId, String data) throws UnsupportedEncodingException {
+    // 토큰 생성 (데이터 추가로 담기 가능 : userId, password, email exp 넘김)
+    public String createAccessToken(String claimId, UserDto user) throws UnsupportedEncodingException {
 
-        return Jwts.builder().setHeaderParam("alg", "HS256").setHeaderParam("type", "JWT").claim(claimId, data).setExpiration(new Date(System.currentTimeMillis() + accessTokenValidTime)).signWith(io.jsonwebtoken.SignatureAlgorithm.HS256, SALT.getBytes("UTF-8")).compact();
+        return Jwts.builder().setHeaderParam("alg", "HS256").setHeaderParam("type", "JWT").claim("userId", user.getUserId()).claim("password", user.getPassword()).claim("email", user.getEmail()).setExpiration(new Date(System.currentTimeMillis() + accessTokenValidTime)).signWith(io.jsonwebtoken.SignatureAlgorithm.HS256, SALT.getBytes("UTF-8")).compact();
     }
 
     // Refresh Token 생성.
-    public String createRefreshToken(String claimId, String data) throws UnsupportedEncodingException {
+    public String createRefreshToken(String claimId, UserDto user) throws UnsupportedEncodingException {
 
-        return Jwts.builder().setHeaderParam("alg", "HS256").setHeaderParam("type", "JWT").claim(claimId, data).setExpiration(new Date(System.currentTimeMillis() + refreshTokenValidTime)).signWith(io.jsonwebtoken.SignatureAlgorithm.HS256, SALT.getBytes("UTF-8")).compact();
+        return Jwts.builder().setHeaderParam("alg", "HS256").setHeaderParam("type", "JWT").claim("userId", user.getUserId()).claim("password", user.getPassword()).claim("email", user.getEmail()).setExpiration(new Date(System.currentTimeMillis() + refreshTokenValidTime)).signWith(io.jsonwebtoken.SignatureAlgorithm.HS256, SALT.getBytes("UTF-8")).compact();
     }
 
     // 토큰 정보 반환
     public Map<String, Object> checkAndGetClaims(final String jwt) {
         Jws<Claims> claims = Jwts.parser().setSigningKey(SALT.getBytes()).parseClaimsJws(jwt);
-        log.trace("claims: {}", claims);
+        log.info("claims: {}", claims);
         // Claims는 Map의 구현체이다.
         return claims.getBody();
     }

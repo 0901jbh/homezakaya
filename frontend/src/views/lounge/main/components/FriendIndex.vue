@@ -132,7 +132,10 @@ const getFriends = onBeforeMount(() => {
 })
 
 const searchUser = () => {
-  store.dispatch("friendModule/searchUser", data.value.userInput)
+  store.dispatch("friendModule/searchUser", {
+    userInput: data.value.userInput,
+    userId: store.state.userModule.user.userId,
+  })
 }
 
 const userInRoom = (userId) => {

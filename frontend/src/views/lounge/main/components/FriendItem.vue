@@ -8,9 +8,9 @@
       </div>
     </div>
     <div class="second-line">
-      <img src="../../../../assets/beer.png" alt="맥주 이미지" style="width:10%; height:15%; ">
+      <img src="../../../../assets/manner.png" alt="맥주 이미지" style="width:10%; height:15%; ">
       <div>{{ props.friend.mannerPoint }}</div>
-      <img src="../../../../assets/dokuri.png" alt="사케 이미지" style="width:10%; height:15%; ">
+      <img src="../../../../assets/alcohol.png" alt="사케 이미지" style="width:10%; height:15%; ">
       <div>{{ props.friend.alcoholPoint }}잔</div>
       <div class="follow-friend" type="button" @click="followFriend">따라가기</div>
     </div>

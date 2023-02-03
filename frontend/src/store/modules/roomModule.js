@@ -113,18 +113,20 @@ export const roomModule = {
     },
     // 방 퇴장
     quitRoom(context, payload){
-      axios.put(`api/rooms/quit/${payload}`).then(({ status, data }) => {
+      return axios.put(`api/rooms/quit/${payload}`).then(({ status, data }) => {
         if(status == 200){
           console.log("퇴장 성공");
           console.log(data);
           if(data.personCount == 0){
             context.dispatch("removeRoom", payload);
           }
+          return true
         }
       }).catch(err => {
         if(err.response.status == 404){
           console.log("노방");
         }
+        return false
       });
     },
     // 방 삭제

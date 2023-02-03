@@ -140,18 +140,20 @@ export const roomModule = {
       });
     },
     createUserInRoom(context, payload){
-      axios.post(`api/userinroom`, payload).then(({ status, data }) => {
+      return axios.post(`api/userinroom`, payload).then(({ status, data }) => {
         if(status == 201){
           console.log("유저인룸 생성 성공");
         }
+        return true
       }).catch(err => {
         if(err.response.status == 404){
           console.log(err.response.data);
           console.log("노방");
         }
         else if(err.response.status == 409){
-          console.log("이미 참여한 방");
+          console.log("이미 참여중인 유저입니다.");
         }
+        return false
       });
     },
     removeUserInRoom(context, payload){

@@ -161,10 +161,10 @@ const notInRoomClose = () => {
 const followEnterRoom = (roomId) => {
 	store.dispatch("roomModule/checkPassword", {
 		roomId: roomId,
-		password: null,
+		password: '',
 	}).then((result) => {
 		if (result) {
-			console.log(`${roomId}번에 입장`)
+			console.log(`${roomId}번에 입장시도`)
 			enterRoom(roomId)
 		}
 		else {
@@ -192,10 +192,16 @@ const followEnterPrivateRoom = () => {
 const enterRoom = (roomId) => {
 	store.dispatch('roomModule/enterRoom', roomId).then((result) => {
     if (result) {
-      router.push({ name: 'room', params: { roomId: roomId }})
       store.dispatch('roomModule/createUserInRoom', {
         userId: store.state.userModule.user.userId,
         roomId: roomId,
+      }).then((result) => {
+        if (result) {
+          router.push({ name: 'room', params: { roomId: roomId }})
+        }
+        else {
+          followErrorOpen(2)
+        }
       })
     }
     else {

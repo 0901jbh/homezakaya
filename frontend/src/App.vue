@@ -6,6 +6,13 @@
 
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
+import { useStore } from "vuex";
+
+const store = useStore();
+window.onunload = function (event) {
+  event.preventDefault();
+  store.dispatch("userModule/userLogout", "userB");
+}
 </script>
 
 <style scoped>

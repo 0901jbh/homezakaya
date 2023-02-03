@@ -3,13 +3,12 @@ import axios from "axios";
 export const userModule = {
   namespaced: true,
   state: () => ({
-
     // users: [], // 전체 유저 필요 X (친구에서 필요,, )
     user: {}, // user 전체 정보
     loginUser: {}, // loginUser 정보
     token: null, // accessToken 정보
     tokenExpired: null, // token 만료 시간
-    // isLogin: false, // 로그인상태
+    isLogin: false, // 로그인상태
   }),
   mutations: {
     SET_USER(state, payload) {
@@ -22,19 +21,22 @@ export const userModule = {
 
     // 로그인
     LOGIN(state, payload) {
-      // state.isLogin = true;
-      state.loginUser = {
-        nickname: sessionStorage.getItem("nickname"),
-        mannerPoint: sessionStorage.getItem("mannerPoint"),
-        alcoholPoint: sessionStorage.getItem("alcoholPoint"),
-      };
-      state.user = state.loginUser;
+      state.isLogin = true;
+      // state.loginUser = {
+      //   nickname: sessionStorage.getItem("nickname"),
+      //   mannerPoint: sessionStorage.getItem("mannerPoint"),
+      //   alcoholPoint: sessionStorage.getItem("alcoholPoint"),
+      // };
+      // state.user = state.loginUser;
+      state.user = user;
     },
 
     // 로그아웃
     LOGOUT(state) {
-      state.loginUser = null;
-      state.user = state.loginUser;
+      // state.loginUser = null;
+      // state.user = state.loginUser;
+      state.isLogin = false;
+      state.user = user;
     },
 
     // 탈퇴
@@ -70,10 +72,6 @@ export const userModule = {
   },
 
   actions: {
-<<<<<<< HEAD
-    
-  }
-=======
     // id 중복확인 - ok
     idcheck(context, payload) {
       return axios
@@ -240,5 +238,4 @@ export const userModule = {
         });
     },
   },
->>>>>>> fee3f6c49d53c3d6ae7d0f144920c87685c992ca
 };

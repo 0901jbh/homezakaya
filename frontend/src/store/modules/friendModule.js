@@ -143,9 +143,14 @@ export const friendModule = {
     },
     // 유저 검색 조회
     searchUser(context, payload){
-      axios.get(`/api/friends/search/${payload}`)
+      axios.get(`/api/friends/search/${payload.userInput}`)
       .then(({ status, data }) => {
         if(status == 200){
+          data.forEach((item, index) => {
+            if (item.userId === payload.userId) {
+              data.splice(index, 1)
+            }
+          });
           context.commit("SET_SEARCH_USERS", data)
           console.log("searchUser Success");
           console.log(data)

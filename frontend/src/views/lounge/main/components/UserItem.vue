@@ -7,9 +7,9 @@
       </div>
     </div>
     <div class="second-line">
-      <img src="../../../../assets/beer.png" alt="맥주 이미지" style="width:10%; height:15%; ">
+      <img src="../../../../assets/manner.png" alt="맥주 이미지" style="width:10%; height:15%; ">
       <div>{{ props.user.mannerPoint }}</div>
-      <img src="../../../../assets/dokuri.png" alt="사케 이미지" style="width:10%; height:15%; ">
+      <img src="../../../../assets/alcohol.png" alt="사케 이미지" style="width:10%; height:15%; ">
       <div>{{ props.user.alcoholPoint }}잔</div>
       <div v-if="!isFriend" class="request-friend" type="button" @click="sendRequest">친구 요청</div>
       <div v-if="isFriend" class="request-friend"></div>
@@ -37,7 +37,7 @@
 </template>
 
 <script setup>
-import { defineProps, ref, onMounted } from "vue";
+import { defineProps, ref, onMounted, computed, onBeforeUpdate, onUnmounted, onBeforeMount, onUpdated } from "vue";
 import { useStore } from 'vuex'
 
 const props = defineProps({
@@ -48,6 +48,7 @@ const props = defineProps({
 const store = useStore()
 
 onMounted(() => {
+  console.log(document.getElementsByClassName("user-state"))
   let userStateTag = document.getElementsByClassName("user-state")[props.idx]
   if (props.user.state == "offline") {
     userStateTag.style.background = "radial-gradient(50% 50% at 50% 50%, #EE1818 0%, rgba(208, 106, 106, 0) 100%)";

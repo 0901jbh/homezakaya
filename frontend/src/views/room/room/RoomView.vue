@@ -37,11 +37,9 @@
           'under-six': this.headCount == 5 || this.headCount == 6,
           'under-eight': this.headCount == 7 || this.headCount == 8,
         }">
-          <user-video class="video" :stream-manager="publisher" my-video="true" :im-host="isIHost"
-            @click.native="updateMainVideoStreamManager(publisher)" />
+          <user-video class="video" :stream-manager="publisher" my-video="true" :im-host="isIHost" />
           <user-video class="video" v-for="sub in subscribers" :key="sub.stream.connection.connectionId"
-            :stream-manager="sub" my-video="false" :im-host="isIHost"
-            @click.native="updateMainVideoStreamManager(sub)" />
+            :stream-manager="sub" my-video="false" :im-host="isIHost" />
         </div>
         <div id="chatting-container" class="col-md-4">
           <div id="chats" ref="message_scroll">
@@ -69,7 +67,7 @@
           <form id="send-form" @submit.prevent="sendMessage">
             <input v-model="newMessage" placeholder="Type your message here" />
             <img src="../../../assets/message.png" alt="message img" @click="sendMessage"
-              style="width:30px; height:30px;">
+              style="width:30px; height:30px; cursor: pointer">
           </form>
         </div>
       </div>

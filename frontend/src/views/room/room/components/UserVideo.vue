@@ -1,6 +1,6 @@
 <template>
 	<div id="video" v-if="streamManager">
-		<el-popover :width="200"
+		<el-popover :width="250"
 			popper-style="background: rgb(235 153 153); border: rgb(235 153 153); box-shadow: rgb(14 18 22 / 35%) 0px 10px 38px -10px, rgb(14 18 22 / 20%) 0px 10px 20px -15px; padding: 15px;"
 			trigger="click" placement="right">
 			<template #reference>
@@ -15,9 +15,9 @@
 					</p>
 					<div class="user_manner_alcohol"
 						style="margin: 0; display: flex; gap: 16px; flex-direction: row; justify-content: center;">
-						<img src="../../../../assets/beer.png" alt="beer img" style="width:20px; height:20px;">
+						<img src="../../../../assets/manner.png" alt="manner img" style="width:28px; height:28px;">
 						<p style="margin: 0; font-size: 20px; color: white; align-self:center;">3.5</p>
-						<img src="../../../../assets/dokuri.png" alt="dokuri img" style="width:20px; height:20px;">
+						<img src="../../../../assets/alcohol.png" alt="alcohol img" style="width:28px; height:28px;">
 						<p style="margin: 0; font-size: 20px; color: white; align-self:center;">14잔</p>
 					</div>
 					<!-- <div class="content" style="width: 60%; text-decoration:none;">
@@ -61,7 +61,7 @@ export default {
 
 	props: {
 		streamManager: Object,
-		myVideo: Boolean,
+		myVideo: String,
 		imHost: Boolean,
 	},
 

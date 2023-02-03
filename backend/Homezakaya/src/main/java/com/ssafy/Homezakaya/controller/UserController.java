@@ -142,6 +142,9 @@ public class UserController {
                 System.out.println("Key: " + key + ", Value: " + info.get(key));
             }
 
+            // 유저 state를 online으로 변경
+            userService.modifyUserState(user.getUserId(), "online");
+
             status = HttpStatus.OK; // 200
         } else {
             result.put("message", "로그인 실패");
@@ -159,6 +162,9 @@ public class UserController {
         UserDto loginUser = userService.getUser(userId);
         loginUser.setRefreshToken(null);
         userService.removeTokenInfo(loginUser);
+
+        // 유저 state를 offline으로 변경
+        userService.modifyUserState(userId, "offline");
 
         result.put("message", "로그아웃 성공");
         return new ResponseEntity<HashMap<String, Object>>(result, HttpStatus.OK);  // 200

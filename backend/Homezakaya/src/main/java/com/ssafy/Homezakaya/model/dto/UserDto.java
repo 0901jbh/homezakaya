@@ -23,4 +23,5 @@ public class UserDto {
     private double alcoholPoint;
     private String username;
     private String refreshToken;
+    private String state;
 }

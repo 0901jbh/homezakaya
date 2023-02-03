@@ -26,7 +26,8 @@ public class FriendServiceImpl implements FriendService{
         UserDto userDto = fDao.selectUserById(userId);
         if( userDto == null){
             return null;
-        }else return fDao.selectFriendsById(userId);
+        }
+        return fDao.selectFriendsById(userId); // 친구 목록 리턴
     }
 
     // 친구 삭제 (친구 연결 끊기)

@@ -93,12 +93,12 @@ const clickEnterBtn = () => {
 }
 
 const enterRoom = () => {
-	store.dispatch('roomModule/enterRoom', props.room.roomId).then((result) => {
+	store.dispatch('roomModule/createUserInRoom', {
+		userId: store.state.userModule.user.userId,
+		roomId: props.room.roomId,
+	}).then((result) => {
 		if (result) {
-			store.dispatch('roomModule/createUserInRoom', {
-				userId: store.state.userModule.user.userId,
-				roomId: props.room.roomId,
-			}).then((result) => {
+			store.dispatch('roomModule/enterRoom', props.room.roomId).then((result) => {
 				if (result) {
 					router.push({ name: 'room', params: { roomId: props.room.roomId }})
 				}

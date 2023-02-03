@@ -54,8 +54,8 @@
 					</el-form-item>
 					<el-form-item style="width:100%;">
 						<div class="btn">
-							<RouterLink to="/rooms" style="text-decoration:none;"><el-button type="info" size="large"
-									@click="createRoom">Create</el-button></RouterLink>
+							<el-button type="info" size="large"
+									@click="createRoom">Create</el-button>
 						</div>
 						<div class="btn">
 							<RouterLink to="/rooms" style="text-decoration:none;"><el-button type="info" size="large"
@@ -74,8 +74,10 @@
 import RoomItem from './RoomItem.vue'
 import { computed, onBeforeMount, ref } from 'vue'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 
 const store = useStore()
+const router = useRouter()
 
 const form = ref({
 	title: '',
@@ -86,6 +88,7 @@ const form = ref({
 	hostId: store.state.userModule.user.userId,
 	// createdTime: null,
 	rooms: [],
+	roomId: -1,
 })
 
 const createRoom = () => {
@@ -95,8 +98,11 @@ const createRoom = () => {
 		password: form.value.password,
 		category: form.value.category,
 		personLimit: form.value.personLimit,
+		personCount: 1,
 		hostId: form.value.hostId,
 		// createdTime: form.createdTime,
+	}).then((result) => {
+		router.push({ name: 'room', params: { roomId : result.roomId}})
 	});
 }
 

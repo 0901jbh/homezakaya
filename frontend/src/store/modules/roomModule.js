@@ -17,15 +17,6 @@ export const roomModule = {
     // SET_ROOM_ID(state, payload){
     //   state.roomId = payload;
     // },
-    // SET_CHECK_PASSWORD_RESULT(state, payload) {
-    //   if (payload == "success") {
-    //     state.checkPasswordResult = true;
-    //     console.log('vuex true')
-    //   } else {
-    //     state.checkPasswordResult = false;
-    //     console.log('vuex false')
-    //   }
-    // },
   },
   getters: {
     getCheckPasswordResult(state){
@@ -35,15 +26,17 @@ export const roomModule = {
   actions: {
     // 방 만들기
     createRoom(context, payload){
-      axios.post(`/api/rooms`, payload).then(({ status, data }) => {
+      return axios.post(`/api/rooms`, payload).then(({ status, data }) => {
         if(status == 201){
           console.log(data);
           context.commit("SET_ROOM", data);
         }
+        return data
       }).catch(err => {
         if(err.response.status == 404){
           console.log("노방");
         }
+        return { roomId: -1 }
       });
     },
     // 방 목록 조회
@@ -76,17 +69,14 @@ export const roomModule = {
     checkPassword(context , payload){
       return axios.post(`/api/rooms/password`, payload).then(({ status, data }) => {
         if(status == 200){
-          // context.commit("SET_CHECK_PASSWORD_RESULT", data.message)
           console.log("비밀번호 일치")
           return true
         }
       }).catch(err => {
         if(err.response.status == 401){
-          // context.commit("SET_CHECK_PASSWORD_RESULT", err.response.message)
           console.log("비밀번호 불일치")
         }
         else if(err.response.status == 404){
-          // context.commit("SET_CHECK_PASSWORD_RESULT", err.response.message)
           console.log("노방")
         }
         return false
@@ -113,18 +103,20 @@ export const roomModule = {
     },
     // 방 퇴장
     quitRoom(context, payload){
-      axios.put(`api/rooms/quit/${payload}`).then(({ status, data }) => {
+      return axios.put(`api/rooms/quit/${payload}`).then(({ status, data }) => {
         if(status == 200){
           console.log("퇴장 성공");
           console.log(data);
           if(data.personCount == 0){
             context.dispatch("removeRoom", payload);
           }
+          return true
         }
       }).catch(err => {
         if(err.response.status == 404){
           console.log("노방");
         }
+        return false
       });
     },
     // 방 삭제
@@ -163,7 +155,7 @@ export const roomModule = {
         }
       }).catch(err => {
         if(err.response.status == 404){
-          console.log("노방");
+          console.log("이 유저는 현재 참여중인 방이 없습니다.");
         }
       });
     },

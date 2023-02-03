@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.Homezakaya.model.dao.InviteFriendDao">
+    <!-- 친구 초대 관련 -->
+    <insert id="inviteFriend" parameterType="InviteFriendDto">
+        insert into invitefriend(fromUserId, toUserId)
+        values (#{fromUserId}, #{toUserId})
+    </insert>
+
+    <select id="inviteList" resultType="map" parameterType="String">
+        select fromUserId
+        from invitefriend
+        where toUserId = #{toUserId}
+    </select>
+
+    <delete id="deleteInvite" parameterType="InviteFriendDto">
+        delete
+        from invitefriend
+        where fromUserId = #{fromUserId}
+          and toUserId = #{toUserId}
+    </delete>
+</mapper>

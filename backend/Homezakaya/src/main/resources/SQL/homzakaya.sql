@@ -9,6 +9,7 @@ DROP table IF EXISTS room;
 DROP table IF EXISTS user;
 DROP table IF EXISTS sentence;
 DROP table IF EXISTS topic;
+DROP table IF EXISTS invitefriend;
 
 
 -- TABLE User
@@ -82,4 +83,17 @@ CREATE TABLE IF NOT EXISTS topic (
     topicId INT AUTO_INCREMENT,
     content VARCHAR(255) NOT NULL,
     PRIMARY KEY (topicId)
+    );
+
+-- TABLE invitefriend
+CREATE TABLE IF NOT EXISTS invitefriend (
+    fromUser VARCHAR(45) NOT NULL,
+    toUser VARCHAR(45) NOT NULL,
+    PRIMARY KEY (fromUser),
+    FOREIGN KEY (fromUser)
+    REFERENCES friend (userAId)
+    ON DELETE CASCADE,
+    FOREIGN KEY (toUser)
+    REFERENCES friend (userBId)
+    ON DELETE CASCADE
     );

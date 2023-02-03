@@ -144,6 +144,7 @@ axios.defaults.headers.post["Content-Type"] = "application/json";
 
 const APPLICATION_SERVER_URL = "http://localhost:5000/";
 
+
 export default {
   name: "RoomView",
 
@@ -221,7 +222,13 @@ export default {
         this.newMessage = null
       }
     },
-
+    startBtn() {
+      // this.$store.dispatch("gameModule/startSmileGame");
+      this.$store.dispatch("gameModule/getSpeech");
+    },
+    endBtn() {
+      this.$store.dispatch("gameModule/stopDetect");
+    },
     clickMuteVideo() {
       if (this.publisher.stream.videoActive) {
         this.publisher.publishVideo(false)

@@ -49,31 +49,60 @@ export const gameModule = {
       });
     },
     //웃참
-    startVideo(context, payload) {
-      console.log("시작");
-      const video = document.getElementById(payload);
+    startSmileGame(context, payload) {
+      console.log("탐지 시작");
+      const videos = document.getElementsByTagName("video");
+      console.log(videos);
+      const video = videos[0];
+
       Promise.all([
           faceapi.nets.tinyFaceDetector.loadFromUri('/models'),
           faceapi.nets.faceExpressionNet.loadFromUri('/models')
-      ]).then(() => {
-          navigator.mediaDevices.getUserMedia({ video: true })
-              .then(function (stream) { video.srcObject = stream; })
-              .catch(function (err) { console.log(err); });
-      });
+      ]);
       
-      video.addEventListener('play', context.dispatch("detect", video));
+      video.addEventListener('play', context.dispatch("startDetect", video));
     },
-    detect(context, payload){
-      clearInterval(context.state.interval);
+    startDetect(context, payload){
+      context.dispatch("stopDetect");
       context.commit('SET_INTERVAL',setInterval(async () => {
           const detections = await faceapi.detectAllFaces(payload, new faceapi.TinyFaceDetectorOptions()).withFaceExpressions();
           if(detections.length > 0){
-              console.log(detections[0].expressions.happy);
-              if(detections[0].expressions.happy > 0.3)
-                  console.log("웃었땈ㅋ");
+              console.log(detections[0].expressions);
+              if(detections[0].expressions.happy > 0.3){
+                console.log("웃었땈ㅋ");
+                context.dispatch("stopDetect");
+              }
           }
       }, 500));
-  },
+    },
+    stopDetect(context, payload){
+      clearInterval(context.state.interval);
+      console.log("탐지 끝");
+    },
+    getSpeech(context, payload){
+
+      window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+      let recognition = new SpeechRecognition();
+      recognition.interimResults = true;
+      recognition.lang = 'ko-KR';
+
+      recognition.start();
+
+      recognition.onstart = function() {
+        console.log("감지 시작");
+      };
+
+      recognition.onend = function() {
+        console.log("감지 끝");
+      };
+
+      recognition.onresult = function(e) {
+        console.log(e);
+        let texts = Array.from(e.results).map(results => results[0].transcript).join("");
+        console.log(texts);
+      }
+    }
   }
 };
  

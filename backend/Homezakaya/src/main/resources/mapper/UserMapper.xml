@@ -60,5 +60,11 @@
         WHERE userId = #{userId}
     </update>
 
+    <update id="updateUserState" parameterType="String">
+        UPDATE user
+        SET state = #{state}
+        WHERE userId = #{userId}
+    </update>
+
 
 </mapper>

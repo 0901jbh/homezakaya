@@ -15,17 +15,17 @@
       <template #default>
         <div class="MyInfo" style="display: flex; gap: 32px; flex-direction: column">
           <p class="MyInfo_nickname" style="margin: 0; font-size: 30px; color: white; align-self:center;">
-            팀장은역시고진석
+            {{ data.nickname }}
           </p>
           <div class="MyInfo_manner"
             style="margin: 0; display: flex; gap: 16px; flex-direction: row; justify-content: center;">
             <img src="../../../assets/beer.png" alt="beer img" style="width:40px; height:40px;">
-            <p style="margin: 0; font-size: 30px; color: white; align-self:center;">3.5</p>
+            <p style="margin: 0; font-size: 30px; color: white; align-self:center;">{{ data.mannerPoint }}</p>
           </div>
           <div class="MyInfo_alcohol"
             style="margin: 0; display: flex; gap: 16px; flex-direction: row; justify-content: center;">
             <img src="../../../assets/dokuri.png" alt="dokuri img" style="width:40px; height:40px;">
-            <p style="margin: 0; font-size: 30px; color: white; align-self:center;">14잔</p>
+            <p style="margin: 0; font-size: 30px; color: white; align-self:center;">{{ data.alcoholPoint }}잔</p>
           </div>
           <RouterLink class="MyInfo_edit content" to="/edit" style="text-decoration:none;">
             정보수정
@@ -40,6 +40,14 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
+import { useStore } from 'vuex'
+const store = useStore()
+const data = ref({
+  nickname: store.state.userModule.user.nickname,
+  mannerPoint: store.state.userModule.user.mannerPoint,
+  alcoholPoint: store.state.userModule.user.alcoholPoint,
+})
 </script>
 
 <style scoped>

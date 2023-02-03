@@ -33,4 +33,7 @@ public interface UserDao {
     int addTokenInfo(UserDto user);
 
     int deleteTokenInfo(UserDto user);
+
+    // 온오프라인 변경
+    int updateUserState(String userId, String state);
 }

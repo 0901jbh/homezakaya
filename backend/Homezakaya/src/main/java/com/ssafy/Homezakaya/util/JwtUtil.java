@@ -40,7 +40,8 @@ public class JwtUtil {
     // 토큰 정보 반환
     public Map<String, Object> checkAndGetClaims(final String jwt) {
         Jws<Claims> claims = Jwts.parser().setSigningKey(SALT.getBytes()).parseClaimsJws(jwt);
-        log.info("claims: {}", claims);
+//        Date expiration = claims.getBody().getExpiration(); // 만료 기간
+        log.trace("claims: {}", claims);
         // Claims는 Map의 구현체이다.
         return claims.getBody();
     }

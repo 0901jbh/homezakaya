@@ -45,7 +45,8 @@ import { defineProps } from "vue";
 import { useStore } from 'vuex';
 
 const props = defineProps({
-  request: Object
+  request: Object,
+  idx: Number
 })
 
 const store = useStore()
@@ -53,7 +54,7 @@ const store = useStore()
 const deleteRequest = () => {
   console.log('deleteRequest!')
   store.dispatch('friendModule/deleteRequest', {
-    userAId: store.state.userModule.userId,
+    userAId: store.state.userModule.user.userId,
     userBId: props.request.userId
   })
   deleteRequestClose()
@@ -62,25 +63,25 @@ const deleteRequest = () => {
 const approveRequest = () => {
   console.log('approveRequest!')
   store.dispatch('friendModule/approveRequest', {
-    userAId: store.state.userModule.userId,
+    userAId: store.state.userModule.user.userId,
     userBId: props.request.userId
   })
 }
 
 const deleteRequestOpen = () => {
-	document.getElementsByClassName("delete-request-modal-wrap")[0].style.display ='block';
-	document.getElementsByClassName("delete-request-modal-bg")[0].style.display ='block';
+	document.getElementsByClassName("delete-request-modal-wrap")[props.idx].style.display ='block';
+	document.getElementsByClassName("delete-request-modal-bg")[props.idx].style.display ='block';
 }
 
 const deleteRequestClose = () => {
-    document.getElementsByClassName("delete-request-modal-wrap")[0].style.display ='none';
-    document.getElementsByClassName("delete-request-modal-bg")[0].style.display ='none';
+    document.getElementsByClassName("delete-request-modal-wrap")[props.idx].style.display ='none';
+    document.getElementsByClassName("delete-request-modal-bg")[props.idx].style.display ='none';
 }
 </script>
 
 <style scoped>
 .wrapper {
-  width: 100%;
+  width: 86%;
   height: 15%;
   color: white;
   background: linear-gradient(180deg, #A44242 202.91%, rgba(0, 0, 0, 0.709847) 260.73%, rgba(84, 84, 84, 0) 302.91%);
@@ -88,6 +89,10 @@ const deleteRequestClose = () => {
   padding: 7%;
   font-size: 1rem;
   margin: 2.5% 0;
+  transition: 0.1s ease-in;
+}
+.wrapper:hover {
+  transform: scale(1.05, 1.05);
 }
 .first-line{
   display: flex;

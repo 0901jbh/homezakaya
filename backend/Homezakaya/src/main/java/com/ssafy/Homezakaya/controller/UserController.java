@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -122,31 +123,48 @@ public class UserController {
             String refreshToken = jwtUtil.createRefreshToken("userInfo", user);
 
             // 토큰 정보 전달
-            result.put("access-token", accessToken);
+            result.put("accessToken", accessToken);
+            result.put("userId", loginUser.getUserId());
+            result.put("nickname", loginUser.getNickname());
+            result.put("mannerPoint", loginUser.getMannerPoint());
+            result.put("alcoholPoint", loginUser.getAlcoholPoint());
 
             // 토큰 정보 저장
             loginUser.setRefreshToken(refreshToken);
             userService.addTokenInfo(loginUser);
-//            Map<String, Object> info = jwtUtil.checkAndGetClaims(accessToken);
+            Map<String, Object> info = jwtUtil.checkAndGetClaims(accessToken);
+
+            // accessToken 만료일자
+//            String expiration = (String) info.get("exp");
+//            Date expiration =  info.get("exp");
+
+            for (String key : info.keySet()) {
+                System.out.println("Key: " + key + ", Value: " + info.get(key));
+            }
+
+            // 유저 state를 online으로 변경
+            userService.modifyUserState(user.getUserId(), "online");
 
             status = HttpStatus.OK; // 200
         } else {
             result.put("message", "로그인 실패");
             status = HttpStatus.UNAUTHORIZED;  // 401
         }
-
         return new ResponseEntity<HashMap<String, Object>>(result, status);
     }
 
     // 로그아웃
-    @GetMapping("/logout")
-    public ResponseEntity<?> logOut(@RequestParam String userId) throws Exception {
+    @GetMapping("/logout/{userId}")
+    public ResponseEntity<?> logOut(@PathVariable String userId) throws Exception {
         HashMap<String, Object> result = new HashMap<>();
         // DB에서 refresh token 삭제
         // session 정보 삭제 - front
         UserDto loginUser = userService.getUser(userId);
-        loginUser.setRefreshToken("");
+        loginUser.setRefreshToken(null);
         userService.removeTokenInfo(loginUser);
+
+        // 유저 state를 offline으로 변경
+        userService.modifyUserState(userId, "offline");
 
         result.put("message", "로그아웃 성공");
         return new ResponseEntity<HashMap<String, Object>>(result, HttpStatus.OK);  // 200
@@ -157,18 +175,19 @@ public class UserController {
     public ResponseEntity<?> refresh(@RequestBody UserDto user, HttpServletResponse response) throws Exception {
         HashMap<String, Object> result = new HashMap<>();
 
-        // refresh token 유효성 검사
-        jwtUtil.checkAndGetClaims(user.getRefreshToken());
+        if (userService.getUser(user.getUserId()).getRefreshToken() != null) {  // refreshToken 존재 확인
+            // refresh token 유효성 검사
+            jwtUtil.checkAndGetClaims(user.getRefreshToken());
 
-        if (user.getRefreshToken().equals(userService.getUser(user.getUserId()).getRefreshToken())) {
             // 새로운 토큰 발급 및 배포
             String accessToken = jwtUtil.createAccessToken("userInfo", user);
             result.put("access-token", accessToken);
-            // 유효성 검사
+
+            // new accessToken 유효성 검사
             jwtUtil.checkAndGetClaims(accessToken);
 
-//            Map<String, Object> info = jwtUtil.checkAndGetClaims(accessToken);
-//            result.putAll(info);
+            Map<String, Object> info = jwtUtil.checkAndGetClaims(accessToken);
+            result.putAll(info);
         }
         return new ResponseEntity<HashMap<String, Object>>(result, HttpStatus.OK);  // 200
     }

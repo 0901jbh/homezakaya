@@ -5,7 +5,7 @@ export const roomModule = {
   state: () => ({
     rooms: [],
     room: {},
-    // roomId: Number
+    checkPasswordResult: false,
   }),
   mutations: {
     SET_ROOMS(state, payload) {
@@ -17,15 +17,28 @@ export const roomModule = {
     // SET_ROOM_ID(state, payload){
     //   state.roomId = payload;
     // },
+    // SET_CHECK_PASSWORD_RESULT(state, payload) {
+    //   if (payload == "success") {
+    //     state.checkPasswordResult = true;
+    //     console.log('vuex true')
+    //   } else {
+    //     state.checkPasswordResult = false;
+    //     console.log('vuex false')
+    //   }
+    // },
   },
   getters: {
+    getCheckPasswordResult(state){
+      return state.checkPasswordResult
+    }
   },
   actions: {
+    // 방 만들기
     createRoom(context, payload){
       axios.post(`/api/rooms`, payload).then(({ status, data }) => {
         if(status == 201){
           console.log(data);
-          context.dispatch("getRoom", data.roomId);
+          context.commit("SET_ROOM", data);
         }
       }).catch(err => {
         if(err.response.status == 404){
@@ -33,6 +46,7 @@ export const roomModule = {
         }
       });
     },
+    // 방 목록 조회
     getRooms(context, payload){
       axios.get(`/api/rooms`).then(({ status, data }) => {
         if(status == 200){
@@ -45,6 +59,7 @@ export const roomModule = {
         }
       });
     },
+    // 특정 방 조회
     getRoom(context, payload){
       axios.get(`/api/rooms/${payload}`).then(({ status, data }) => {
         if(status == 200){
@@ -57,28 +72,35 @@ export const roomModule = {
         }
       });
     },
+    // 비공개방 비밀번호 확인
     checkPassword(context , payload){
       return axios.post(`/api/rooms/password`, payload).then(({ status, data }) => {
         if(status == 200){
-          console.log("비밀번호 일치");
-          return true;
+          // context.commit("SET_CHECK_PASSWORD_RESULT", data.message)
+          console.log("비밀번호 일치")
+          return true
         }
       }).catch(err => {
         if(err.response.status == 401){
-          console.log("비밀번호 불일치");
+          // context.commit("SET_CHECK_PASSWORD_RESULT", err.response.message)
+          console.log("비밀번호 불일치")
         }
         else if(err.response.status == 404){
-          console.log("노방");
+          // context.commit("SET_CHECK_PASSWORD_RESULT", err.response.message)
+          console.log("노방")
         }
-        return false;
+        return false
       });
     },
+    // 방 입장
     enterRoom(context, payload){
-      axios.put(`api/rooms/enter/${payload}`).then(({ status, data }) => {
+      return axios.put(`api/rooms/enter/${payload}`).then(({ status, data }) => {
+        console.log(payload)
         if(status == 200){
           console.log("입장 성공");
           console.log(data.personCount);
         }
+        return true
       }).catch(err => {
         if(err.response.status == 404){
           console.log("노방");
@@ -86,9 +108,10 @@ export const roomModule = {
         else if(err.response.status == 409){
           console.log("풀방");
         }
-        return false;
+        return false
       });
     },
+    // 방 퇴장
     quitRoom(context, payload){
       axios.put(`api/rooms/quit/${payload}`).then(({ status, data }) => {
         if(status == 200){
@@ -104,6 +127,7 @@ export const roomModule = {
         }
       });
     },
+    // 방 삭제
     removeRoom(context, payload){
       axios.delete(`api/rooms/${payload}`).then(({ status }) => {
         if(status == 204){
@@ -116,18 +140,20 @@ export const roomModule = {
       });
     },
     createUserInRoom(context, payload){
-      axios.post(`api/userinroom`, payload).then(({ status, data }) => {
+      return axios.post(`api/userinroom`, payload).then(({ status, data }) => {
         if(status == 201){
           console.log("유저인룸 생성 성공");
         }
+        return true
       }).catch(err => {
         if(err.response.status == 404){
           console.log(err.response.data);
           console.log("노방");
         }
         else if(err.response.status == 409){
-          console.log("이미 참여한 방");
+          console.log("이미 참여중인 유저입니다.");
         }
+        return false
       });
     },
     removeUserInRoom(context, payload){

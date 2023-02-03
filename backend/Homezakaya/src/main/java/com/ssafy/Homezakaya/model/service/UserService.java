@@ -28,4 +28,7 @@ public interface UserService {
     void addTokenInfo(UserDto user);
 
     void removeTokenInfo(UserDto user);
+
+    // 유저 상태 수정
+    int modifyUserState(String userId, String state);
 }

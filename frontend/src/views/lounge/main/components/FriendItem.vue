@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <div class="first-line">
-      <div class="user-state"></div>
+      <div class="friend-state"></div>
       <div class="name-and-cancel">
         <div>{{ props.friend.nickname }}</div>
         <button class="delete-friend" type="button" @click="deleteFriendOpen">X</button>
@@ -44,38 +44,53 @@
 </template>
 
 <script setup>
-import { defineProps } from 'vue';
+import { defineProps, onMounted } from 'vue';
 import { useStore } from 'vuex';
 
 const props = defineProps({
-  friend:Object
+  friend:Object,
+  idx:Number,
 })
 
+const emit = defineEmits(['followFriend'])
 const store = useStore()
+
+onMounted(() => {
+  let friendStateTag = document.getElementsByClassName("friend-state")[props.idx]
+  if (props.friend.state == "offline") {
+    friendStateTag.style.background = "radial-gradient(50% 50% at 50% 50%, #EE1818 0%, rgba(208, 106, 106, 0) 100%)";
+  } else {
+    friendStateTag.style.background = "radial-gradient(50% 50% at 50% 50%, #1CEE18 0%, rgba(108, 208, 106, 0) 100%)";
+  }
+})
 
 const deleteFriend = ()=>{
   console.log('deleteFriend!')
   store.dispatch("friendModule/deleteFriend", {
-    userAId: store.state.userModule.userId,
+    userAId: store.state.userModule.user.userId,
     userBId: props.friend.userId
   })
   deleteFriendClose()
 }
 
+const followFriend = () => {
+  emit('followFriend', props.friend.userId)
+}
+
 const deleteFriendOpen = () => {
-	document.getElementsByClassName("delete-friend-modal-wrap")[0].style.display ='block';
-  document.getElementsByClassName("delete-friend-modal-bg")[0].style.display ='block';
+	document.getElementsByClassName("delete-friend-modal-wrap")[props.idx].style.display ='block';
+  document.getElementsByClassName("delete-friend-modal-bg")[props.idx].style.display ='block';
 }
 
 const deleteFriendClose = () => {
-    document.getElementsByClassName("delete-friend-modal-wrap")[0].style.display ='none';
-    document.getElementsByClassName("delete-friend-modal-bg")[0].style.display ='none';
+    document.getElementsByClassName("delete-friend-modal-wrap")[props.idx].style.display ='none';
+    document.getElementsByClassName("delete-friend-modal-bg")[props.idx].style.display ='none';
 }
 </script>
 
 <style scoped>
 .wrapper {
-  width: 100%;
+  width: 86%;
   height: 10%;
   color: white;
   background: linear-gradient(180deg, #959595 202.91%, rgba(0, 0, 0, 0.709847) 260.73%, rgba(84, 84, 84, 0) 302.91%);
@@ -83,19 +98,20 @@ const deleteFriendClose = () => {
   padding: 7%;
   font-size: 1rem;
   margin: 2.5% 0;
+  transition: 0.1s ease-in;
+}
+.wrapper:hover {
+  transform: scale(1.05, 1.05);
 }
 .first-line{
   display: grid;
   grid-template-columns: 1fr 8fr;
   align-items: center;
 }
-.user-state{
+.friend-state{
   width: 1rem;
   height: 1rem;
-  /* 온라인 표시 */
   background: radial-gradient(50% 50% at 50% 50%, #1CEE18 0%, rgba(108, 208, 106, 0) 100%);
-  /* 오프라인 표시
-  background: radial-gradient(50% 50% at 50% 50%, #EE1818 0%, rgba(208, 106, 106, 0) 100%); */
 }
 
 .name-and-cancel{
@@ -170,10 +186,6 @@ const deleteFriendClose = () => {
 	border-radius: 1rem 1rem 0 0;
 }
 .popup-content {
-	/* display: flex;
-  justify-content: center;
-	align-items: center;
-	flex-direction: column; */
   display: grid;
   text-align: center;
   grid-template-rows: 2fr 1fr;

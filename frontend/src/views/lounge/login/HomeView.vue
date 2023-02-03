@@ -49,6 +49,9 @@ import HeaderItem from '../menu/HeaderItem.vue'
 import FooterItem from '../menu/FooterItem.vue'
 import { reactive } from 'vue'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
+
+const router = useRouter();
 
 const store = useStore();
 
@@ -58,7 +61,7 @@ const form = reactive({
 })
 
 const onSubmit = () => {
-  store.dispatch("roomModule/getRoomId", "ssafy");
+  router.push({ name : "rooms" })
   console.log('submit!');
 }
 </script>

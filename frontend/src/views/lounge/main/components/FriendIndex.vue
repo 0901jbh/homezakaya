@@ -322,6 +322,7 @@ input[name="tab_item"] {
   background-color: black;
   color: #fff;
 }
+/* 검색창 */
 .search-bar{
   height: 5%;
   width: 90%;

@@ -84,7 +84,7 @@ const form = ref({
 	category: '자유',
 	personLimit: 2,
 	password: '',
-	private: false,
+	private: "공개",
 	hostId: store.state.userModule.user.userId,
 	// createdTime: null,
 	rooms: [],
@@ -124,7 +124,7 @@ const popClose = () => {
 
 const passwordOpen = () => {
 	document.getElementsByClassName("passwordInput")[0].style.display ='flex';
-	form.password = '';
+	form.value.password = '';
 }
 
 const passwordClose = () => {

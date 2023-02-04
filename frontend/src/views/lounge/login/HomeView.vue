@@ -1,69 +1,77 @@
 <template>
-  <header>
-    <HeaderItem />
-  </header>
-  <div class="container">
-    <div>
-      <img src="../../../assets/HomeLogin.jpg" alt="izakaya img" style="height:90vh;">
-    </div>
-    <div class="wrapper" style="width:80vh;">
-      <div class="box">
-        <div class="title">Homezakaya</div>
-        <div class="comment">좋은 사람들과 새로운 술자리</div>
-      </div>
+  <div class="intro" v-if="!data.isEnter">
+    <HeaderItem :isEnter="data.isEnter" @clickTitle="clickTitle"/>
+  </div>
+  <div class="login" v-if="data.isEnter">
+    <header>
+      <HeaderItem :isEnter="data.isEnter"/>
+    </header>
+    <div class="container">
       <div>
+        <img src="../../../assets/HomeLogin.jpg" alt="izakaya img" style="height:90vh;">
+      </div>
+      <div class="wrapper" style="width:80vh;">
         <div class="box">
-          <div>
-            <el-form :model="form" label-width="10vw" margin-top="10vh">
-              <el-form-item label="아이디" size='large'>
-                <el-input v-model="form.id" placeholder="아이디를 입력해주세요" clearable />
-              </el-form-item>
-              <br>
-              <el-form-item label="비밀번호" size="large">
-                <el-input v-model="form.password" placeholder="비밀번호를 입력해주세요" show-password />
-              </el-form-item>
-              <br>
-              <br>
-              <el-form-item>
-                <div class="btn">
-                  <el-button type="info" size="large" @click="onSubmit">로그인</el-button>
-                </div>
-                <div class="btn" @click="SignUpRouter">
-                  <RouterLink to="/signup" style="text-decoration:none;"><el-button type="info"
-                      size="large">회원가입</el-button></RouterLink>
-                </div>
-              </el-form-item>
-            </el-form>
+          <div class="title">Homezakaya</div>
+          <div class="comment">좋은 사람들과 새로운 술자리</div>
+        </div>
+        <div>
+          <div class="box">
+            <div>
+              <el-form label-width="10vw" margin-top="10vh">
+                <el-form-item label="아이디" size='large'>
+                  <el-input v-model="data.id" placeholder="아이디를 입력해주세요" clearable />
+                </el-form-item>
+                <br>
+                <el-form-item label="비밀번호" size="large">
+                  <el-input v-model="data.password" placeholder="비밀번호를 입력해주세요" show-password />
+                </el-form-item>
+                <br>
+                <br>
+                <el-form-item>
+                  <div class="btn">
+                    <el-button type="info" size="large" @click="onSubmit">로그인</el-button>
+                  </div>
+                  <div class="btn" @click="SignUpRouter">
+                    <RouterLink to="/signup" style="text-decoration:none;"><el-button type="info"
+                        size="large">회원가입</el-button></RouterLink>
+                  </div>
+                </el-form-item>
+              </el-form>
+            </div>
           </div>
         </div>
       </div>
     </div>
+    <footer>
+      <FooterItem />
+    </footer>
   </div>
-  <footer>
-    <FooterItem />
-  </footer>
 </template>
 
 <script setup>
 import HeaderItem from '../menu/HeaderItem.vue'
 import FooterItem from '../menu/FooterItem.vue'
-import { reactive } from 'vue'
-import { useStore } from 'vuex'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter();
 
-const store = useStore();
-
-const form = reactive({
+const data = ref({
   id: '',
   password: '',
+  isEnter: false,
 })
 
 const onSubmit = () => {
   router.push({ name : "rooms" })
-  console.log('submit!');
+  console.log('Log-In!');
 }
+
+const clickTitle = () => {
+  data.value.isEnter = !data.value.isEnter
+}
+
 </script>
 
 <style scoped>

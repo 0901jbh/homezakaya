@@ -10,14 +10,19 @@
         </div>
       </div>
       <div class="rooms">
-        <RoomsIndexItem />
+        <RoomsIndexItem :key="renderKey"/>
       </div>
     </div>
-    <FriendIndex />
+    <FriendIndex :key="renderKey"/>
   </div>
   <footer>
     <FooterItem />
   </footer>
+  <div class="reload-btn-wrapper" @click="reload">
+      <div class="reload-btn">
+        <img src="../../../assets/circle_arrow.png" alt="circle_arrow">
+      </div>
+  </div>
 </template>
 
 <script setup>
@@ -27,7 +32,16 @@ import FooterItem from '../menu/FooterItem.vue'
 import RoomsIndexItem from './components/RoomsIndexItem.vue'
 import FriendIndex from './components/FriendIndex.vue'
 import InfoItem from '../menu/InfoItem.vue'
+import { ref } from 'vue'
 
+const renderKey = ref(0);
+
+const reload = () => {
+  renderKey.value += 1
+  console.log("========== start Rerender !! ==========")
+}
+
+defineExpose(renderKey)
 </script>
 
 <style scoped>
@@ -78,5 +92,37 @@ import InfoItem from '../menu/InfoItem.vue'
   border-radius: 30px;
   padding: 4vh;
   margin-bottom: 4vh;
+}
+
+/* 새로고침 버튼 */
+
+.reload-btn-wrapper {
+  position: fixed;
+  bottom: 3%;
+  right: 3%;
+  
+  height: 4rem;
+  width: 4rem;
+  background: #d4d4d4;
+  border: 0.3rem solid black;
+  border-radius: 50%;
+  transition: rotate 1s;
+}
+.reload-btn{
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.reload-btn > img{
+  width: 65%;
+  height: 65%;
+}
+.reload-btn-wrapper:hover{
+ background-color: #ffffff;
+ rotate: 360deg;
+ cursor: pointer;
 }
 </style>

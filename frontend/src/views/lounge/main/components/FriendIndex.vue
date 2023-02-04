@@ -1,9 +1,9 @@
 <template>
 	<div class="tabs">
-		<input id="friend" type="radio" name="tab_item" checked>
-		<label class="tab_item" id="tab_first" for="friend">Friend</label>
-		<input id="user" type="radio" name="tab_item">
-		<label class="tab_item" id="tab_second" for="user">User</label>
+    <input id="friend" type="radio" name="tab_item" checked>
+    <label class="tab_item" id="tab_first" for="friend">Friend</label>
+    <input id="user" type="radio" name="tab_item">
+    <label class="tab_item" id="tab_second" for="user">User</label>
     <div class="tab_content" id="friend_content">
 			<FriendRequestItem 
         v-for="(request, idx) in data.requests" 
@@ -250,7 +250,8 @@ const followErrorClose = () => {
 /* 탭 전체 스타일 */
 .tabs {
   margin-top: 3vh;
-	margin-left: 5vh;
+	margin-left: 6%;
+  width: 94%;
 	height: 81vh;
 }
 
@@ -272,8 +273,8 @@ const followErrorClose = () => {
   text-align: center;
   font-weight: bold;
   transition: all 0.2s ease;
-	margin: 2vh;
-	margin-bottom: 3vh;
+	margin: 1vw;
+	margin-bottom: 3.5vh;
 }
 .tab_item:hover {
   opacity: 0.75;
@@ -322,6 +323,7 @@ input[name="tab_item"] {
   background-color: black;
   color: #fff;
 }
+/* 검색창 */
 .search-bar{
   height: 5%;
   width: 90%;

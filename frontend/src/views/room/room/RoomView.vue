@@ -349,7 +349,7 @@ export default {
 
       // Remove beforeunload listener
       window.removeEventListener("beforeunload", this.leaveSession);
-
+      
       this.$router.push({ name: 'rooms' });
       this.$store.dispatch("roomModule/quitRoom", this.mySessionId)
       .then((result) => {

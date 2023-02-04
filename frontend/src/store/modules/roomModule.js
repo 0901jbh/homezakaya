@@ -26,6 +26,7 @@ export const roomModule = {
   actions: {
     // 방 만들기
     createRoom(context, payload){
+      context.dispatch("getRooms");
       return axios.post(`/api/rooms`, payload).then(({ status, data }) => {
         if(status == 201){
           console.log(data);
@@ -67,6 +68,7 @@ export const roomModule = {
     },
     // 비공개방 비밀번호 확인
     checkPassword(context , payload){
+      context.dispatch("getRooms");
       return axios.post(`/api/rooms/password`, payload).then(({ status, data }) => {
         if(status == 200){
           console.log("비밀번호 일치")
@@ -84,6 +86,7 @@ export const roomModule = {
     },
     // 방 입장
     enterRoom(context, payload){
+      context.dispatch("getRooms");
       return axios.put(`api/rooms/enter/${payload}`).then(({ status, data }) => {
         console.log(payload)
         if(status == 200){

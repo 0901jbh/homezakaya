@@ -110,6 +110,7 @@ export const roomModule = {
           if(data.personCount == 0){
             context.dispatch("removeRoom", payload);
           }
+          context.dispatch("getRooms");
           return true
         }
       }).catch(err => {

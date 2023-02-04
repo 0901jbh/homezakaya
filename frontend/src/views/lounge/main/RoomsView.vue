@@ -18,7 +18,7 @@
   <footer>
     <FooterItem />
   </footer>
-  <div class="reload-btn-wrapper" @click="clickReloadBtn">
+  <div class="reload-btn-wrapper" @click="reload">
       <div class="reload-btn">
         <img src="../../../assets/circle_arrow.png" alt="circle_arrow">
       </div>
@@ -36,11 +36,12 @@ import { ref } from 'vue'
 
 const renderKey = ref(0);
 
-const clickReloadBtn = () => {
+const reload = () => {
   renderKey.value += 1
   console.log("start Rerender !!")
 }
 
+defineExpose(renderKey)
 </script>
 
 <style scoped>

@@ -73,7 +73,7 @@ const data = ref({
 .title {
   font-family: 'dokdo';
   color: white;
-  font-size: 5vh;
+  font-size: 2.5rem;
   font-weight: 600;
   padding-left: 1vw;
 }

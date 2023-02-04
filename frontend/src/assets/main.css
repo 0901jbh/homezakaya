@@ -11,3 +11,23 @@ body {
   --el-color-primary-light-8: #e7a1a1;
   --el-color-primary-light-9: #f3c1c1;
 }
+
+.snowflake {
+  width: 11px !important;
+  height: 11px !important;
+  border-radius: 50%;
+  background-color: white;
+  position: absolute !important;
+  top: -11px;
+  z-index: 1000;
+  /* animation: fall 10s linear; */
+}
+
+@keyframes fall {
+  from {
+  }
+  to {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}

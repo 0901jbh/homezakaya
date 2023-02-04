@@ -111,9 +111,11 @@ export const roomModule = {
           console.log("퇴장 성공");
           console.log(data);
           if(data.personCount == 0){
-            context.dispatch("removeRoom", payload);
+            context.dispatch("removeRoom", payload)
           }
-          context.dispatch("getRooms");
+          else {
+            context.dispatch("getRooms");
+          }
           return true
         }
       }).catch(err => {
@@ -128,6 +130,7 @@ export const roomModule = {
       axios.delete(`api/rooms/${payload}`).then(({ status }) => {
         if(status == 204){
           console.log("방 삭제 성공");
+          context.dispatch("getRooms")
         }
       }).catch(err => {
         if(err.response.status == 404){

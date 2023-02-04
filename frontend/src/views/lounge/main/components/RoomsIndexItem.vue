@@ -102,7 +102,15 @@ const createRoom = () => {
 		hostId: form.value.hostId,
 		// createdTime: form.createdTime,
 	}).then((result) => {
-		router.push({ name: 'room', params: { roomId : result.roomId}})
+		form.value.roomId = result.roomId
+		store.dispatch('roomModule/createUserInRoom', {
+			userId: store.state.userModule.user.userId,
+			roomId: result.roomId,
+		}).then((result) => {
+			if (result) {
+				router.push({ name: 'room', params: { roomId: form.value.roomId }})
+			}
+		})
 	});
 }
 

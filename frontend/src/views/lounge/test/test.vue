@@ -13,7 +13,7 @@ const store = useStore();
 const startBtn = () => {
   // store.dispatch("gameModule/updateUser", "video");
   // store.dispatch("userModule/userLogout", "suz.dev33");
-  store.dispatch("roomModule/quitRoom", 4)
+  store.dispatch("roomModule/quitRoom", 19)
   .then((result) => {
     if (result) {
       store.dispatch("roomModule/removeUserInRoom", store.state.userModule.user.userId)

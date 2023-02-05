@@ -25,24 +25,20 @@ public class JwtUtil {
     // Access Token 생성.
 
 
-    // 토큰 생성 (데이터 추가로 담기 가능 : userId, password, email exp 넘김)
+    // 토큰 생성 (데이터 추가로 담기 가능 : userId, password, email, exp 넘김)
     public String createAccessToken(String claimId, UserDto user) throws UnsupportedEncodingException {
-
         return Jwts.builder().setHeaderParam("alg", "HS256").setHeaderParam("type", "JWT").claim("userId", user.getUserId()).claim("password", user.getPassword()).claim("email", user.getEmail()).setExpiration(new Date(System.currentTimeMillis() + accessTokenValidTime)).signWith(io.jsonwebtoken.SignatureAlgorithm.HS256, SALT.getBytes("UTF-8")).compact();
     }
 
-    // Refresh Token 생성.
+    // Refresh Token 생성 (인증정보 X)
     public String createRefreshToken(String claimId, UserDto user) throws UnsupportedEncodingException {
-
-        return Jwts.builder().setHeaderParam("alg", "HS256").setHeaderParam("type", "JWT").claim("userId", user.getUserId()).claim("password", user.getPassword()).claim("email", user.getEmail()).setExpiration(new Date(System.currentTimeMillis() + refreshTokenValidTime)).signWith(io.jsonwebtoken.SignatureAlgorithm.HS256, SALT.getBytes("UTF-8")).compact();
+        return Jwts.builder().setHeaderParam("alg", "HS256").setHeaderParam("type", "JWT").setExpiration(new Date(System.currentTimeMillis() + refreshTokenValidTime)).signWith(io.jsonwebtoken.SignatureAlgorithm.HS256, SALT.getBytes("UTF-8")).compact();
     }
 
-    // 토큰 정보 반환
+    // 토큰 정보 반환 (토큰에 문제 발생 시 RuntimeError 발생)
     public Map<String, Object> checkAndGetClaims(final String jwt) {
         Jws<Claims> claims = Jwts.parser().setSigningKey(SALT.getBytes()).parseClaimsJws(jwt);
-//        Date expiration = claims.getBody().getExpiration(); // 만료 기간
         log.trace("claims: {}", claims);
-        // Claims는 Map의 구현체이다.
         return claims.getBody();
     }
 }

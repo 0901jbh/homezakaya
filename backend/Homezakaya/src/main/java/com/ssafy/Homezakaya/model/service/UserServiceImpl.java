@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService {
 
     // 유저 상태 수정
     @Override
-    public int modifyUserState(String userId, String state){
+    public int modifyUserState(String userId, String state) {
         return userDao.updateUserState(userId, state);
     }
 

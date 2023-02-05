@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 public class JwtInterceptor implements HandlerInterceptor {
     // header 정보
-    private static final String HEADER_AUTH = "access-token";
+    private static final String HEADER_AUTH = "accessToken";
     @Autowired
     private JwtUtil jwtUtil;
     @Override
@@ -23,12 +23,13 @@ public class JwtInterceptor implements HandlerInterceptor {
         final String token = request.getHeader(HEADER_AUTH);
         System.out.println("token = " + token);
 
-        // 토큰이 있다면
+        // 유효성 검사
         if (token != null) {
             jwtUtil.checkAndGetClaims(token);
             return true;
+        }else{
+            throw new Exception("유효하지 않은 접근이다.");
         }
-        throw new Exception("유효하지 않은 접근이다.");
     }
 }
 

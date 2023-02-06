@@ -129,6 +129,7 @@
       </div>
     </div>
   </div>
+  <div></div>
 </template>
 
 <script>
@@ -138,11 +139,13 @@ import { OpenVidu } from "openvidu-browser";
 import { useStore } from 'vuex';
 import axios from "axios";
 import UserVideo from "./components/UserVideo.vue";
+import { useStore } from 'vuex';
 
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
 const APPLICATION_SERVER_URL = "http://localhost:5000/";
 
+const store = useStore()
 
 export default {
   name: "RoomView",

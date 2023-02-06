@@ -4,6 +4,7 @@ import com.ssafy.Homezakaya.model.dto.UserDto;
 import com.ssafy.Homezakaya.model.service.EmailService;
 import com.ssafy.Homezakaya.model.service.UserServiceImpl;
 import com.ssafy.Homezakaya.util.JwtUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,13 +24,13 @@ import java.util.Map;
 @Slf4j
 @RequestMapping("/api/users")
 @RestController
+@RequiredArgsConstructor
 public class UserController {
-    @Autowired
-    private UserServiceImpl userService;
-    @Autowired
-    private EmailService emailService;
-    @Autowired
-    private JwtUtil jwtUtil;
+
+    private final UserServiceImpl userService;
+    private final JwtUtil jwtUtil;
+    private final EmailService emailService;
+
 
     // 확인용
     private static final String SUCCESS = "success";

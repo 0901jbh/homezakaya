@@ -136,7 +136,6 @@
 import { RouterLink, RouterView } from 'vue-router'
 import RoomHeader from '../menu/RoomHeader.vue'
 import { OpenVidu } from "openvidu-browser";
-import { useStore } from 'vuex';
 import axios from "axios";
 import UserVideo from "./components/UserVideo.vue";
 import { useStore } from 'vuex';
@@ -144,8 +143,6 @@ import { useStore } from 'vuex';
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
 const APPLICATION_SERVER_URL = "http://localhost:5000/";
-
-const store = useStore()
 
 export default {
   name: "RoomView",
@@ -209,9 +206,8 @@ export default {
       console.log("감지지지지지ㅣㅈ" + value);
       if(value){
         this.session.signal({
-            data: JSON.stringify(this.myUserName),  // Any string (optional)
-            to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
-            type: 'smile'             // The type of message (optional)
+            data: JSON.stringify(this.myUserName),
+            type: 'smile'
           })
             .then(() => {
               console.log('웃탐!!');
@@ -225,10 +221,9 @@ export default {
       console.log("감감감감감감감감지" + value);
       if(value){
         this.session.signal({
-          //체크할 닉네임, 말할 문장 담아서 보내기
-          data: JSON.stringify({sentence : this.store.state.gameModule.sentence, speech : this.store.state.gameModule.texts}),  // Any string (optional)
-          to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
-          type: 'detect-audio'             // The type of message (optional)
+          //말할 문장, 말한 문장 담아서 보내기
+          data: JSON.stringify({sentence : this.store.state.gameModule.sentence, speech : this.store.state.gameModule.texts}),
+          type: 'detect-audio'
         })
           .then(() => {
             console.log('끝!!!!');
@@ -249,9 +244,8 @@ export default {
           username: this.myUserName
         }
         this.session.signal({
-          data: JSON.stringify(this.messageData),  // Any string (optional)
-          to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
-          type: 'my-chat'             // The type of message (optional)
+          data: JSON.stringify(this.messageData),
+          type: 'my-chat'
         })
           .then(() => {
             console.log('Message successfully sent');
@@ -331,8 +325,7 @@ export default {
       });
 
       this.session.on('signal:detect-smile', (event) => {
-        this.eventData = JSON.parse(event.data)
-        console.log(this.eventData);
+        this.store.dispatch("gameModule/startSmileGame");
       })
 
       this.session.on('signal:smile', (event) => {
@@ -470,9 +463,7 @@ export default {
           //게임화면 켜지고 게임 룰 설명하고
           //웃음탐지 시그널 보내고
           this.session.signal({
-            data: JSON.stringify(this.messageData),  // Any string (optional)
-            to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
-            type: 'detect-smile'             // The type of message (optional)
+            type: 'detect-smile'
           })
             .then(() => {
               console.log('웃탐시작');
@@ -483,10 +474,9 @@ export default {
             break
         case 2:
           this.session.signal({
-            //체크할 닉네임, 말할 문장 담아서 보내기
-            data: JSON.stringify({username : this.myUserName}),  // Any string (optional)
-            to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
-            type: 'not-drunk'             // The type of message (optional)
+            //체크할 닉네임 보내기
+            data: JSON.stringify({username : this.myUserName}),
+            type: 'not-drunk'
           })
             .then(() => {
               console.log('나안취했어 시작');
@@ -497,9 +487,8 @@ export default {
           break;
         case 3:
           this.session.signal({
-            data: JSON.stringify({topic : this.store.state.gameModule.topic}),  // Any string (optional)
-            to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
-            type: 'random-topic'             // The type of message (optional)
+            data: JSON.stringify({topic : this.store.state.gameModule.topic}),
+            type: 'random-topic'
           })
             .then(() => {
               console.log('랜덤주제');

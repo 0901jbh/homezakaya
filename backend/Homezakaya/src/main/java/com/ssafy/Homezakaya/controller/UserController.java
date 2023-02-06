@@ -1,13 +1,16 @@
 package com.ssafy.Homezakaya.controller;
 
 import com.ssafy.Homezakaya.model.dto.UserDto;
+import com.ssafy.Homezakaya.model.service.EmailService;
 import com.ssafy.Homezakaya.model.service.UserServiceImpl;
 import com.ssafy.Homezakaya.util.JwtUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -16,11 +19,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @RequestMapping("/api/users")
 @RestController
 public class UserController {
     @Autowired
     private UserServiceImpl userService;
+    @Autowired
+    private EmailService emailService;
     @Autowired
     private JwtUtil jwtUtil;
 
@@ -97,6 +103,15 @@ public class UserController {
             return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NOT_FOUND);
         }
 
+    }
+
+    // 메일인증
+    @PostMapping("/login/mailConfirm")
+    @ResponseBody
+    public String mailConfirm(@RequestParam String email) throws MessagingException, UnsupportedEncodingException {
+        String code = emailService.sendSimpleMessage(email);    // 인증 코드 확인해야 함
+        log.info("인증코드 : " + code);
+        return code;
     }
 
     // 매너 도수 갱신

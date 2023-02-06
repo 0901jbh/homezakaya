@@ -1,14 +1,22 @@
 <template>
   <div class="head">
     <div class="title">
-      <div>[아이콘]</div>
-      <div>방제목</div>
+      <div style="margin-right: 4vw;">{{ props.category }}</div>
+      <div>{{ props.title }}</div>
     </div>
-    <div class="info">인원수</div>
+    <div class="info">
+      {{ headCount }} / {{ headCountMax }}
+    </div>
   </div>
 </template>
 
 <script setup>
+const props = defineProps({
+  title: String,
+  category: String,
+  headCount: Number,
+  headCountMax: Number,
+})
 </script>
 
 <style scoped>

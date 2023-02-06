@@ -302,14 +302,12 @@ input[name="tab_item"] {
 /* 선택 된 탭 콘텐츠를 표시 */
 #friend:checked ~ #friend_content {
   display: flex;
-	flex-direction: row;
-	flex-wrap: wrap;
+	flex-direction: column;
 	overflow-y: scroll;
 }
 #user:checked ~ #user_content {
   display: flex;
 	flex-direction: column;
-	flex-wrap: wrap;
 	overflow-y: scroll;
 }
 

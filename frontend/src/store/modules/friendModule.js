@@ -37,7 +37,6 @@ export const friendModule = {
       .then(({status, data}) => {
         if(status == 200){
           context.commit("SET_FRIENDS", data)
-          console.log(data)
           console.log("getFriends Success")
         }
         else if(status == 404){
@@ -153,7 +152,6 @@ export const friendModule = {
           });
           context.commit("SET_SEARCH_USERS", data)
           console.log("searchUser Success");
-          console.log(data)
         }
       }).catch(err => {
         console.log(err);

@@ -1,6 +1,11 @@
 <template>
   <header>
-    <RoomHeader />
+    <RoomHeader
+      :title="title"
+      :category="category"
+      :headCount="headCount"
+      :headCountMax="headCountMax"
+    />
   </header>
   <div id="main-container" class="container">
     <!-- <div id="join" v-if="!session">
@@ -116,7 +121,7 @@
                 style="display: flex; justify-content: space-evenly; align-items: center; margin: 10px;">
                 <p class="friend_nickname" align="right"
                   style="width: 80%; margin: 0; margin-right: 10px; font-size: 20px; color: white; align-self:center;">
-                  {{ friend }}
+                  {{ friend.nickname }}
                 </p>
                 <div class="content_inside" style="width: 20%; text-decoration:none;">
                   Invite
@@ -144,8 +149,6 @@ axios.defaults.headers.post["Content-Type"] = "application/json";
 
 const APPLICATION_SERVER_URL = "http://localhost:5000/";
 
-const store = useStore()
-
 export default {
   name: "RoomView",
 
@@ -156,6 +159,7 @@ export default {
 
   data() {
     return {
+      store: useStore(),
       // OpenVidu objects
       OV: undefined,
       session: undefined,
@@ -165,14 +169,16 @@ export default {
 
       // Join form
       mySessionId: this.$route.params.roomId,
-      myUserId: "id" + Math.floor(Math.random() * 100),
-      myUserName: "nickname" + Math.floor(Math.random() * 100),
+      myUserId: "",
+      myUserName: "",
 
       newMessage: null,
       messages: [],
       messageData: null,
       eventData: null,
 
+      title: "",
+      category: "",
       headCountMax: 8,
       headCount: 1,
 
@@ -400,11 +406,43 @@ export default {
       });
       return response.data; // The token
     },
+
+    async getFriends() {
+      const friends = await this.store.state.friendModule.friends;
+      const parseFriends = JSON.parse(JSON.stringify(friends));
+      this.friends = parseFriends.filter(friend => friend.state === "online");
+    },
+
+    async getRoom() {
+      const roomData = await this.store.dispatch("roomModule/getRoom", this.$route.params.roomId);
+      const room = JSON.parse(JSON.stringify(roomData));
+      this.title = room.title;
+      this.category = room.category;
+      this.headCount = room.personCount;
+      this.headCountMax = room.personLimit;
+    },
+
+    async getUser() {
+      const user = this.store.state.userModule.user;
+      this.myUserId = user.userId;
+      this.myUserName = user.nickname;
+    },
   },
 
   created() {
-    this.joinSession()
+    this.joinSession();
+    this.getFriends();
+    this.getRoom();
+    this.getUser();
   },
+
+  mounted() {
+
+  },
+
+  updated() {
+
+  }
 };
 
 </script>

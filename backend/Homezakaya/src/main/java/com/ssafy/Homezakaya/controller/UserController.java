@@ -124,23 +124,15 @@ public class UserController {
 
             // 토큰 정보 전달
             result.put("accessToken", accessToken);
+            result.put("refreshToken", refreshToken);
             result.put("userId", loginUser.getUserId());
             result.put("nickname", loginUser.getNickname());
             result.put("mannerPoint", loginUser.getMannerPoint());
             result.put("alcoholPoint", loginUser.getAlcoholPoint());
 
-            // 토큰 정보 저장
+            // refresh 토큰 정보 저장
             loginUser.setRefreshToken(refreshToken);
             userService.addTokenInfo(loginUser);
-            Map<String, Object> info = jwtUtil.checkAndGetClaims(accessToken);
-
-            // accessToken 만료일자
-//            String expiration = (String) info.get("exp");
-//            Date expiration =  info.get("exp");
-
-            for (String key : info.keySet()) {
-                System.out.println("Key: " + key + ", Value: " + info.get(key));
-            }
 
             // 유저 state를 online으로 변경
             userService.modifyUserState(user.getUserId(), "online");
@@ -174,11 +166,10 @@ public class UserController {
     @PostMapping("/refresh") // api check
     public ResponseEntity<?> refresh(@RequestBody UserDto user, HttpServletResponse response) throws Exception {
         HashMap<String, Object> result = new HashMap<>();
+        // refresh token 유효성 검사
+        jwtUtil.checkAndGetClaims(user.getRefreshToken());
 
-        if (userService.getUser(user.getUserId()).getRefreshToken() != null) {  // refreshToken 존재 확인
-            // refresh token 유효성 검사
-            jwtUtil.checkAndGetClaims(user.getRefreshToken());
-
+        if (user.getRefreshToken().equals(userService.getUser(user.getUserId()).getRefreshToken())) {
             // 새로운 토큰 발급 및 배포
             String accessToken = jwtUtil.createAccessToken("userInfo", user);
             result.put("access-token", accessToken);
@@ -186,8 +177,6 @@ public class UserController {
             // new accessToken 유효성 검사
             jwtUtil.checkAndGetClaims(accessToken);
 
-            Map<String, Object> info = jwtUtil.checkAndGetClaims(accessToken);
-            result.putAll(info);
         }
         return new ResponseEntity<HashMap<String, Object>>(result, HttpStatus.OK);  // 200
     }

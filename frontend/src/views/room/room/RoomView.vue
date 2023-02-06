@@ -93,7 +93,7 @@
               <div class="content">game</div>
             </template>
             <template #default>
-              <div class="game" v-for="game in games"
+              <div class="game" v-for="game in games" :key="game"
                 style="display: flex; justify-content: space-evenly; align-items: center; margin: 10px;">
                 <p class="game_name" align="right"
                   style="width: 80%; margin: 0; margin-right: 10px; font-size: 20px; color: white; align-self:center;">
@@ -112,7 +112,7 @@
               <div class="content">Invite</div>
             </template>
             <template #default>
-              <div class="online_friend" v-for="friend in friends"
+              <div class="online_friend" v-for="friend in friends" :key="friend"
                 style="display: flex; justify-content: space-evenly; align-items: center; margin: 10px;">
                 <p class="friend_nickname" align="right"
                   style="width: 80%; margin: 0; margin-right: 10px; font-size: 20px; color: white; align-self:center;">
@@ -129,6 +129,7 @@
       </div>
     </div>
   </div>
+  <div></div>
 </template>
 
 <script>
@@ -137,11 +138,13 @@ import RoomHeader from '../menu/RoomHeader.vue'
 import { OpenVidu } from "openvidu-browser";
 import axios from "axios";
 import UserVideo from "./components/UserVideo.vue";
+import { useStore } from 'vuex';
 
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
 const APPLICATION_SERVER_URL = "http://localhost:5000/";
 
+const store = useStore()
 
 export default {
   name: "RoomView",

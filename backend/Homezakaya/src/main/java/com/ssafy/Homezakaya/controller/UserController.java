@@ -4,7 +4,9 @@ import com.ssafy.Homezakaya.model.dto.UserDto;
 import com.ssafy.Homezakaya.model.service.EmailService;
 import com.ssafy.Homezakaya.model.service.UserServiceImpl;
 import com.ssafy.Homezakaya.util.JwtUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,15 +22,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
+@RequiredArgsConstructor
 @RequestMapping("/api/users")
 @RestController
 public class UserController {
-    @Autowired
-    private UserServiceImpl userService;
-    @Autowired
-    private EmailService emailService;
-    @Autowired
-    private JwtUtil jwtUtil;
+
+    private final UserServiceImpl userService;
+    private final JwtUtil jwtUtil;
+    private final EmailService emailService;
 
     // 확인용
     private static final String SUCCESS = "success";
@@ -102,17 +103,46 @@ public class UserController {
             resultMap.put("message", "존재하지 않는 Id");
             return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NOT_FOUND);
         }
-
     }
 
     // 메일인증
     @PostMapping("/login/mailConfirm")
-    @ResponseBody
-    public String mailConfirm(@RequestParam String email) throws MessagingException, UnsupportedEncodingException {
-        String code = emailService.sendSimpleMessage(email);    // 인증 코드 확인해야 함
-        log.info("인증코드 : " + code);
-        return code;
+    public ResponseEntity<?> mailConfirm(@RequestParam String email) throws MessagingException, UnsupportedEncodingException {
+        Map<String, Object> resultMap = new HashMap<>();
+        try {
+            if (userService.findByEmail(email) == null) {
+                String code = emailService.sendSimpleMessage(email);
+                log.info("인증코드 : " + code);
+                resultMap.put("emailCode", code);
+                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            resultMap.put("message", "이미 가입된 이메일 입니다.");
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.ALREADY_REPORTED);
     }
+
+    // id 찾기
+    @GetMapping("/login/findId")
+    public ResponseEntity<?> findId(@RequestParam String email) throws MessagingException, UnsupportedEncodingException {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        try {
+            if (userService.findByEmail(email).getUserId() != null) { // 이메일로 userId 검색
+                String userId = userService.findByEmail(email).getUserId();
+                resultMap.put("userId", userId);
+                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultMap.put("message", "해당 이메일로 가입한 아이디가 존재하지 않습니다.");
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NO_CONTENT);
+    }
+
+
+    // pw 찾기
+
 
     // 매너 도수 갱신
     @PutMapping("/point/{userId}")
@@ -126,7 +156,8 @@ public class UserController {
 
     // 로그인
     @PostMapping("/login")
-    public ResponseEntity<HashMap<String, Object>> login(@RequestBody UserDto user, HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
+    public ResponseEntity<HashMap<String, Object>> login(@RequestBody UserDto user, HttpServletRequest
+            request, HttpServletResponse response) throws UnsupportedEncodingException {
         HashMap<String, Object> result = new HashMap<>();
         HttpStatus status = null;
 

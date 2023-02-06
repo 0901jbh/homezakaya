@@ -105,7 +105,7 @@ public class UserController {
         }
     }
 
-    // 메일인증
+    //    // 메일인증
     @PostMapping("/login/mailConfirm")
     public ResponseEntity<?> mailConfirm(@RequestParam String email) throws MessagingException, UnsupportedEncodingException {
         Map<String, Object> resultMap = new HashMap<>();
@@ -134,14 +134,17 @@ public class UserController {
                 return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            resultMap.put("message", "해당 이메일로 가입한 아이디가 존재하지 않습니다.");
+            e.printStackTrace();    // DB 중복 이메일 오류
         }
-        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NO_CONTENT);
+        resultMap.put("message", "해당 이메일로 가입한 아이디가 존재하지 않습니다.");
+        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-
-    // pw 찾기
+    // pw 찾기 (userId, email 인증)
+//    @GetMapping("/login/findPassword")
+//    public ResponseEntity<?> findPassword(@RequestParam String email) throws MessagingException, UnsupportedEncodingException {
+//
+//    }
 
 
     // 매너 도수 갱신

@@ -42,18 +42,14 @@ dependencies {
 	implementation 'javax.xml.bind:jaxb-api:2.4.0-b180830.0359'
 
 	// email 인증
-	implementation 'org.springframework.boot:spring-boot-starter-mail:2.7.0'
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
 
-	// 빌드 에러 수정
-	sourceSets {
-		main {
-			resources {
-				srcDirs("src/main/resources")
-			}
-		}
-	}
+	// https://mvnrepository.com/artifact/com.sun.activation/javax.activation
+	implementation group: 'com.sun.activation', name: 'javax.activation', version: '1.2.0'
+
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+
 }

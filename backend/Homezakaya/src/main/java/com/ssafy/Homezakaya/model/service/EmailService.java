@@ -20,9 +20,8 @@ import java.util.Random;
 @RequiredArgsConstructor
 @Service
 public class EmailService {
-    
+
     private final JavaMailSender javaMailSender;
-    
     // 인증번호 생성
     private final String ePw = createKey();
 
@@ -56,7 +55,7 @@ public class EmailService {
         StringBuffer key = new StringBuffer();
         Random rnd = new Random();
 
-        for(int i = 0; i <6; i++){  // 6자리 코드
+        for (int i = 0; i < 6; i++) {  // 6자리 코드
             key.append(rnd.nextInt(10));
         }
         return key.toString();
@@ -65,7 +64,6 @@ public class EmailService {
     // 메일 발송
 
     /**
-     * 
      * @param to : 인증번호를 받을 메일 주소
      * @return
      * @throws MessagingException
@@ -73,9 +71,9 @@ public class EmailService {
      */
     public String sendSimpleMessage(String to) throws MessagingException, UnsupportedEncodingException {
         MimeMessage message = createMessage(to);    // 메일로 전송할 내용 담기
-        try{
+        try {
             javaMailSender.send(message);
-        }catch (MailException e){
+        } catch (MailException e) {
             e.printStackTrace();
             throw new IllegalArgumentException();
         }

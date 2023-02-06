@@ -26,6 +26,7 @@ public class EmailConfig {
 
     @Bean
     public JavaMailSender javaMailSender(){
+
         JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
 
         javaMailSender.setHost(host); // smtp 서버 주소

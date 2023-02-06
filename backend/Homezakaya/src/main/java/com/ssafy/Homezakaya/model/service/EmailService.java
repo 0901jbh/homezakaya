@@ -15,7 +15,7 @@ import javax.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
 import java.util.Random;
 
-//@PropertySource("classpath:application.properties")
+@PropertySource("classpath:application.properties")
 @Slf4j
 @RequiredArgsConstructor
 @Service

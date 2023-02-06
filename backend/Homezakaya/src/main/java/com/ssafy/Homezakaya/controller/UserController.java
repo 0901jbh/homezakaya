@@ -22,9 +22,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
+@RequiredArgsConstructor
 @RequestMapping("/api/users")
 @RestController
-@RequiredArgsConstructor
 public class UserController {
 
     private final UserServiceImpl userService;

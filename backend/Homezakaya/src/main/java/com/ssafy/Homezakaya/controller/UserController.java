@@ -31,7 +31,6 @@ public class UserController {
     private final JwtUtil jwtUtil;
     private final EmailService emailService;
 
-
     // 확인용
     private static final String SUCCESS = "success";
     private static final String FAIL = "fail";

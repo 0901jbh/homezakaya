@@ -93,13 +93,13 @@
               <div class="content">game</div>
             </template>
             <template #default>
-              <div class="game" v-for="game in games" :key="game"
+              <div class="game" v-for="idx in 3" :key="idx"
                 style="display: flex; justify-content: space-evenly; align-items: center; margin: 10px;">
                 <p class="game_name" align="right"
                   style="width: 80%; margin: 0; margin-right: 10px; font-size: 20px; color: white; align-self:center;">
-                  {{ game }}
+                  {{ games[idx] }}
                 </p>
-                <div class="content_inside" style="width: 20%; text-decoration:none;">
+                <div @click="startBtn(idx)" class="content_inside" style="width: 20%; text-decoration:none;">
                   start
                 </div>
               </div>
@@ -136,6 +136,7 @@
 import { RouterLink, RouterView } from 'vue-router'
 import RoomHeader from '../menu/RoomHeader.vue'
 import { OpenVidu } from "openvidu-browser";
+import { useStore } from 'vuex';
 import axios from "axios";
 import UserVideo from "./components/UserVideo.vue";
 import { useStore } from 'vuex';
@@ -176,7 +177,7 @@ export default {
       headCountMax: 8,
       headCount: 1,
 
-      games: ['할머니 게임', '나 안취했어', '랜덤 대화주제'],
+      games: ['일반', '할머니 게임', '나 안취했어', '랜덤 대화주제'],
       friends: ['친구1', '친구2', '친구3', '이름이긴친구우우'],
 
       isIHost: true,
@@ -185,21 +186,60 @@ export default {
 
       muteVideo: false,
       muteAudio: false,
+
+      store: useStore(),
+      gameStatus: 0,
     };
   },
 
-  // mounted() {
-  //   if (this.headCount == 1) {
-  //     console.log("혼자왔어요")
-  //     console.log(this.headCount)
-  //     this.isHost = true;
-  //   } else {
-  //     console.log("유어낫언론")
-  //     console.log(this.headCount)
-  //     this.isHost = false;
-  //   }
-  // },
-
+  mounted() {
+    this.store.dispatch("gameModule/getSentence");
+    this.store.dispatch("gameModule/getTopic");
+  },
+  computed: {
+    isSmile() {
+      return this.store.state.gameModule.isSmile;
+    },
+    isFinished() {
+      return this.store.state.gameModule.isFinished;
+    },
+  },
+  watch: {
+    isSmile(value){
+      console.log("감지지지지지ㅣㅈ" + value);
+      if(value){
+        this.session.signal({
+            data: JSON.stringify(this.myUserName),  // Any string (optional)
+            to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+            type: 'smile'             // The type of message (optional)
+          })
+            .then(() => {
+              console.log('웃탐!!');
+            })
+            .catch(error => {
+              console.error(error);
+            })
+      }
+    },
+    isFinished(value){
+      console.log("감감감감감감감감지" + value);
+      if(value){
+        this.session.signal({
+          //체크할 닉네임, 말할 문장 담아서 보내기
+          data: JSON.stringify({sentence : this.store.state.gameModule.sentence, speech : this.store.state.gameModule.texts}),  // Any string (optional)
+          to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+          type: 'detect-audio'             // The type of message (optional)
+        })
+          .then(() => {
+            console.log('끝!!!!');
+            this.store.dispatch("gameModule/getSentence");
+          })
+          .catch(error => {
+            console.error(error);
+          })
+      }
+    },
+  },
   methods: {
 
     sendMessage() {
@@ -222,13 +262,6 @@ export default {
         this.messageData = null
         this.newMessage = null
       }
-    },
-    startBtn() {
-      // this.$store.dispatch("gameModule/startSmileGame");
-      this.$store.dispatch("gameModule/getSpeech");
-    },
-    endBtn() {
-      this.$store.dispatch("gameModule/stopDetect");
     },
     clickMuteVideo() {
       if (this.publisher.stream.videoActive) {
@@ -280,29 +313,56 @@ export default {
         console.warn(exception);
       });
 
+      // Receiver of the message (usually before calling 'session.connect')
+      this.session.on('signal:my-chat', (event) => {
+        console.log(event.data); // Message
+        console.log(event.from); // Connection object of the sender
+        console.log(event.type); // The type of message ("my-chat")
+        this.eventData = JSON.parse(event.data)
+        this.messages.push({
+          id: Date.now(),
+          username: this.eventData.username,
+          text: this.eventData.content,
+        });
+        this.$nextTick(() => {
+          let msgscr = this.$refs.message_scroll;
+          msgscr.scrollTo({ top: msgscr.scrollHeight, behavior: 'smooth' });
+        });
+      });
+
+      this.session.on('signal:detect-smile', (event) => {
+        this.eventData = JSON.parse(event.data)
+        console.log(this.eventData);
+      })
+
+      this.session.on('signal:smile', (event) => {
+        this.store.dispatch("gameModule/stopDetect");
+        console.log(event.data + "님이 웃으셨습니다!!");
+      })
+
+      this.session.on('signal:not-drunk', (event) => {
+        this.eventData = JSON.parse(event.data)
+        console.log(this.eventData.username + "님 말 할 준비 하세용");
+        console.log(this.store.state.gameModule.sentence);
+        if(this.eventData.username == this.myUserName)
+          this.store.dispatch("gameModule/getSpeech");
+      })
+
+      this.session.on('signal:detect-audio', (event) => {
+        this.eventData = JSON.parse(event.data);
+        console.log(this.eventData.sentence + "이 문장을 발음한 결과");
+        console.log(this.eventData.speech + "이것입니다.");
+      })
+
+      this.session.on('signal:random-topic', (event) => {
+        this.eventData = JSON.parse(event.data)
+        console.log(this.eventData.topic);
+      })
+      
       // --- 4) Connect to the session with a valid user token ---
 
       // Get a token from the OpenVidu deployment
       this.getToken(this.mySessionId).then((token) => {
-
-        // Receiver of the message (usually before calling 'session.connect')
-
-        this.session.on('signal:my-chat', (event) => {
-          console.log(event.data); // Message
-          console.log(event.from); // Connection object of the sender
-          console.log(event.type); // The type of message ("my-chat")
-          this.eventData = JSON.parse(event.data)
-          this.messages.push({
-            id: Date.now(),
-            username: this.eventData.username,
-            text: this.eventData.content,
-          });
-          this.$nextTick(() => {
-            let msgscr = this.$refs.message_scroll;
-            msgscr.scrollTo({ top: msgscr.scrollHeight, behavior: 'smooth' });
-          });
-        });
-
         // First param is the token. Second param can be retrieved by every user on event
         // 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
         this.session.connect(token, { clientId: this.myUserId, clientNick: this.myUserName, isHost: this.isIHost })
@@ -399,6 +459,59 @@ export default {
         headers: { 'Content-Type': 'application/json', },
       });
       return response.data; // The token
+    },
+
+
+    //게임 기능
+    startBtn(idx) {
+      this.gameStatus = idx;
+      switch(this.gameStatus){
+        case 1:
+          //게임화면 켜지고 게임 룰 설명하고
+          //웃음탐지 시그널 보내고
+          this.session.signal({
+            data: JSON.stringify(this.messageData),  // Any string (optional)
+            to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+            type: 'detect-smile'             // The type of message (optional)
+          })
+            .then(() => {
+              console.log('웃탐시작');
+            })
+            .catch(error => {
+              console.error(error);
+            })
+            break
+        case 2:
+          this.session.signal({
+            //체크할 닉네임, 말할 문장 담아서 보내기
+            data: JSON.stringify({username : this.myUserName}),  // Any string (optional)
+            to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+            type: 'not-drunk'             // The type of message (optional)
+          })
+            .then(() => {
+              console.log('나안취했어 시작');
+            })
+            .catch(error => {
+              console.error(error);
+            })
+          break;
+        case 3:
+          this.session.signal({
+            data: JSON.stringify({topic : this.store.state.gameModule.topic}),  // Any string (optional)
+            to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+            type: 'random-topic'             // The type of message (optional)
+          })
+            .then(() => {
+              console.log('랜덤주제');
+              this.store.dispatch("gameModule/getTopic");
+            })
+            .catch(error => {
+              console.error(error);
+            })
+            break
+          
+      }
+      
     },
   },
 

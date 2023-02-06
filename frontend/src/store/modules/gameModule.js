@@ -5,8 +5,11 @@ export const gameModule = {
   namespaced: true,
   state: () => ({
     interval: Object,
+    isSmile: false,
     sentence: String,
     topic: String,
+    texts: '',
+    isFinished: false,
   }),
   mutations: {
     SET_INTERVAL(state, payload){
@@ -17,6 +20,15 @@ export const gameModule = {
     },
     SET_TOPIC(state, payload){
       state.topic = payload;
+    },
+    SET_ISSMILE(state, payload){
+      state.isSmile = payload;
+    },
+    SET_TEXTS(state, payload){
+      state.texts = payload;
+    },
+    SET_ISFINISHED(state, payload){
+      state.isFinished = payload;
     },
   },
   getters: {
@@ -51,9 +63,7 @@ export const gameModule = {
     //웃참
     startSmileGame(context, payload) {
       console.log("탐지 시작");
-      const videos = document.getElementsByTagName("video");
-      console.log(videos);
-      const video = videos[0];
+      const video = document.getElementById("local-video-undefined");
 
       Promise.all([
           faceapi.nets.tinyFaceDetector.loadFromUri('/models'),
@@ -63,14 +73,14 @@ export const gameModule = {
       video.addEventListener('play', context.dispatch("startDetect", video));
     },
     startDetect(context, payload){
-      context.dispatch("stopDetect");
+      context.commit("SET_ISSMILE", false);
       context.commit('SET_INTERVAL',setInterval(async () => {
           const detections = await faceapi.detectAllFaces(payload, new faceapi.TinyFaceDetectorOptions()).withFaceExpressions();
           if(detections.length > 0){
               console.log(detections[0].expressions);
               if(detections[0].expressions.happy > 0.3){
                 console.log("웃었땈ㅋ");
-                context.dispatch("stopDetect");
+                context.commit("SET_ISSMILE", true);
               }
           }
       }, 500));
@@ -94,13 +104,14 @@ export const gameModule = {
       };
 
       recognition.onend = function() {
+        context.commit("SET_ISFINISHED", true);
         console.log("감지 끝");
       };
 
       recognition.onresult = function(e) {
-        console.log(e);
         let texts = Array.from(e.results).map(results => results[0].transcript).join("");
         console.log(texts);
+        context.commit("SET_TEXTS", texts);
       }
     }
   }

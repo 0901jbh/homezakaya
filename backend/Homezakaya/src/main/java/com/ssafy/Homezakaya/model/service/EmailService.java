@@ -1,7 +1,9 @@
 package com.ssafy.Homezakaya.model.service;
 
+import com.ssafy.Homezakaya.model.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.mail.MailException;
@@ -25,6 +27,8 @@ public class EmailService {
     private final JavaMailSender javaMailSender;
     // 인증번호 생성
     private final String ePw = createKey();
+
+    private final UserService userService;
 
     @Value("${spring.mail.username}")
     private String id;
@@ -70,7 +74,12 @@ public class EmailService {
         
         // 임시 비밀번호 생성 (UUID)
         String temPw = UUID.randomUUID().toString().replace("-","").substring(0,10);
-        System.out.println(temPw);  // 확인
+        System.out.println("0 : " + temPw);  // 확인
+
+        // DB에 저장
+        UserDto updateUser = userService.findByEmail(to);
+        updateUser.setPassword(temPw);
+        userService.modifyUser(updateUser);
 
         message.addRecipients(MimeMessage.RecipientType.TO, to);
         message.setSubject("임시 비밀번호");

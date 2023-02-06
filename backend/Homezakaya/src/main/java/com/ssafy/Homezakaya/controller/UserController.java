@@ -149,13 +149,12 @@ public class UserController {
         String userId = user.getUserId();
 
         if (userService.getUser(userId) != null && userService.findByEmail(email) != null) {
-            String temPw = emailService.sendSimpleMessageForPassword(email);    // 임시 비밀번호 발송
-            log.info("임시 비밀번호 : " + temPw);
-            resultMap.put("temPw", temPw);
+            emailService.sendSimpleMessageForPassword(email);    // 임시 비밀번호 발송
 
-            // 임시 비밀번호로 update
-            user.setPassword(temPw);
-            userService.modifyUser(user);
+            // 임시 비밀번호 확인
+            String temPw = userService.getUser(userId).getPassword();
+            System.out.println(temPw);
+            resultMap.put("temPw", temPw);
 
             return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
 

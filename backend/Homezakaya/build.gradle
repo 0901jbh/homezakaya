@@ -43,6 +43,15 @@ dependencies {
 
 	// email 인증
 	implementation 'org.springframework.boot:spring-boot-starter-mail:2.7.0'
+
+	// 빌드 에러 수정
+	sourceSets {
+		main {
+			resources {
+				srcDirs("src/main/resources")
+			}
+		}
+	}
 }
 
 tasks.named('test') {

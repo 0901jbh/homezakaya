@@ -31,4 +31,7 @@ public interface UserService {
 
     // 유저 상태 수정
     int modifyUserState(String userId, String state);
+
+    // 아이디, 비밀번호 찾기
+    UserDto findByEmail(String email);
 }

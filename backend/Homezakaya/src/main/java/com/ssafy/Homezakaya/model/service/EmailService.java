@@ -18,17 +18,15 @@ import java.io.UnsupportedEncodingException;
 import java.util.Random;
 import java.util.UUID;
 
-//@PropertySource("classpath:application.properties")
 @Slf4j
 @RequiredArgsConstructor
 @Service
 public class EmailService {
 
     private final JavaMailSender javaMailSender;
-    // 인증번호 생성
-    private final String ePw = createKey();
-
     private final UserService userService;
+    private final String ePw = UUID.randomUUID().toString().replace("-", "").substring(0, 10);
+    private String temPw;
 
     @Value("${spring.mail.username}")
     private String id;
@@ -55,26 +53,13 @@ public class EmailService {
         return message;
     }
 
-    // 인증코드 생성
-    private String createKey() {
-        StringBuffer key = new StringBuffer();
-        Random rnd = new Random();
-
-        for (int i = 0; i < 6; i++) {  // 6자리 코드
-            key.append(rnd.nextInt(10));
-        }
-        return key.toString();
-    }
-
     // 메일 양식 작성
     public MimeMessage createMessageForPassword(String to) throws MessagingException, UnsupportedEncodingException {
-//        log.info("보내는 대상 : " + to);
-//        log.info("인증 번호 : " + ePw);
+
         MimeMessage message = javaMailSender.createMimeMessage();
-        
-        // 임시 비밀번호 생성 (UUID)
-        String temPw = UUID.randomUUID().toString().replace("-","").substring(0,10);
-        System.out.println("0 : " + temPw);  // 확인
+
+        temPw = UUID.randomUUID().toString().replace("-", "").substring(0, 10);
+        log.info(temPw);
 
         // DB에 저장
         UserDto updateUser = userService.findByEmail(to);
@@ -98,8 +83,7 @@ public class EmailService {
     }
 
 
-    // 메일 발송
-
+    // 인증번호 발송
     /**
      * @param to : 인증번호를 받을 메일 주소
      * @return
@@ -116,8 +100,8 @@ public class EmailService {
         }
         return ePw; // 메일로 보냈던 인증 코드 서버로 리턴
     }
-    // 메일 발송
 
+    // 임시 비밀번호 발송
     /**
      * @param to : 인증번호를 받을 메일 주소
      * @return
@@ -132,6 +116,6 @@ public class EmailService {
             e.printStackTrace();
             throw new IllegalArgumentException();
         }
-        return ePw; // 메일로 보냈던 인증 코드 서버로 리턴
+        return temPw; // 메일로 보냈던 인증 코드 서버로 리턴
     }
 }

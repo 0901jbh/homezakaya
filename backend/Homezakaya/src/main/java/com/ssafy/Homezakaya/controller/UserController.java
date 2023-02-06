@@ -117,8 +117,9 @@ public class UserController {
                 return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
             }
         } catch (Exception e) {
-            resultMap.put("message", "이미 가입된 이메일 입니다.");
+            e.printStackTrace();
         }
+        resultMap.put("message", "이미 가입된 이메일 입니다.");
         return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.ALREADY_REPORTED);
     }
 
@@ -148,12 +149,10 @@ public class UserController {
         String email = user.getEmail();
         String userId = user.getUserId();
 
-        if (userService.getUser(userId) != null && userService.findByEmail(email) != null) {
-            emailService.sendSimpleMessageForPassword(email);    // 임시 비밀번호 발송
+        if (userService.getUser(userId) != null && userService.findByEmail(email) != null && userId.equals(userService.findByEmail(email).getUserId())) {
+            String temPw = emailService.sendSimpleMessageForPassword(email);    // 임시 비밀번호 발송
 
-            // 임시 비밀번호 확인
-            String temPw = userService.getUser(userId).getPassword();
-            System.out.println(temPw);
+            log.info("임시비밀번호 : " + temPw);
             resultMap.put("temPw", temPw);
 
             return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
@@ -163,7 +162,6 @@ public class UserController {
             return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
 
     // 매너 도수 갱신
     @PutMapping("/point/{userId}")

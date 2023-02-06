@@ -7,7 +7,7 @@
 </template>
 
 <script setup>
-import { onMounted, defineProps } from "vue";
+import { onMounted } from "vue";
 
 const props = defineProps({
   isEnter:Boolean
@@ -24,7 +24,7 @@ onMounted(() => {
     const head = document.getElementsByClassName('head')[0];
     function makeSnowflake() {
       const snowflake = document.createElement("div");
-      const delay = Math.random() * 5;
+      const delay = Math.random() * 10;
       const initialOpacity = Math.random();
       const duration = Math.random() * 20 + MIN_DURATION;
   

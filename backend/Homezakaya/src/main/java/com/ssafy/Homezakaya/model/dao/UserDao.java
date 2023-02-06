@@ -36,4 +36,7 @@ public interface UserDao {
 
     // 온오프라인 변경
     int updateUserState(String userId, String state);
+
+    // email로 userId 조회
+    UserDto findUserIdByEmail(String email);
 }

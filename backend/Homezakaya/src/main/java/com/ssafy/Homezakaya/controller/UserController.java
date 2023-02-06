@@ -148,7 +148,7 @@ public class UserController {
         String email = user.getEmail();
         String userId = user.getUserId();
 
-        if (userService.getUser(userId) != null && userService.getUser(email) !=null) {
+        if (userService.getUser(userId) != null && userService.findByEmail(email) != null) {
             String temPw = emailService.sendSimpleMessageForPassword(email);    // 임시 비밀번호 발송
             log.info("임시 비밀번호 : " + temPw);
             resultMap.put("temPw", temPw);

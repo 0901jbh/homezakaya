@@ -32,6 +32,7 @@
         :idx="idx"
         :user="user"
         :friends="data.friends"
+        :renderKey="data.renderKey"
       />
 		</div>
 	</div>
@@ -114,6 +115,7 @@ const data = ref({
   searchUsers: [],
   passwordInput: '',
   followRoomId: -1,
+  renderKey: 0,
 })
 
 const store = useStore()
@@ -136,6 +138,8 @@ const searchUser = () => {
     userInput: data.value.userInput,
     userId: store.state.userModule.user.userId,
   })
+  data.value.renderKey += 1
+  console.log(data.value.renderKey)
 }
 
 const userInRoom = (userId) => {

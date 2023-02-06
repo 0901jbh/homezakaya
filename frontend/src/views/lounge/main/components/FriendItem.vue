@@ -44,7 +44,7 @@
 </template>
 
 <script setup>
-import { defineProps, onMounted } from 'vue';
+import { onMounted } from 'vue';
 import { useStore } from 'vuex';
 
 const props = defineProps({

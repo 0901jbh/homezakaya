@@ -38,7 +38,7 @@ const renderKey = ref(0);
 
 const reload = () => {
   renderKey.value += 1
-  console.log("==== start Rerender !! ====")
+  console.log("-- start Rerender !! --")
 }
 
 defineExpose(renderKey)

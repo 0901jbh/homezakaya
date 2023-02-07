@@ -117,8 +117,9 @@ public class UserController {
                 return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
             }
         } catch (Exception e) {
-            resultMap.put("message", "이미 가입된 이메일 입니다.");
+            e.printStackTrace();
         }
+        resultMap.put("message", "이미 가입된 이메일 입니다.");
         return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.ALREADY_REPORTED);
     }
 
@@ -134,15 +135,33 @@ public class UserController {
                 return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            resultMap.put("message", "해당 이메일로 가입한 아이디가 존재하지 않습니다.");
+            e.printStackTrace();    // DB 중복 이메일 오류
         }
-        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NO_CONTENT);
+        resultMap.put("message", "해당 이메일로 가입한 아이디가 존재하지 않습니다.");
+        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    // pw 찾기 (email로 임시 password 전송)
+    @GetMapping("/login/findPassword")
+    public ResponseEntity<?> findPassword(@RequestBody UserDto user) throws MessagingException, UnsupportedEncodingException {
+        Map<String, Object> resultMap = new HashMap<>();
 
-    // pw 찾기
+        String email = user.getEmail();
+        String userId = user.getUserId();
 
+        if (userService.getUser(userId) != null && userService.findByEmail(email) != null && userId.equals(userService.findByEmail(email).getUserId())) {
+            String temPw = emailService.sendSimpleMessageForPassword(email);    // 임시 비밀번호 발송
+
+            log.info("임시비밀번호 : " + temPw);
+            resultMap.put("temPw", temPw);
+
+            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+
+        } else {
+            resultMap.put("message", "가입 정보가 존재하지 않습니다.");
+            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     // 매너 도수 갱신
     @PutMapping("/point/{userId}")

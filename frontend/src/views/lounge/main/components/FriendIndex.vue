@@ -12,9 +12,16 @@
     <div class="tab_content" id="user_content">
       <input class="search-bar" type="text" v-model="data.userInput" @keyup.enter="searchUser"
         placeholder="press enter key for search">
-      <UserItem v-for="(user, idx) in data.searchUsers" :key="idx" :idx="idx" :user="user" :friends="data.friends" />
-    </div>
-  </div>
+      <UserItem 
+        v-for="(user, idx) in data.searchUsers" 
+        :key="idx"
+        :idx="idx"
+        :user="user"
+        :friends="data.friends"
+        :renderKey="data.renderKey"
+      />
+		</div>
+	</div>
   <!-- 따라가기 거부됨 팝업창 -->
   <div class="user-not-in-modal-bg" @click="notInRoomClose"></div>
   <div class="user-not-in-modal-wrap">
@@ -94,6 +101,7 @@ const data = ref({
   searchUsers: [],
   passwordInput: '',
   followRoomId: -1,
+  renderKey: 0,
 })
 
 const store = useStore()
@@ -116,6 +124,8 @@ const searchUser = () => {
     userInput: data.value.userInput,
     userId: store.state.userModule.user.userId,
   })
+  data.value.renderKey += 1
+  console.log(data.value.renderKey)
 }
 
 const userInRoom = (userId) => {
@@ -287,16 +297,14 @@ input[name="tab_item"] {
 /* 선택 된 탭 콘텐츠를 표시 */
 #friend:checked~#friend_content {
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  overflow-y: scroll;
+	flex-direction: column;
+	overflow-y: scroll;
 }
 
 #user:checked~#user_content {
   display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  overflow-y: scroll;
+	flex-direction: column;
+	overflow-y: scroll;
 }
 
 /* 스크롤 가리기 */

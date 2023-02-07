@@ -1,8 +1,6 @@
 <template>
   <div class="head">
-    <div style="height: 100%; width: 100%;">
-      <div class="title" @click="clickTitle">Homezakaya</div>
-    </div>
+    <div class="title" @click="clickTitle">Homezakaya</div>
   </div>
 </template>
 
@@ -80,42 +78,41 @@ const clickTitle = () => {
   src: url('../../../assets/fonts/EastSeaDokdo-Regular.ttf')
 }
 
-.head {
-  position: absolute;
+.head{
+  position: block;
   top: 0px;
-  height: 90vh;
+  height: 57vh;
   width: 100%;
   background: black;
   border-bottom: solid 10vh #6E0000;
   transition: all ease-in 1s;
+  padding-top: 33vh;
 }
 
-.title {
-  margin: 0 33vw;
-  text-align: center;
-  padding-top: 33vh;
+.title{
+  display: block;
+  margin-left:35vw;
+  /* margin-top:33vh; */
+  width: max-content;
   font-family: 'dokdo';
   color: white;
-  font-size: 6rem;
+  font-size: 6vw;
   font-weight: 600;
   transition: all ease-in 1s;
-  /* transition: transform ease-in 0.5s; */
+  transition: transform ease-in 0.3s;
 }
 
 .title:hover {
   color: rgb(247, 225, 197);
   cursor: pointer;
-  /* transform: scale(1.1, 1.1); */
+  transform: scale(1.05, 1.05);
 }
 
 .head-change {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   background-color: black;
   height: 8vh;
   border-bottom: solid 2vh #6E0000;
-  transition: all ease-in 1.5s;
+  transition: all ease-out 1.5s;
   width: 100%;
 }
 
@@ -124,7 +121,8 @@ const clickTitle = () => {
   color: white;
   font-size: 2.5rem;
   font-weight: 600;
+  padding-top: 0.6vh;
   padding-left: 1vw;
-  transition: all ease-in 1.5s;
+  transition: all ease-out 1.5s;
 }
 </style>

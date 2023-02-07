@@ -4,6 +4,7 @@ import com.ssafy.Homezakaya.model.dao.UserDao;
 import com.ssafy.Homezakaya.model.dto.UserDto;
 import com.ssafy.Homezakaya.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;

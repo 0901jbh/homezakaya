@@ -37,7 +37,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeMount, onUpdated, onBeforeUpdate } from "vue";
+import { ref, onMounted, onUpdated } from "vue";
 import { useStore } from 'vuex'
 
 const props = defineProps({

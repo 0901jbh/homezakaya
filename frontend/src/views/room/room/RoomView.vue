@@ -342,11 +342,12 @@ export default {
       })
 
       this.session.on('signal:not-drunk', (event) => {
-        this.eventData = JSON.parse(event.data)
+        this.eventData = JSON.parse(event.data);
         console.log(this.eventData.username + "님 말 할 준비 하세용");
         console.log(this.store.state.gameModule.sentence);
-        if(this.eventData.username == this.myUserName)
+        if(this.eventData.username == this.myUserName){
           this.store.dispatch("gameModule/getSpeech");
+        }
       })
 
       this.session.on('signal:detect-audio', (event) => {
@@ -481,6 +482,7 @@ export default {
       const user = this.store.state.userModule.user;
       this.myUserId = user.userId;
       this.myUserName = user.nickname;
+    },
 
     //게임 기능
     startBtn(idx) {

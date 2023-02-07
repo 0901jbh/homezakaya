@@ -1,82 +1,61 @@
 import axios from "axios";
+import jwtDecode from "jwt-decode";
 
 export const userModule = {
   namespaced: true,
   state: () => ({
-    // users: [], // 전체 유저 필요 X (친구에서 필요,, )
-    user: {
-      userId: "power916",
-      nickname: "태형",
-      mannerPoint: 3,
-      alcoholPoint: 7,
-    }, // user 전체 정보
-    loginUser: {}, // loginUser 정보
-    token: null, // accessToken 정보
-    tokenExpired: null, // token 만료 시간
+    // user: {
+    //   userId: "power916",
+    //   nickname: "태형",
+    //   mannerPoint: 3,
+    //   alcoholPoint: 7,
+    // }, // user 전체 정보
+
     isLogin: false, // 로그인상태
+    isLoginError: false,
+    userInfo: null,
+    isValidToken: false, // accessToken 정보
   }),
-  mutations: {
-    SET_USER(state, payload) {
-      state.user = payload;
+  getters: {
+    checkUserInfo: function (state) {
+      return state.userInfo;
     },
-    // 토큰 설정
-    SET_TOKEN(state, payload) {
-      state.token = payload;
-    },
-
-    // 로그인
-    LOGIN(state, payload) {
-      state.isLogin = true;
-      // state.loginUser = {
-      //   nickname: sessionStorage.getItem("nickname"),
-      //   mannerPoint: sessionStorage.getItem("mannerPoint"),
-      //   alcoholPoint: sessionStorage.getItem("alcoholPoint"),
-      // };
-      // state.user = state.loginUser;
-      state.user = user;
-    },
-
-    // 로그아웃
-    LOGOUT(state) {
-      // state.loginUser = null;
-      // state.user = state.loginUser;
-      state.isLogin = false;
-      state.user = user;
-    },
-
-    // 탈퇴
-    DELETE_USER(state) {
-      // state.isLogin = true;
-      state.loginUser = null;
-      state.user = state.loginUser;
-    },
-
-    // 회원정보 수정(본인)
-    UPDATE_USER(state, payload) {
-      state.user = payload;
-      state.loginUser = {
-        nickname: sessionStorage.getItem("nickname"),
-        email: sessionStorage.getItem("email"),
-        birthDate: sessionStorage.getItem("birthDate"),
-        alcoholPoint: sessionStorage.getItem("alcoholPoint"),
-      };
+    checkToken: function (state) {
+      return state.isValidToken;
     },
   },
-  getters: {
-    // 호출해야될 변수 : token, userInfo
-    // GET_TOKEN(state, token) {
-    //   state.token = token;
-    // },
-    GET_USER(state, user) {
-      state.user = user;
+  mutations: {
+    SET_IS_LOGIN: (state, isLogin) => {
+      state.isLogin = isLogin;
     },
-
-    GET_TOKEN(state, token) {
-      state.token = token;
+    SET_IS_LOGIN_ERROR: (state, isLoginError) => {
+      state.isLoginError = isLoginError;
+    },
+    SET_IS_VALID_TOKEN: (state, isValidToken) => {
+      state.isValidToken = isValidToken;
+    },
+    SET_USER_INFO: (state, userInfo) => {
+      state.isLogin = true;
+      state.userInfo = userInfo;
     },
   },
 
   actions: {
+    // 회원 가입 - ok
+    createUser(context, payload) {
+      return axios
+        .post(`/api/users`, payload)
+        .then(({ status, data }) => {
+          if (status == 201) {
+            console.log("회원가입 성공");
+          }
+        })
+        .catch((err) => {
+          if (err.response.status === 409) {
+            console.log("이미 존재하는 유저입니다."); // 콘솔에
+          }
+        });
+    },
     // id 중복확인 - ok
     idcheck(context, payload) {
       return axios
@@ -113,51 +92,18 @@ export const userModule = {
         });
     },
 
-    // 회원 가입 - ok
-    createUser(context, payload) {
-      return axios.post(`/api/users`, payload).then(({ status, data }) => {
-        if (status == 200) {
-          console.log("회원가입 성공"); // console 출력 안됨
-          context.commit("SET_USER", data);
-        }
-      });
-    },
-
-    // 회원 정보 조회 (내정보) - ok
-    getUser(context, payload) {
-      axios
-        .get(`/api/users/${payload}`)
-        .then(({ status, data }) => {
-          if (status == 200) {
-            console.log(data);
-            context.commit("SET_USER", data);
-          }
-        })
-        .catch((err) => {
-          if (err.response.status == 404) {
-            console.log("존재하지 않는 회원 입니다.");
-          }
-        });
-    },
-
     // 회원 정보 수정 - ok
     updateUser(context, payload) {
       axios
         .put(`/api/users`, payload)
         .then(({ status, data }) => {
           if (status == 200) {
-            sessionStorage.setItem("nickname", payload.nickname);
-            sessionStorage.setItem("password", payload.password);
-            sessionStorage.setItem("email", payload.email); // 표시할건지?
-            sessionStorage.setItem("mannerPoint", payload.mannerPoint);
-            sessionStorage.setItem("alcoholPoint", payload.alcoholPoint);
-
             console.log("정보 수정 완료");
-            context.commit("UPDATE_USER", data);
+            context.commit("SET_USER_INFO", data);
           }
         })
         .catch((err) => {
-          if (err.status == 404) {
+          if (err.response.status == 404) {
             console.log("유저없음");
           }
         });
@@ -169,18 +115,31 @@ export const userModule = {
         .post(`/api/users/login`, payload)
         .then(({ status, data }) => {
           if (status == 200) {
-            sessionStorage.setItem("userId", payload.userId);
-            sessionStorage.setItem("nickname", data.nickname);
-            sessionStorage.setItem("mannerPoint", data.mannerPoint);
-            sessionStorage.setItem("alcoholPoint", data.alcoholPoint);
-            sessionStorage.setItem("access-token", data.accessToken);
+            let accessToken = data["access-token"];
+            let refreshToken = data["refresh-token"];
+
+            console.log(data);
+            // console.log(
+            //   "login success token created!!!! >> ",
+            //   accessToken,
+            //   refreshToken
+            // );
+            context.commit("SET_IS_LOGIN", true);
+            context.commit("SET_IS_LOGIN_ERROR", false);
+            context.commit("SET_IS_VALID_TOKEN", true);
+
+            sessionStorage.setItem("access-token", accessToken);
+            sessionStorage.setItem("refresh-token", refreshToken);
 
             console.log("로그인 성공");
-            context.commit("LOGIN");
+          } else {
+            commit("SET_IS_LOGIN", false);
+            commit("SET_IS_LOGIN_ERROR", true);
+            commit("SET_IS_VALID_TOKEN", false);
           }
         })
         .catch((err) => {
-          if (err.status == 401) {
+          if (err.response.status == 401) {
             console.log("로그인 실패");
           }
         });
@@ -188,19 +147,106 @@ export const userModule = {
 
     // 로그아웃 (세션 날리기) -  ok
     userLogout(context, payload) {
-      axios.get(`/api/users/logout/${payload}`).then(({ status, data }) => {
-        if (status == 200) {
-          sessionStorage.clear();
+      axios
+        .get(`/api/users/logout/${payload}`)
+        .then(({ status, data }) => {
+          if (status == 200) {
+            context.commit("SET_IS_LOGIN", false);
+            context.commit("SET_USER_INFO", null);
+            context.commit("SET_IS_VALID_TOKEN", false);
 
-          context.commit("DELETE_USER");
-          console.log("로그아웃 완료");
-        }
-      });
+            sessionStorage.clear();
+
+            console.log("로그아웃 완료");
+          } else {
+            console.log("유저 정보 없음");
+          }
+        })
+        .catch((err) => {
+          if (err.response.status == 401) {
+            console.log("로그아웃 실패");
+          }
+        });
     },
 
-    // 로그인 토큰 갱신 (새로고침 시 검증)
-    tokenRefresh(context, payload) {
-      axios.get(`/api/users/refresh`);
+    // 회원 정보 조회 (내정보) - ok
+    getUserInfo(context, payload) {
+      let decodedToken = jwtDecode(payload); // 토큰 정보
+      console.log("getUserInfo() decodeToken :: ", decodedToken);
+      axios
+        .get(`/api/users/${decodedToken.userId}`)
+        .then(({ status, data }) => {
+          if (status == 200) {
+            context.commit("SET_USER_INFO", response.data.userInfo); //userInfo에 저장
+          } else {
+            console.log(response.data);
+            console.error("Failed to retrieve user information");
+          }
+        })
+        .catch((err) => {
+          if (err.response.status == 401) {
+            console.log("인증되지 않은 토큰");
+          }
+        });
+    },
+
+    // token refresh
+    tokenRegeneration(context, payload) {
+      console.log(
+        "토큰 재발급 >> 기존 토큰 정보 : {}",
+        sessionStorage.getItem("access-token")
+      );
+      axios
+        .post(`/api/users/refresh`, payload)
+        .then(({ status, data }) => {
+          console.log(status);
+          if (status == 200) {
+            let accessToken = data["access-token"];
+            console.log("재발급 완료 >> 새로운 토큰 : {}", accessToken);
+            sessionStorage.setItem("access-token", accessToken);
+            context.commit("SET_IS_VALID_TOKEN", true);
+          }
+        })
+        .catch((err) => {
+          if (err.status == 401) {
+            console.log("토큰 갱신 실패");
+            userLogout(
+              state.userInfo.userId,
+              ({ data }) => {
+                if (data.message === 200) {
+                  console.log("리프레시 토큰 제거 성공");
+                } else {
+                  console.log("리프레시 토큰 제거 실패");
+                }
+                alert("RefreshToken 기간 만료!!! 다시 로그인해 주세요.");
+                context.commit("SET_IS_LOGIN", false);
+                context.commit("SET_USER_INFO", null);
+                context.commit("SET_IS_VALID_TOKEN", false);
+                router.push({ name: "login" });
+              },
+              (error) => {
+                console.log(error);
+                context.commit("SET_IS_LOGIN", false);
+                context.commit("SET_USER_INFO", null);
+              }
+            );
+          }
+        });
+    },
+
+    // 매너도수
+    updateMannerPoint(context, payload) {
+      return axios
+        .put(`/api/users/point/${payload.userId}`, payload)
+        .then(({ status, data }) => {
+          if (status == 200) {
+            console.log(data);
+            console.log("매너도수 평가 완료");
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
 
     // 회원 탈퇴 (db에서 삭제) - ok
@@ -209,10 +255,13 @@ export const userModule = {
         .delete(`/api/users/${payload}`)
         .then(({ status, data }) => {
           if (status == 200) {
-            sessionStorage.clear;
+            context.commit("SET_IS_LOGIN", false);
+            context.commit("SET_USER_INFO", null);
+            context.commit("SET_IS_VALID_TOKEN", false);
+
+            sessionStorage.clear();
 
             console.log("회원 탈퇴 성공");
-            context.commit("DELETE_USER");
           }
         })
         .catch((err) => {
@@ -220,26 +269,6 @@ export const userModule = {
           if (err.response.status == 404) {
             console.log("존재하지 않는 ID");
           }
-        });
-    },
-
-    // 매너도수 로직 고치기 : from_user, to_user 필요?
-    // 매너도수 평가 : 타인
-    // 매너도수 표시 : 나
-
-    // 매너도수 - userId : 평가받는(나) 유저
-    updateMannerPoint(context, payload) {
-      axios
-        .put(`/api/point/${payload.userId}`, payload)
-        .then(({ status, data }) => {
-          if (status == 200) {
-            console.log(data);
-            context.commit("EVALUATE", data); // userId, mannerPoint
-          }
-        })
-        .catch((err) => {
-          // 임시
-          console.log("err");
         });
     },
   },

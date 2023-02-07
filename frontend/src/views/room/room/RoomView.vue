@@ -481,6 +481,7 @@ export default {
       const user = this.store.state.userModule.user;
       this.myUserId = user.userId;
       this.myUserName = user.nickname;
+    },
 
     //게임 기능
     startBtn(idx) {
@@ -498,7 +499,7 @@ export default {
             .catch(error => {
               console.error(error);
             })
-            break
+          break;
         case 2:
           this.session.signal({
             //체크할 닉네임 보내기
@@ -524,8 +525,7 @@ export default {
             .catch(error => {
               console.error(error);
             })
-            break
-          
+          break;
       }
       
     },

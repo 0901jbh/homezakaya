@@ -39,6 +39,10 @@ public class UserController {
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody UserDto user) {
         Map<String, Object> resultMap = new HashMap<>();
+        if (userService.getUser(user.getUserId()) != null) {
+            resultMap.put("message", "중복된 id입니다.");
+            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.CONFLICT); // 409
+        }
         userService.createUser(user);
         resultMap.put("message", SUCCESS);
         return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.CREATED);
@@ -117,8 +121,9 @@ public class UserController {
                 return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
             }
         } catch (Exception e) {
-            resultMap.put("message", "이미 가입된 이메일 입니다.");
+            e.printStackTrace();
         }
+        resultMap.put("message", "이미 가입된 이메일 입니다.");
         return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.ALREADY_REPORTED);
     }
 
@@ -134,15 +139,33 @@ public class UserController {
                 return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            resultMap.put("message", "해당 이메일로 가입한 아이디가 존재하지 않습니다.");
+            e.printStackTrace();    // DB 중복 이메일 오류
         }
-        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NO_CONTENT);
+        resultMap.put("message", "해당 이메일로 가입한 아이디가 존재하지 않습니다.");
+        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    // pw 찾기 (email로 임시 password 전송)
+    @GetMapping("/login/findPassword")
+    public ResponseEntity<?> findPassword(@RequestBody UserDto user) throws MessagingException, UnsupportedEncodingException {
+        Map<String, Object> resultMap = new HashMap<>();
 
-    // pw 찾기
+        String email = user.getEmail();
+        String userId = user.getUserId();
 
+        if (userService.getUser(userId) != null && userService.findByEmail(email) != null && userId.equals(userService.findByEmail(email).getUserId())) {
+            String temPw = emailService.sendSimpleMessageForPassword(email);    // 임시 비밀번호 발송
+
+            log.info("임시비밀번호 : " + temPw);
+            resultMap.put("temPw", temPw);
+
+            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+
+        } else {
+            resultMap.put("message", "가입 정보가 존재하지 않습니다.");
+            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     // 매너 도수 갱신
     @PutMapping("/point/{userId}")
@@ -169,12 +192,8 @@ public class UserController {
             String refreshToken = jwtUtil.createRefreshToken("userInfo", user);
 
             // 토큰 정보 전달
-            result.put("accessToken", accessToken);
-            result.put("refreshToken", refreshToken);
-            result.put("userId", loginUser.getUserId());
-            result.put("nickname", loginUser.getNickname());
-            result.put("mannerPoint", loginUser.getMannerPoint());
-            result.put("alcoholPoint", loginUser.getAlcoholPoint());
+            result.put("access-token", accessToken);
+            result.put("refresh-token", refreshToken);
 
             // refresh 토큰 정보 저장
             loginUser.setRefreshToken(refreshToken);
@@ -209,7 +228,7 @@ public class UserController {
     }
 
     // 토큰 갱신 (session에서 정보 받아와야 함)
-    @PostMapping("/refresh") // api check
+    @PostMapping("/refresh")
     public ResponseEntity<?> refresh(@RequestBody UserDto user, HttpServletResponse response) throws Exception {
         HashMap<String, Object> result = new HashMap<>();
         // refresh token 유효성 검사

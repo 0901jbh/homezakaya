@@ -1,79 +1,18 @@
 <template>
   <header>
-    <RoomHeader />
+    <RoomHeader
+      :title="title"
+      :category="category"
+      :headCount="headCount"
+      :headCountMax="headCountMax"
+    />
   </header>
   <div id="main-container" class="container">
-    <!-- <div id="join" v-if="!session">
-      <div id="join-dialog" class="jumbotron vertical-center">
-        <h1>Join a video session</h1>
-        <div class="form-group">
-          <p>
-            <label>Participant</label>
-            <input v-model="myUserName" class="form-control" type="text" required />
-          </p>
-          <p>
-            <label>Session</label>
-            <input v-model="mySessionId" class="form-control" type="text" required />
-          </p>
-          <p class="text-center">
-            <button class="btn btn-lg btn-success" @click="joinSession()">
-              Join!
-            </button>
-          </p>
-        </div>
-      </div>
-    </div> -->
-
-    <!-- <div id="session" v-if="session"> -->
     <div id="session">
       <div id="container">
         <user-video :stream-manager="mainStreamManager" />
       </div>
-      <!-- <div id="container" style="display: flex;">
-        <div id="video-container" :class="{
-          'under-one': this.headCount == 1,
-          'under-two': this.headCount == 2,
-          'under-four': this.headCount == 3 || this.headCount == 4,
-          'under-six': this.headCount == 5 || this.headCount == 6,
-          'under-eight': this.headCount == 7 || this.headCount == 8,
-        }">
-          <user-video class="video" :stream-manager="publisher"
-            @click.native="updateMainVideoStreamManager(publisher)" />
-          <user-video class="video" v-for="sub in subscribers" :key="sub.stream.connection.connectionId"
-            :stream-manager="sub" @click.native="updateMainVideoStreamManager(sub)" />
-        </div>
-        <div id="chatting-container" class="col-md-4">
-          <div id="chats" ref="message_scroll">
-            <div v-for="message in messages" :key="message.id">
-              <div id="msg_mine" class="msg_box" v-if="message.username == myUserName">
-                <div class="username">
-                  {{ message.username }}
-                </div>
-                <div class="msg">
-                  {{ message.text }}
-                </div>
-              </div>
-              <div id="msg_not_mine" class="msg_box" v-else>
-                <div class="username">
-                  {{ message.username }}
-                </div>
-                <div class="msg">
-                  {{ message.text }}
-                </div>
-              </div>
-            </div>
-          </div>
-          <form id="send-form" @submit.prevent="sendMessage">
-            <input v-model="newMessage" placeholder="Type your message here" />
-            <img src="../../../assets/message.png" alt="message img" @click="sendMessage"
-              style="width:30px; height:30px;">
-          </form>
-        </div>
-      </div> -->
       <div id="option-footer">
-        <!-- <h1 id="session-title">{{ mySessionId }}</h1> -->
-        <!-- <input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="leaveSession"
-          value="Leave session" /> -->
         <div id="mute">
           <div class="onoff" @click="clickMuteVideo">
             <img v-if="videoActive" src="../../../assets/video_on.png" alt="video on img" />
@@ -96,11 +35,11 @@
 </template>
 
 <script>
-import { RouterLink, RouterView } from 'vue-router'
 import RoomHeader from '../menu/RoomHeader.vue'
 import { OpenVidu } from "openvidu-browser";
 import axios from "axios";
 import UserVideo from "./components/UserVideo.vue";
+import { useStore } from 'vuex';
 
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
@@ -116,6 +55,7 @@ export default {
 
   data() {
     return {
+      store: useStore(),
       // OpenVidu objects
       OV: undefined,
       session: undefined,
@@ -124,54 +64,23 @@ export default {
       // subscribers: [],
 
       // Join form
-      mySessionId: this.$route.params.roomId,
-      myUserId: "id" + Math.floor(Math.random() * 100),
-      myUserName: "nickname" + Math.floor(Math.random() * 100),
+      roomId: this.$route.params.roomId,
+      myUserName: "",
 
-      isIHost: false,
+      title: "",
+      category: "",
+      headCountMax: Number,
+      headCount: Number,
+
       videoActive: false,
       audioActive: false,
     };
   },
 
-  // mounted() {
-  //   if (this.headCount == 1) {
-  //     console.log("혼자왔어요")
-  //     console.log(this.headCount)
-  //     this.isHost = true;
-  //   } else {
-  //     console.log("유어낫언론")
-  //     console.log(this.headCount)
-  //     this.isHost = false;
-  //   }
-  // },
-
   methods: {
     enterRoom() {
-      this.$router.push({ name: 'room', params: { roomId: this.mySessionId } })
+      this.$router.push({ name: 'room', params: { roomId: this.roomId }, query: { video : this.videoActive, audio : this.audioActive } })
     },
-
-    // sendMessage() {
-    //   if (this.newMessage) {
-    //     this.messageData = {
-    //       content: this.newMessage,
-    //       username: this.myUserName
-    //     }
-    //     this.session.signal({
-    //       data: JSON.stringify(this.messageData),  // Any string (optional)
-    //       to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
-    //       type: 'my-chat'             // The type of message (optional)
-    //     })
-    //       .then(() => {
-    //         console.log('Message successfully sent');
-    //       })
-    //       .catch(error => {
-    //         console.error(error);
-    //       })
-    //     this.messageData = null
-    //     this.newMessage = null
-    //   }
-    // },
 
     clickMuteVideo() {
       if (this.publisher.stream.videoActive) {
@@ -194,83 +103,31 @@ export default {
     },
 
     joinSession() {
-      // --- 1) Get an OpenVidu object ---
       this.OV = new OpenVidu();
 
-      // --- 2) Init a session ---
       this.session = this.OV.initSession();
 
-      // --- 3) Specify the actions when events take place in the session ---
-
-      // On every new Stream received...
-      // this.session.on("streamCreated", ({ stream }) => {
-      //   const subscriber = this.session.subscribe(stream);
-      //   this.subscribers.push(subscriber);
-      //   this.headCount++;
-      // });
-
-      // On every Stream destroyed...
-      // this.session.on("streamDestroyed", ({ stream }) => {
-      //   const index = this.subscribers.indexOf(stream.streamManager, 0);
-      //   if (index >= 0) {
-      //     this.subscribers.splice(index, 1);
-      //   }
-      //   this.headCount--;
-      // });
-
-      // On every asynchronous exception...
       this.session.on("exception", ({ exception }) => {
         console.warn(exception);
       });
 
-      // --- 4) Connect to the session with a valid user token ---
-
-      // Get a token from the OpenVidu deployment
-      this.getToken(this.myUserId).then((token) => {
-
-        // Receiver of the message (usually before calling 'session.connect')
-
-        // this.session.on('signal:my-chat', (event) => {
-        //   console.log(event.data); // Message
-        //   console.log(event.from); // Connection object of the sender
-        //   console.log(event.type); // The type of message ("my-chat")
-        //   this.eventData = JSON.parse(event.data)
-        //   this.messages.push({
-        //     id: Date.now(),
-        //     username: this.eventData.username,
-        //     text: this.eventData.content,
-        //   });
-        //   this.$nextTick(() => {
-        //     let msgscr = this.$refs.message_scroll;
-        //     msgscr.scrollTo({ top: msgscr.scrollHeight, behavior: 'smooth' });
-        //   });
-        // });
-
-        // First param is the token. Second param can be retrieved by every user on event
-        // 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
-        this.session.connect(token, { clientId: this.myUserId, clientNick: this.myUserName, isHost: this.isIHost })
+      this.getToken().then((token) => {
+        this.session.connect(token, { username: this.myUserName })
           .then(() => {
 
-            // --- 5) Get your own camera stream with the desired properties ---
-
-            // Init a publisher passing undefined as targetElement (we don't want OpenVidu to insert a video
-            // element: we will manage it on our own) and with the desired properties
             let publisher = this.OV.initPublisher(undefined, {
-              audioSource: undefined, // The source of audio. If undefined default microphone
-              videoSource: undefined, // The source of video. If undefined default webcam
-              publishAudio: false, // Whether you want to start publishing with your audio unmuted or not
-              publishVideo: false, // Whether you want to start publishing with your video enabled or not
-              resolution: "640x480", // The resolution of your video
-              frameRate: 30, // The frame rate of your video
-              insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
-              mirror: false, // Whether to mirror your local video or not
+              audioSource: undefined,
+              videoSource: undefined,
+              publishAudio: this.videoActive,
+              publishVideo: this.audioActive,
+              resolution: "640x480",
+              frameRate: 30,
+              insertMode: "APPEND",
+              mirror: false,
             });
 
-            // Set the main video in the page to display our webcam and store our Publisher
             this.mainStreamManager = publisher;
             this.publisher = publisher;
-
-            // --- 6) Publish your stream ---
 
             this.session.publish(this.publisher);
           })
@@ -283,64 +140,52 @@ export default {
     },
 
     leaveSession() {
-      // --- 7) Leave the session by calling 'disconnect' method over the Session object ---
       if (this.session) this.session.disconnect();
 
-      // Empty all properties...
       this.session = undefined;
       this.mainStreamManager = undefined;
       this.publisher = undefined;
-      // this.subscribers = [];
       this.OV = undefined;
 
-      // Remove beforeunload listener
       window.removeEventListener("beforeunload", this.leaveSession);
 
       this.$router.push({ name: 'rooms' });
     },
 
-    updateMainVideoStreamManager(stream) {
-      if (this.mainStreamManager === stream) return;
-      this.mainStreamManager = stream;
-    },
-
-    /**
-     * --------------------------------------------
-     * GETTING A TOKEN FROM YOUR APPLICATION SERVER
-     * --------------------------------------------
-     * The methods below request the creation of a Session and a Token to
-     * your application server. This keeps your OpenVidu deployment secure.
-     * 
-     * In this sample code, there is no user control at all. Anybody could
-     * access your application server endpoints! In a real production
-     * environment, your application server must identify the user to allow
-     * access to the endpoints.
-     * 
-     * Visit https://docs.openvidu.io/en/stable/application-server to learn
-     * more about the integration of OpenVidu in your application server.
-     */
     async getToken(myUserId) {
       const sessionId = await this.createSession(myUserId);
       return await this.createToken(sessionId);
     },
 
     async createSession(sessionId) {
-      const response = await axios.post(APPLICATION_SERVER_URL + 'api/sessions', { customSessionId: sessionId }, {
-        headers: { 'Content-Type': 'application/json', },
-      });
+      const response = await axios.post(APPLICATION_SERVER_URL + 'api/sessions', { customSessionId: sessionId });
       return response.data; // The sessionId
     },
 
     async createToken(sessionId) {
-      const response = await axios.post(APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections', {}, {
-        headers: { 'Content-Type': 'application/json', },
-      });
+      const response = await axios.post(APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections');
       return response.data; // The token
+    },
+
+    async getRoom() {
+      const roomData = await this.store.dispatch("roomModule/getRoom", this.$route.params.roomId);
+      const room = JSON.parse(JSON.stringify(roomData));
+      this.title = room.title;
+      this.category = room.category;
+      this.headCount = room.personCount;
+      this.headCountMax = room.personLimit;
+    },
+
+    getUser() {
+      const user = this.store.state.userModule.user;
+      this.myUserName = user.nickname;
     },
   },
 
   created() {
-    this.joinSession()
+    this.joinSession();
+    this.getRoom();
+    this.getUser();
   },
 };
 

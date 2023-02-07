@@ -8,32 +8,8 @@
     />
   </header>
   <div id="main-container" class="container">
-    <!-- <div id="join" v-if="!session">
-      <div id="join-dialog" class="jumbotron vertical-center">
-        <h1>Join a video session</h1>
-        <div class="form-group">
-          <p>
-            <label>Participant</label>
-            <input v-model="myUserName" class="form-control" type="text" required />
-          </p>
-          <p>
-            <label>Session</label>
-            <input v-model="mySessionId" class="form-control" type="text" required />
-          </p>
-          <p class="text-center">
-            <button class="btn btn-lg btn-success" @click="joinSession()">
-              Join!
-            </button>
-          </p>
-        </div>
-      </div>
-    </div> -->
 
-    <!-- <div id="session" v-if="session"> -->
     <div id="session">
-      <!-- <div id="main-video" class="col-md-6">
-        <user-video :stream-manager="mainStreamManager" />
-      </div> -->
       <div id="container" style="display: flex;">
         <div id="video-container" :class="{
           'under-one': this.headCount == 1,
@@ -42,9 +18,9 @@
           'under-six': this.headCount == 5 || this.headCount == 6,
           'under-eight': this.headCount == 7 || this.headCount == 8,
         }">
-          <user-video class="video" :stream-manager="publisher" my-video="true" :im-host="isIHost" />
+          <user-video class="video" :stream-manager="publisher" my-video="true" />
           <user-video class="video" v-for="sub in subscribers" :key="sub.stream.connection.connectionId"
-            :stream-manager="sub" my-video="false" :im-host="isIHost" />
+            :stream-manager="sub" my-video="false" @kickUser="kickUser" @changeHost="changeHost"/>
         </div>
         <div id="chatting-container" class="col-md-4">
           <div id="chats" ref="message_scroll">
@@ -77,23 +53,20 @@
         </div>
       </div>
       <div id="option-footer">
-        <!-- <h1 id="session-title">{{ mySessionId }}</h1> -->
-        <!-- <input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="leaveSession"
-          value="Leave session" /> -->
         <div id="mute">
           <div class="onoff" @click="clickMuteVideo">
-            <img v-if="muteVideo" src="../../../assets/video_on.png" alt="video on img" />
+            <img v-if="videoActive" src="../../../assets/video_on.png" alt="video on img" />
             <img v-else src="../../../assets/video_off.png" alt="video on img" />
           </div>
           <div class="onoff" @click="clickMuteAudio">
-            <img v-if="muteAudio" src="../../../assets/audio_on.png" alt="audio on img" />
+            <img v-if="audioActive" src="../../../assets/audio_on.png" alt="audio on img" />
             <img v-else src="../../../assets/audio_off.png" alt="audio on img" />
           </div>
         </div>
         <div id="btns">
           <div class="content" @click="infoOpen">Info</div>
-          <el-popover v-if="isIHost" :width="300"
-            popper-style="z-index:999; background: rgb(235 153 153); border: rgb(235 153 153); box-shadow: rgb(14 18 22 / 35%) 0px 10px 38px -10px, rgb(14 18 22 / 20%) 0px 10px 20px -15px; padding: 15px;"
+          <el-popover v-if="myUserId == hostId" :width="300"
+            popper-style="background: rgb(235 153 153); border: rgb(235 153 153); box-shadow: rgb(14 18 22 / 35%) 0px 10px 38px -10px, rgb(14 18 22 / 20%) 0px 10px 20px -15px; padding: 15px;"
             trigger="click">
             <template #reference>
               <div class="content">game</div>
@@ -118,6 +91,9 @@
               <div class="content">Invite</div>
             </template>
             <template #default>
+              <div v-if=" friends.length == 0 ">
+                초대 가능한 친구가 없어요
+              </div>
               <div class="online_friend" v-for="friend in friends" :key="friend"
                 style="display: flex; justify-content: space-evenly; align-items: center; margin: 10px;">
                 <p class="friend_nickname" align="right"
@@ -168,7 +144,6 @@
 </template>
 
 <script>
-import { RouterLink, RouterView } from 'vue-router'
 import RoomHeader from '../menu/RoomHeader.vue'
 import { OpenVidu } from "openvidu-browser";
 import axios from "axios";
@@ -177,7 +152,8 @@ import { useStore } from 'vuex';
 
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
-const APPLICATION_SERVER_URL = "http://localhost:5000/";
+const APPLICATION_SERVER_URL = "https://i8a606.p.ssafy.io:8443/";
+const OPENVIDU_SERVER_SECRET = 'ssafy';
 
 export default {
   name: "RoomView",
@@ -190,6 +166,7 @@ export default {
   data() {
     return {
       store: useStore(),
+
       // OpenVidu objects
       OV: undefined,
       session: undefined,
@@ -199,8 +176,6 @@ export default {
 
       // Join form
       mySessionId: this.$route.params.roomId,
-      myUserId: "",
-      myUserName: "",
 
       newMessage: null,
       messages: [],
@@ -211,28 +186,24 @@ export default {
       category: "",
       headCountMax: 8,
       headCount: 1,
+      hostId: "",
 
-      games: ['일반', '할머니 게임', '나 안취했어', '랜덤 대화주제'],
-      friends: ['친구1', '친구2', '친구3', '이름이긴친구우우'],
+      myUserId: "",
+      myUserName: "",
+      friends: [],
 
-      isIHost: true,
-      videoActive: false,
-      audioActive: false,
+      // videoActive: JSON.parse(this.$route.query.video),
+      // audioActive: JSON.parse(this.$route.query.audio),
+      videoActive: true,
+      audioActive: true,
 
-      muteVideo: false,
-      muteAudio: false,
-
-      store: useStore(),
       gameStatus: 0,
+      games: ['일반', '할머니 게임', '나 안취했어', '랜덤 대화주제'],
 
       infoPage: 1,
     };
   },
 
-  mounted() {
-    this.store.dispatch("gameModule/getSentence");
-    this.store.dispatch("gameModule/getTopic");
-  },
   computed: {
     isSmile() {
       return this.store.state.gameModule.isSmile;
@@ -298,22 +269,23 @@ export default {
       }
     },
     clickMuteVideo() {
+      console.log(this.videoActive);
       if (this.publisher.stream.videoActive) {
         this.publisher.publishVideo(false)
-        this.muteVideo = false
+        this.videoActive = false
       } else {
         this.publisher.publishVideo(true)
-        this.muteVideo = true
+        this.videoActive = true
       }
     },
 
     clickMuteAudio() {
       if (this.publisher.stream.audioActive) {
         this.publisher.publishAudio(false)
-        this.muteAudio = false
+        this.audioActive = false
       } else {
         this.publisher.publishAudio(true)
-        this.muteAudio = true
+        this.audioActive = true
       }
     },
 
@@ -389,17 +361,31 @@ export default {
       })
 
       this.session.on('signal:random-topic', (event) => {
-        this.eventData = JSON.parse(event.data)
+        this.eventData = JSON.parse(event.data);
         console.log(this.eventData.topic);
       })
+
+      this.session.on('signal:kick', (event) => {
+        this.eventData = JSON.parse(event.data);
+        console.log(this.eventData.username);
+        if(this.eventData.username == this.myUserName){
+          alert("강퇴당함");
+          this.leaveSession();
+        }
+      })
       
+      this.session.on('signal:change-host', (event) => {
+        this.eventData = JSON.parse(event.data);
+        this.hostId = this.eventData.userId;
+      })
+
       // --- 4) Connect to the session with a valid user token ---
 
       // Get a token from the OpenVidu deployment
       this.getToken(this.mySessionId).then((token) => {
         // First param is the token. Second param can be retrieved by every user on event
         // 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
-        this.session.connect(token, { clientId: this.myUserId, clientNick: this.myUserName, isHost: this.isIHost })
+        this.session.connect(token, { userId: this.myUserId, username: this.myUserName, hostId: this.hostId, friends: this.friends })
           .then(() => {
 
             // --- 5) Get your own camera stream with the desired properties ---
@@ -448,10 +434,10 @@ export default {
       window.removeEventListener("beforeunload", this.leaveSession);
       
       this.$router.push({ name: 'rooms' });
-      this.$store.dispatch("roomModule/quitRoom", this.mySessionId)
+      this.store.dispatch("roomModule/quitRoom", this.mySessionId)
       .then((result) => {
         if (result) {
-          this.$store.dispatch("roomModule/removeUserInRoom",this.$store.state.userModule.user.userId)
+          this.store.dispatch("roomModule/removeUserInRoom",this.store.state.userModule.user.userId)
         }
       })
     },
@@ -482,16 +468,29 @@ export default {
     },
 
     async createSession(sessionId) {
-      const response = await axios.post(APPLICATION_SERVER_URL + 'api/sessions', { customSessionId: sessionId }, {
-        headers: { 'Content-Type': 'application/json', },
-      });
+      const response = await axios.post(APPLICATION_SERVER_URL + 'openvidu/api/sessions', { customSessionId: sessionId }, {
+        headers: {
+            Authorization: `Basic ${btoa(
+              `OPENVIDUAPP:${OPENVIDU_SERVER_SECRET}`
+            )}`,
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET,POST',
+          }
+        });
       return response.data; // The sessionId
     },
 
     async createToken(sessionId) {
-      const response = await axios.post(APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections', {}, {
-        headers: { 'Content-Type': 'application/json', },
-      });
+      const response = await axios.post(APPLICATION_SERVER_URL + 'openvidu/api/sessions/' + sessionId + '/connections', {
+        headers: {
+            Authorization: `Basic ${btoa(
+              `OPENVIDUAPP:${OPENVIDU_SERVER_SECRET}`
+            )}`,
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET,POST',
+          }
+        }
+      );
       return response.data; // The token
     },
 
@@ -506,11 +505,13 @@ export default {
       const room = JSON.parse(JSON.stringify(roomData));
       this.title = room.title;
       this.category = room.category;
-      this.headCount = room.personCount;
+      // this.headCount = room.personCount;
+      this.headCount = 1;
       this.headCountMax = room.personLimit;
+      this.hostId = room.hostId;
     },
 
-    async getUser() {
+    getUser() {
       const user = this.store.state.userModule.user;
       this.myUserId = user.userId;
       this.myUserName = user.nickname;
@@ -533,7 +534,7 @@ export default {
             .catch(error => {
               console.error(error);
             })
-            break
+          break;
         case 2:
           this.session.signal({
             //체크할 닉네임 보내기
@@ -559,7 +560,9 @@ export default {
             .catch(error => {
               console.error(error);
             })
-            break
+
+          break;
+
       }
     },
     
@@ -608,6 +611,32 @@ export default {
         this.infoPage = 1
       }
     },
+
+    kickUser(username){
+      this.session.signal({
+        data: JSON.stringify({username : username}),
+        type: 'kick'
+      })
+        .then(() => {
+          console.log('강퇴!');
+        })
+        .catch(error => {
+          console.error(error);
+        })
+    },
+
+    changeHost(userId){
+      this.session.signal({
+        data: JSON.stringify({userId : userId}),
+        type: 'change-host'
+      })
+        .then(() => {
+          console.log('방장변경!');
+        })
+        .catch(error => {
+          console.error(error);
+        })
+    }
   },
 
   created() {
@@ -615,6 +644,12 @@ export default {
     this.getFriends();
     this.getRoom();
     this.getUser();
+    console.log(this.$route.query.video);
+    this.store.dispatch("gameModule/getSentence");
+    this.store.dispatch("gameModule/getTopic");
+  },
+
+  mounted() {
   },
 
   updated() {

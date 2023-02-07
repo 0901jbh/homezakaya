@@ -2,14 +2,15 @@ body {
   width: 100%;
   height: 100vh;
   margin: 0;
-  background: linear-gradient(180deg, #b4b4b4 0%, rgba(255, 255, 255, 0) 100%);
-  --el-color-primary: #9d0101;
-  --el-color-primary-dark-2: #6e0000;
-  --el-color-primary-light-3: #a92121;
-  --el-color-primary-light-5: #c16161;
-  --el-color-primary-light-7: #da8181;
-  --el-color-primary-light-8: #e7a1a1;
-  --el-color-primary-light-9: #f3c1c1;
+  /* background: linear-gradient(180deg, #b4b4b4 0%, rgba(255, 255, 255, 0) 100%); */
+  background: #252836;
+  --el-color-primary: #e27b66;
+  --el-color-primary-dark-2: black;
+  --el-color-primary-light-3: #1f1d2b;
+  --el-color-primary-light-5: #252836;
+  --el-color-primary-light-7: #2e303f;
+  --el-color-primary-light-8: #cbcbcb;
+  --el-color-primary-light-9: white;
 }
 
 .snowflake {

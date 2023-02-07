@@ -44,7 +44,7 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import { onMounted, onUpdated } from 'vue';
 import { useStore } from 'vuex';
 
 const props = defineProps({
@@ -55,13 +55,22 @@ const props = defineProps({
 const emit = defineEmits(['followFriend'])
 const store = useStore()
 
-onMounted(() => {
+
+const userState = () => {
   let friendStateTag = document.getElementsByClassName("friend-state")[props.idx]
   if (props.friend.state == "offline") {
     friendStateTag.style.background = "radial-gradient(50% 50% at 50% 50%, #EE1818 0%, rgba(208, 106, 106, 0) 100%)";
   } else {
     friendStateTag.style.background = "radial-gradient(50% 50% at 50% 50%, #1CEE18 0%, rgba(108, 208, 106, 0) 100%)";
   }
+}
+
+onMounted(() => {
+  userState()
+})
+
+onUpdated(() => {
+  userState()
 })
 
 const deleteFriend = () => {

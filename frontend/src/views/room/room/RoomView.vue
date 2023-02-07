@@ -64,6 +64,7 @@
           </div>
         </div>
         <div id="btns">
+          <div class="content" @click="infoOpen">Info</div>
           <el-popover v-if="myUserId == hostId" :width="300"
             popper-style="background: rgb(235 153 153); border: rgb(235 153 153); box-shadow: rgb(14 18 22 / 35%) 0px 10px 38px -10px, rgb(14 18 22 / 20%) 0px 10px 20px -15px; padding: 15px;"
             trigger="click">
@@ -109,6 +110,35 @@
         </div>
       </div>
     </div>
+  </div>
+<!-- gameInfo popup -->
+  <div class="game-info-modal-bg" @click="infoClose"></div>
+  <div class="game-info-modal-wrap">
+    <div class="left-arrow" @click="leftClick()"></div>
+    <div class="game-info-popup">
+      <div class="page1">
+        <div class="game-info-title"> 웃음 참기 게임 </div>
+        <div class="game-info-sentence">
+          내용1
+        </div>
+      </div>
+      <div class="page2">
+        <div class="game-info-title"> 나 진짜 안취했어! </div>
+        <div class="game-info-sentence">
+          내용2
+        </div>
+      </div>
+      <div class="page3">
+        <div class="game-info-title"> 랜덤 대화 주제 </div>
+        <div class="game-info-sentence">
+          내용3
+        </div>
+      </div>
+    </div>
+    <div class="game-info-btn-wrapper">
+      <div class="btn" @click="infoClose">닫기</div>
+    </div>
+    <div class="right-arrow" @click="rightClick()"></div>
   </div>
   <div></div>
 </template>
@@ -169,6 +199,8 @@ export default {
 
       gameStatus: 0,
       games: ['일반', '할머니 게임', '나 안취했어', '랜덤 대화주제'],
+
+      infoPage: 1,
     };
   },
 
@@ -317,8 +349,9 @@ export default {
         this.eventData = JSON.parse(event.data);
         console.log(this.eventData.username + "님 말 할 준비 하세용");
         console.log(this.store.state.gameModule.sentence);
-        if(this.eventData.username == this.myUserName)
+        if(this.eventData.username == this.myUserName){
           this.store.dispatch("gameModule/getSpeech");
+        }
       })
 
       this.session.on('signal:detect-audio', (event) => {
@@ -496,6 +529,7 @@ export default {
           })
             .then(() => {
               console.log('웃탐시작');
+              // 각 게임에 맞는 화면 시작
             })
             .catch(error => {
               console.error(error);
@@ -526,9 +560,56 @@ export default {
             .catch(error => {
               console.error(error);
             })
+
           break;
+
       }
-      
+    },
+    
+    infoOpen() {
+      document.getElementsByClassName("game-info-modal-wrap")[0].style.display = "block";
+      document.getElementsByClassName("game-info-modal-bg")[0].style.display = "block";
+    },
+
+    infoClose() {
+      document.getElementsByClassName("game-info-modal-wrap")[0].style.display = "none";
+      document.getElementsByClassName("game-info-modal-bg")[0].style.display = "none";
+      this.infoPage = 1;
+      document.getElementsByClassName("game-info-popup")[0].style.transform = "translateX(0%)";
+    },
+
+    leftClick() {
+      const number1 = 1/3 * 100
+      const number2 = 2/3 * 100
+      if (this.infoPage == 1) {
+        document.getElementsByClassName("game-info-popup")[0].style.transform = `translateX(${-number2}%)`;
+        this.infoPage = 3
+      }
+      else if (this.infoPage == 2) {
+        document.getElementsByClassName("game-info-popup")[0].style.transform = "translateX(0%)";
+        this.infoPage = 1
+      }
+      else{
+        document.getElementsByClassName("game-info-popup")[0].style.transform = `translateX(${-number1}%)`;
+        this.infoPage = 2
+      }
+    },
+
+    rightClick() {
+      const number1 = 1/3 * 100
+      const number2 = 2/3 * 100
+      if (this.infoPage == 1) {
+        document.getElementsByClassName("game-info-popup")[0].style.transform = `translateX(${-number1}%)`;
+        this.infoPage = 2
+      }
+      else if (this.infoPage == 2) {
+        document.getElementsByClassName("game-info-popup")[0].style.transform = `translateX(${-number2}%)`;
+        this.infoPage = 3
+      }
+      else{
+        document.getElementsByClassName("game-info-popup")[0].style.transform = "translateX(0%)";
+        this.infoPage = 1
+      }
     },
 
     kickUser(username){
@@ -1019,6 +1100,100 @@ a:hover .demo-logo {
   box-shadow: -4px -4px 15px rgba(255, 255, 255, 0.5), 4px 4px 15px rgba(0, 0, 0, 0.5), inset 4px 4px 15px rgba(255, 255, 255, 0.5);
   border-radius: 53px;
 
+  cursor: pointer;
+}
+/* 게임 시작시 도움말창 */
+.game-info-modal-bg {
+	display:none;
+	width:100%;
+	height:100%;
+	position:fixed;
+	top:0;
+	left:0;
+	right:0;
+	z-index:998;
+	transition: 0.5s ease-out;
+}
+.game-info-modal-wrap {
+	display:none;
+	position:absolute;
+	top:50%;
+	left:50%;
+	transform:translate(-50%,-50%);
+	width:50%;
+	height:50%;
+	background: #2E303F;
+  border: 2px solid #CBCBCB;
+  border-radius: 30px;
+	z-index:999;
+  overflow:hidden;
+}
+.game-info-popup {
+  display: flex;
+  flex-wrap: nowrap;
+  height: 100%;
+  width: 300%;
+  transition: all .3s ease-in;
+}
+.game-info-popup > div[class*="page"]{
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-template-rows: 2fr 5fr 3fr;
+  justify-content: center;
+  align-items: center;
+  padding: 0 5%;
+}
+.game-info-title{
+  font-size: 2rem;
+  color: white;
+}
+.game-info-sentence{
+  text-align: center;
+  color: white;
+}
+.game-info-btn-wrapper{
+  width: auto;
+  height: auto;
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  color:white;
+  text-align: center;
+  z-index: 1001;
+}
+.btn{
+  height: 2.5rem;
+  width: 4rem;
+  line-height: 2.5rem;
+  background: #E27B66;
+  border-radius: 20px;
+  transition: all .1s ease-in;
+}
+.btn:hover{
+  transform: scale(1.2, 1.2);
+  cursor: pointer;
+}
+.left-arrow, .right-arrow {
+  width: 5vw;
+  height: 5vw;
+  top: 42%;
+  position: absolute;
+  vertical-align: middle;
+  transition: all .05s ease-in;
+  z-index: 1001;
+}
+.left-arrow{
+  left: 5%;
+  background: url('../../../assets/left_arrow.png') center center /100% no-repeat;
+}
+.right-arrow{
+  right: 5%;
+  background: url('../../../assets/right_arrow.png') center center /100% no-repeat;
+}
+.left-arrow:hover, .right-arrow:hover {
+  transform: scale(1.2, 1.2);
   cursor: pointer;
 }
 </style>

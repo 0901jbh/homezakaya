@@ -29,6 +29,10 @@
         update room set personCount = personCount - 1 where roomId = #{roomId}
     </update>
 
+    <update id="changeHost" parameterType="HashMap">
+        update room set hostId = #{hostId} where roomId = #{roomId}
+    </update>
+
     <delete id="deleteRoom" parameterType="int">
         delete from room where roomId = #{no}
     </delete>

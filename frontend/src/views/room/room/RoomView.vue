@@ -8,32 +8,8 @@
     />
   </header>
   <div id="main-container" class="container">
-    <!-- <div id="join" v-if="!session">
-      <div id="join-dialog" class="jumbotron vertical-center">
-        <h1>Join a video session</h1>
-        <div class="form-group">
-          <p>
-            <label>Participant</label>
-            <input v-model="myUserName" class="form-control" type="text" required />
-          </p>
-          <p>
-            <label>Session</label>
-            <input v-model="mySessionId" class="form-control" type="text" required />
-          </p>
-          <p class="text-center">
-            <button class="btn btn-lg btn-success" @click="joinSession()">
-              Join!
-            </button>
-          </p>
-        </div>
-      </div>
-    </div> -->
 
-    <!-- <div id="session" v-if="session"> -->
     <div id="session">
-      <!-- <div id="main-video" class="col-md-6">
-        <user-video :stream-manager="mainStreamManager" />
-      </div> -->
       <div id="container" style="display: flex;">
         <div id="video-container" :class="{
           'under-one': this.headCount == 1,
@@ -44,7 +20,7 @@
         }">
           <user-video class="video" :stream-manager="publisher" my-video="true" />
           <user-video class="video" v-for="sub in subscribers" :key="sub.stream.connection.connectionId"
-            :stream-manager="sub" my-video="false" @kickUser="kickUser"/>
+            :stream-manager="sub" my-video="false" @kickUser="kickUser" @changeHost="changeHost"/>
         </div>
         <div id="chatting-container" class="col-md-4">
           <div id="chats" ref="message_scroll">
@@ -77,9 +53,6 @@
         </div>
       </div>
       <div id="option-footer">
-        <!-- <h1 id="session-title">{{ mySessionId }}</h1> -->
-        <!-- <input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="leaveSession"
-          value="Leave session" /> -->
         <div id="mute">
           <div class="onoff" @click="clickMuteVideo">
             <img v-if="videoActive" src="../../../assets/video_on.png" alt="video on img" />
@@ -117,6 +90,9 @@
               <div class="content">Invite</div>
             </template>
             <template #default>
+              <div v-if=" friends.length == 0 ">
+                초대 가능한 친구가 없어요
+              </div>
               <div class="online_friend" v-for="friend in friends" :key="friend"
                 style="display: flex; justify-content: space-evenly; align-items: center; margin: 10px;">
                 <p class="friend_nickname" align="right"
@@ -146,7 +122,8 @@ import { useStore } from 'vuex';
 
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
-const APPLICATION_SERVER_URL = "http://localhost:5000/";
+const APPLICATION_SERVER_URL = "https://i8a606.p.ssafy.io:8443/";
+const OPENVIDU_SERVER_SECRET = 'ssafy';
 
 export default {
   name: "RoomView",
@@ -185,8 +162,10 @@ export default {
       myUserName: "",
       friends: [],
 
-      videoActive: JSON.parse(this.$route.query.video),
-      audioActive: JSON.parse(this.$route.query.audio),
+      // videoActive: JSON.parse(this.$route.query.video),
+      // audioActive: JSON.parse(this.$route.query.audio),
+      videoActive: true,
+      audioActive: true,
 
       gameStatus: 0,
       games: ['일반', '할머니 게임', '나 안취했어', '랜덤 대화주제'],
@@ -335,7 +314,7 @@ export default {
       })
 
       this.session.on('signal:not-drunk', (event) => {
-        this.eventData = JSON.parse(event.data)
+        this.eventData = JSON.parse(event.data);
         console.log(this.eventData.username + "님 말 할 준비 하세용");
         console.log(this.store.state.gameModule.sentence);
         if(this.eventData.username == this.myUserName)
@@ -349,12 +328,12 @@ export default {
       })
 
       this.session.on('signal:random-topic', (event) => {
-        this.eventData = JSON.parse(event.data)
+        this.eventData = JSON.parse(event.data);
         console.log(this.eventData.topic);
       })
 
       this.session.on('signal:kick', (event) => {
-        this.eventData = JSON.parse(event.data)
+        this.eventData = JSON.parse(event.data);
         console.log(this.eventData.username);
         if(this.eventData.username == this.myUserName){
           alert("강퇴당함");
@@ -362,13 +341,18 @@ export default {
         }
       })
       
+      this.session.on('signal:change-host', (event) => {
+        this.eventData = JSON.parse(event.data);
+        this.hostId = this.eventData.userId;
+      })
+
       // --- 4) Connect to the session with a valid user token ---
 
       // Get a token from the OpenVidu deployment
       this.getToken(this.mySessionId).then((token) => {
         // First param is the token. Second param can be retrieved by every user on event
         // 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
-        this.session.connect(token, { userId: this.myUserId, username: this.myUserName, hostId: this.hostId })
+        this.session.connect(token, { userId: this.myUserId, username: this.myUserName, hostId: this.hostId, friends: this.friends })
           .then(() => {
 
             // --- 5) Get your own camera stream with the desired properties ---
@@ -451,16 +435,29 @@ export default {
     },
 
     async createSession(sessionId) {
-      const response = await axios.post(APPLICATION_SERVER_URL + 'api/sessions', { customSessionId: sessionId }, {
-        headers: { 'Content-Type': 'application/json', },
-      });
+      const response = await axios.post(APPLICATION_SERVER_URL + 'openvidu/api/sessions', { customSessionId: sessionId }, {
+        headers: {
+            Authorization: `Basic ${btoa(
+              `OPENVIDUAPP:${OPENVIDU_SERVER_SECRET}`
+            )}`,
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET,POST',
+          }
+        });
       return response.data; // The sessionId
     },
 
     async createToken(sessionId) {
-      const response = await axios.post(APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections', {}, {
-        headers: { 'Content-Type': 'application/json', },
-      });
+      const response = await axios.post(APPLICATION_SERVER_URL + 'openvidu/api/sessions/' + sessionId + '/connections', {
+        headers: {
+            Authorization: `Basic ${btoa(
+              `OPENVIDUAPP:${OPENVIDU_SERVER_SECRET}`
+            )}`,
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET,POST',
+          }
+        }
+      );
       return response.data; // The token
     },
 
@@ -546,6 +543,19 @@ export default {
           console.error(error);
         })
     },
+
+    changeHost(userId){
+      this.session.signal({
+        data: JSON.stringify({userId : userId}),
+        type: 'change-host'
+      })
+        .then(() => {
+          console.log('방장변경!');
+        })
+        .catch(error => {
+          console.error(error);
+        })
+    }
   },
 
   created() {

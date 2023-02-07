@@ -25,7 +25,7 @@
 					</div> -->
 					<el-rate v-if="myVideo == 'false'" v-model="manner_rate" size="large" allow-half
 						style="justify-content: center;" />
-					<div v-if="myVideo == 'false'" class="content" style="width: 60%; text-decoration:none;">
+					<div v-if="myVideo == 'false' && !isFriend" class="content" style="width: 60%; text-decoration:none;">
 						친구 추가
 					</div>
 					<div v-if="myVideo == 'false' && isHost" class="content" style="width: 60%; text-decoration:none;">
@@ -76,10 +76,18 @@ export default {
 			const { username } = this.getConnectionData();
 			return username;
 		},
+		userId(){
+			const { userId } = this.getConnectionData();
+			return userId;
+		},
 		isHost() {
 			const clientData = this.getConnectionData();
 			return clientData.hostId == clientData.userId;
 		},
+		isFriend(){
+			const clientData = this.getConnectionData();
+			return clientData.friends.includes(clientData.userId);
+		}
 		// isHost 값을 주는 것 보다는 hostId와 clientId가 일치하는지 직접 비교하는게 나을듯
 	},
 
@@ -95,6 +103,9 @@ export default {
 		kick (){
 			this.$emit('kickUser', this.username);
 		},
+		host(){
+			this.$emit('changeHost', this.userId);
+		}
 	},
 };
 </script>

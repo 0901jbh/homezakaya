@@ -11,7 +11,7 @@
 			<template #default>
 				<div id="user_setting" style="display: flex; gap: 16px; flex-direction: column;">
 					<p class="user_nickname" style="margin: 0; font-size: 20px; color: white; align-self:center;">
-						{{ clientNick }}
+						{{ username }}
 					</p>
 					<div class="user_manner_alcohol"
 						style="margin: 0; display: flex; gap: 16px; flex-direction: row; justify-content: center;">
@@ -28,10 +28,10 @@
 					<div v-if="myVideo == 'false'" class="content" style="width: 60%; text-decoration:none;">
 						친구 추가
 					</div>
-					<div v-if="myVideo == 'false' && imHost" class="content" style="width: 60%; text-decoration:none;">
+					<div v-if="myVideo == 'false' && isHost" class="content" style="width: 60%; text-decoration:none;">
 						방장 변경
 					</div>
-					<div v-if="myVideo == 'false' && imHost" class="content" style="width: 60%; text-decoration:none;">
+					<div v-if="myVideo == 'false' && isHost" @click="kick" class="content" style="width: 60%; text-decoration:none;">
 						강제 퇴장
 					</div>
 				</div>
@@ -43,14 +43,14 @@
 		<div id="nametag">
 			<img v-if="isHost" src="../../../../assets/crown.png" alt="crown img"
 				style="display: inline-block; width:20px; height:20px; padding-right: 5px;" />
-			<p>{{ clientId }}</p>
-			<p>{{ clientNick }}</p>
+			<p>{{ username }}</p>
 		</div>
 	</div>
 </template>
 
 <script>
 import OvVideo from './OvVideo.vue';
+import { useStore } from 'vuex';
 
 export default {
 	name: 'UserVideo',
@@ -62,27 +62,23 @@ export default {
 	props: {
 		streamManager: Object,
 		myVideo: String,
-		imHost: Boolean,
 	},
 
 	data() {
 		return {
+			store: useStore(),
 			manner_rate: null,
 		}
 	},
 
 	computed: {
-		clientId() {
-			const { clientId } = this.getConnectionData();
-			return clientId;
-		},
-		clientNick() {
-			const { clientNick } = this.getConnectionData();
-			return clientNick;
+		username() {
+			const { username } = this.getConnectionData();
+			return username;
 		},
 		isHost() {
-			const { isHost } = this.getConnectionData();
-			return isHost;
+			const clientData = this.getConnectionData();
+			return clientData.hostId == clientData.userId;
 		},
 		// isHost 값을 주는 것 보다는 hostId와 clientId가 일치하는지 직접 비교하는게 나을듯
 	},
@@ -90,11 +86,15 @@ export default {
 	methods: {
 		getConnectionData() {
 			const { connection } = this.streamManager.stream;
+			console.log(connection.data);
 			return JSON.parse(connection.data);
 		},
 		userInfo() {
 			console.log("클릭")
-		}
+		},
+		kick (){
+			this.$emit('kickUser', this.username);
+		},
 	},
 };
 </script>

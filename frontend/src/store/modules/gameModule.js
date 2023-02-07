@@ -100,6 +100,7 @@ export const gameModule = {
       recognition.start();
 
       recognition.onstart = function() {
+        context.commit("SET_ISFINISHED", false);
         console.log("감지 시작");
       };
 

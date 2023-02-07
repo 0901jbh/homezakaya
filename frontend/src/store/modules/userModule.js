@@ -5,8 +5,8 @@ export const userModule = {
   state: () => ({
     // users: [], // 전체 유저 필요 X (친구에서 필요,, )
     user: {
-      userId: "korealdw",
-      nickname: "동우",
+      userId: "userAId",
+      nickname: "태형",
       mannerPoint: 3,
       alcoholPoint: 7,
     }, // user 전체 정보

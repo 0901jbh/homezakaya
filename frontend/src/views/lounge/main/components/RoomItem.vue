@@ -118,7 +118,7 @@ const enterRoom = () => {
 		if (result) {
 			store.dispatch('roomModule/enterRoom', props.room.roomId).then((result) => {
 				if (result) {
-					router.push({ name: 'room', params: { roomId: props.room.roomId } })
+					router.push({ name: 'wait', params: { roomId: props.room.roomId }})
 				}
 				else {
 					errorOpen(2)

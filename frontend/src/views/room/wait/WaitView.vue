@@ -101,6 +101,7 @@ import RoomHeader from '../menu/RoomHeader.vue'
 import { OpenVidu } from "openvidu-browser";
 import axios from "axios";
 import UserVideo from "./components/UserVideo.vue";
+import { useStore } from 'vuex';
 
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
@@ -116,6 +117,7 @@ export default {
 
   data() {
     return {
+      store: useStore(),
       // OpenVidu objects
       OV: undefined,
       session: undefined,
@@ -128,7 +130,6 @@ export default {
       myUserId: "id" + Math.floor(Math.random() * 100),
       myUserName: "nickname" + Math.floor(Math.random() * 100),
 
-      isIHost: false,
       videoActive: false,
       audioActive: false,
     };
@@ -148,7 +149,7 @@ export default {
 
   methods: {
     enterRoom() {
-      this.$router.push({ name: 'room', params: { roomId: this.mySessionId } })
+      this.$router.push({ name: 'room', params: { roomId: this.mySessionId }, query: { video : this.videoActive, audio : this.audioActive } })
     },
 
     // sendMessage() {
@@ -226,7 +227,7 @@ export default {
       // --- 4) Connect to the session with a valid user token ---
 
       // Get a token from the OpenVidu deployment
-      this.getToken(this.myUserId).then((token) => {
+      this.getToken().then((token) => {
 
         // Receiver of the message (usually before calling 'session.connect')
 
@@ -248,7 +249,7 @@ export default {
 
         // First param is the token. Second param can be retrieved by every user on event
         // 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
-        this.session.connect(token, { clientId: this.myUserId, clientNick: this.myUserName, isHost: this.isIHost })
+        this.session.connect(token, { username: this.myUserName })
           .then(() => {
 
             // --- 5) Get your own camera stream with the desired properties ---
@@ -337,10 +338,16 @@ export default {
       });
       return response.data; // The token
     },
+
+    getUser() {
+      const user = this.store.state.userModule.user;
+      this.myUserName = user.nickname;
+    },
   },
 
   created() {
-    this.joinSession()
+    this.getUser();
+    this.joinSession();
   },
 };
 

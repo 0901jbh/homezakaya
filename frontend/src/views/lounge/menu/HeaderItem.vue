@@ -8,7 +8,7 @@
 import { onMounted } from "vue";
 
 const props = defineProps({
-  isEnter:Boolean
+  isEnter: Boolean
 })
 
 
@@ -25,21 +25,21 @@ onMounted(() => {
       const delay = Math.random() * 10;
       const initialOpacity = Math.random();
       const duration = Math.random() * 20 + MIN_DURATION;
-  
+
       snowflake.classList.add("snowflake");
       snowflake.style.left = `${Math.random() * 98}%`;
       snowflake.style.animationDelay = `${delay}s`;
       snowflake.style.opacity = initialOpacity;
       snowflake.style.animation = `fall ${duration}s linear`;
-  
+
       head.appendChild(snowflake);
-  
+
       setTimeout(() => {
         head.removeChild(snowflake);
         makeSnowflake()
       }, (duration + delay) * 1000);
     }
-  
+
     for (let index = 0; index < 150; index++) {
       setTimeout(makeSnowflake(), 500 * index);
     }
@@ -60,7 +60,7 @@ const clickTitle = () => {
   head.className = "head-change";
   title.className = "title-change";
 
-  setTimeout(function() {
+  setTimeout(function () {
     emit('clickTitle');
   }, 1700)
 }
@@ -115,6 +115,7 @@ const clickTitle = () => {
   transition: all ease-out 1.5s;
   width: 100%;
 }
+
 .title-change {
   font-family: 'dokdo';
   color: white;
@@ -124,6 +125,4 @@ const clickTitle = () => {
   padding-left: 1vw;
   transition: all ease-out 1.5s;
 }
-
-
 </style>

@@ -10,7 +10,7 @@
       popper-style="background: rgb(235 153 153); border: rgb(235 153 153); box-shadow: rgb(14 18 22 / 35%) 0px 10px 38px -10px, rgb(14 18 22 / 20%) 0px 10px 20px -15px; padding: 20px;"
       trigger="click">
       <template #reference>
-        <img src="../../../assets/profile.png" alt="profile img" style="width:60px; height:60px;">
+        <img src="../../../assets/profile.png" alt="profile img" style="width:60px; height:60px; padding-right: 1vw;">
       </template>
       <template #default>
         <div class="MyInfo" style="display: flex; gap: 32px; flex-direction: column">

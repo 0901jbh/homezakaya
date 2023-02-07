@@ -2,11 +2,11 @@
 	<div class="rooms-container">
 		<div class="create-room">
 			<div class="create-room-wrapper btn-open" @click="popOpen">
-				<div>+</div>
+				<img src="../../../../assets/plus.png" alt="plus img" style="width: 50px;">
 			</div>
 		</div>
 		<div class="room" v-for="(room, idx) in form.rooms" :key="idx">
-			<RoomItem :room="room" :idx="idx"/>
+			<RoomItem :room="room" :idx="idx" />
 		</div>
 	</div>
 	<!-- 방 생성 팝업창 -->
@@ -45,8 +45,8 @@
 					</div>
 					<el-form-item label="공개여부">
 						<el-radio-group v-model="form.private" fill="black">
-							<el-radio-button label="공개" @click="passwordClose"/>
-							<el-radio-button label="비공개" @click="passwordOpen"/>
+							<el-radio-button label="공개" @click="passwordClose" />
+							<el-radio-button label="비공개" @click="passwordOpen" />
 						</el-radio-group>
 					</el-form-item>
 					<el-form-item class="passwordInput" label="비밀번호">
@@ -54,8 +54,7 @@
 					</el-form-item>
 					<el-form-item style="width:100%;">
 						<div class="btn">
-							<el-button type="info" size="large"
-									@click="createRoom">Create</el-button>
+							<el-button type="info" size="large" @click="createRoom">Create</el-button>
 						</div>
 						<div class="btn">
 							<RouterLink to="/rooms" style="text-decoration:none;"><el-button type="info" size="large"
@@ -108,7 +107,7 @@ const createRoom = () => {
 			roomId: result.roomId,
 		}).then((result) => {
 			if (result) {
-				router.push({ name: 'room', params: { roomId: form.value.roomId }})
+				router.push({ name: 'room', params: { roomId: form.value.roomId } })
 			}
 		})
 	});
@@ -121,22 +120,22 @@ const getRooms = onBeforeMount(() => {
 })
 
 const popOpen = () => {
-	document.getElementsByClassName("modal-wrap")[0].style.display ='block';
-	document.getElementsByClassName("modal-bg")[0].style.display ='block';
+	document.getElementsByClassName("modal-wrap")[0].style.display = 'block';
+	document.getElementsByClassName("modal-bg")[0].style.display = 'block';
 }
 
 const popClose = () => {
-    document.getElementsByClassName("modal-wrap")[0].style.display ='none';
-    document.getElementsByClassName("modal-bg")[0].style.display ='none';
+	document.getElementsByClassName("modal-wrap")[0].style.display = 'none';
+	document.getElementsByClassName("modal-bg")[0].style.display = 'none';
 }
 
 const passwordOpen = () => {
-	document.getElementsByClassName("passwordInput")[0].style.display ='flex';
+	document.getElementsByClassName("passwordInput")[0].style.display = 'flex';
 	form.value.password = '';
 }
 
 const passwordClose = () => {
-	document.getElementsByClassName("passwordInput")[0].style.display ='none';
+	document.getElementsByClassName("passwordInput")[0].style.display = 'none';
 }
 
 </script>
@@ -158,12 +157,11 @@ const passwordClose = () => {
 .create-room {
 	width: 30%;
 	height: 40%;
-	background-image: url('../../../../assets/table.png');
+	/* background-image: url('../../../../assets/table.png');
 	background-position: center;
 	background-size: contain;
-	background-repeat: no-repeat;
-	margin-right: 2%;
-	margin-bottom: 2%;
+	background-repeat: no-repeat; */
+	margin: 1.5%;
 }
 
 .create-room-wrapper {
@@ -173,6 +171,8 @@ const passwordClose = () => {
 	font-size: 3rem;
 	justify-content: center;
 	align-items: center;
+	background: linear-gradient(#252836 10%, #1f1d2b 40%);
+	border-radius: 10px;
 }
 
 .room {
@@ -197,29 +197,31 @@ const passwordClose = () => {
 }
 
 .modal-bg {
-	display:none;
-	width:100%;
-	height:100%;
-	position:fixed;
-	top:0;
-	left:0;
-	right:0;
-	z-index:999;
+	display: none;
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 999;
 	transition: 0.5s ease-out;
 }
+
 .modal-wrap {
-	display:none;
-	position:absolute;
-	top:50%;
-	left:50%;
-	transform:translate(-50%,-50%);
-	width:35%;
-	height:60%;
-	background:white;
+	display: none;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 35%;
+	height: 60%;
+	background: white;
 	border: solid 5px black;
 	border-radius: 2rem;
-	z-index:1000;
+	z-index: 1000;
 }
+
 .create-room-popup {
 	display: grid;
 	height: 100%;
@@ -227,13 +229,15 @@ const passwordClose = () => {
 	grid-template-rows: 1fr 11fr;
 	transition: 0.5s ease-out;
 }
+
 .popup-header {
 	background-color: black;
-  height: 100%;
+	height: 100%;
 	width: 100%;
-  border-bottom: solid 0.5rem #6E0000;
+	border-bottom: solid 0.5rem #6E0000;
 	border-radius: 1rem 1rem 0 0;
 }
+
 .popup-content {
 	display: flex;
 	align-items: start;
@@ -242,28 +246,33 @@ const passwordClose = () => {
 	margin: 0% 10%;
 	margin-top: 10%;
 }
+
 .popup-header-title {
-	color:white;
+	color: white;
 	font-size: 1.3rem;
 	padding: 0 5%;
 	padding-top: 1%;
 }
+
 .passwordInput {
 	display: none;
 }
+
 .create-room-form {
-	width:100%;
-}
-.el-button {
-  background-color: black !important;
-  color: white !important;
-}
-.el-button:hover {
-  background-color: rgb(118, 118, 118) !important;
-  transition: 0.2s;
-}
-.el-radio-button__inner:hover {
-  color: black;
+	width: 100%;
 }
 
+.el-button {
+	background-color: black !important;
+	color: white !important;
+}
+
+.el-button:hover {
+	background-color: rgb(118, 118, 118) !important;
+	transition: 0.2s;
+}
+
+.el-radio-button__inner:hover {
+	color: black;
+}
 </style>

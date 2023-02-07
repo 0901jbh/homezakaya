@@ -62,16 +62,16 @@ export const userModule = {
         .get(`/api/users/id/${payload}`)
         .then(({ status, data }) => {
           if (status == 200) {
-            console.log("사용 가능한 id 입니다.");
-            return true;
+            console.log("사용 가능한 id 입니다.")
+            return true
           }
         })
         .catch((err) => {
           if (err.response.status == 409) {
-            console.log("중복된 id 입니다.");
+            console.log("중복된 id 입니다.")
           }
-          return false;
-        });
+          return false
+        })
     },
 
     // nickname 중복확인 - ok
@@ -80,16 +80,43 @@ export const userModule = {
         .get(`/api/users/nickname/${payload}`)
         .then(({ status, data }) => {
           if (status == 200) {
-            console.log("사용 가능한 nickname 입니다.");
-            return true;
+            console.log("사용 가능한 nickname 입니다.")
+            return true
           }
         })
         .catch((err) => {
           if (err.response.status == 409) {
-            console.log("중복된 닉네임 입니다.");
+            console.log("중복된 닉네임 입니다.")
           }
-          return false;
-        });
+          return false
+        })
+    },
+
+    // 회원 가입 - ok
+    createUser(context, payload) {
+      return axios.post(`/api/users`, payload).then(({ status, data }) => {
+        if (status == 200) {
+          console.log("회원가입 성공") // console 출력 안됨
+          context.commit("SET_USER", data)
+        }
+      })
+    },
+
+    // 회원 정보 조회 (내정보) - ok
+    getUser(context, payload) {
+      axios
+        .get(`/api/users/${payload}`)
+        .then(({ status, data }) => {
+          if (status == 200) {
+            console.log(data)
+            context.commit("SET_USER", data)
+          }
+        })
+        .catch((err) => {
+          if (err.response.status == 404) {
+            console.log("존재하지 않는 회원 입니다.")
+          }
+        })
     },
 
     // 회원 정보 수정 - ok
@@ -106,7 +133,7 @@ export const userModule = {
           if (err.response.status == 404) {
             console.log("유저없음");
           }
-        });
+        })
     },
 
     // 로그인 (세션에 토큰 정보 받아오기) - ok
@@ -142,7 +169,7 @@ export const userModule = {
           if (err.response.status == 401) {
             console.log("로그인 실패");
           }
-        });
+        })
     },
 
     // 로그아웃 (세션 날리기) -  ok
@@ -187,7 +214,7 @@ export const userModule = {
           if (err.response.status == 401) {
             console.log("인증되지 않은 토큰");
           }
-        });
+        })
     },
 
     // token refresh
@@ -272,4 +299,4 @@ export const userModule = {
         });
     },
   },
-};
+}

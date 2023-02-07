@@ -93,7 +93,7 @@ public class RoomController {
 
     }
 
-    @PutMapping("/enter/{roomId}")
+    @PutMapping("/{roomId}/enter")
     public ResponseEntity<?> enterRoom(@PathVariable int roomId) {
         Map<String, Object> resultMap = new HashMap<>();
         RoomDto room = roomService.getRoom(roomId);
@@ -119,7 +119,7 @@ public class RoomController {
         }
     }
 
-    @PutMapping("/quit/{roomId}")
+    @PutMapping("/{roomId}/quit")
     public ResponseEntity<?> quitRoom(@PathVariable int roomId){
         Map<String, Object> resultMap = new HashMap<>();
         RoomDto room = roomService.getRoom(roomId);
@@ -132,6 +132,36 @@ public class RoomController {
         if(res){
             resultMap.put("message", SUCCESS);
             resultMap.put("personCount", room.getPersonCount() - 1);
+            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+        }
+        else
+            return ResponseEntity.internalServerError().build();
+    }
+
+    @PutMapping("/{roomId}/host")
+    public ResponseEntity<?> changeHost(@PathVariable int roomId, @RequestBody Map<String, String> hostIdMap){
+        Map<String, Object> resultMap = new HashMap<>();
+
+        String hostId = hostIdMap.get("hostId");
+        System.out.println(hostId);
+        RoomDto room = roomService.getRoom(roomId);
+        if(room == null){
+            resultMap.put("message", "존재하지 않는 roomId");
+            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NOT_FOUND);
+        }
+
+        if(userService.getUser(hostId) == null){
+            resultMap.put("message", "존재하지 않는 userId");
+            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NOT_FOUND);
+        }
+
+        HashMap params = new HashMap();
+        params.put("hostId", hostId);
+        params.put("roomId", roomId);
+        boolean res = roomService.changeHost(params);
+
+        if(res){
+            resultMap.put("message", SUCCESS);
             return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
         }
         else

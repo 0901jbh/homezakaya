@@ -5,6 +5,7 @@ import com.ssafy.Homezakaya.model.dto.RoomDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -41,6 +42,10 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public boolean quitRoom(int roomId){
         return roomDao.quitRoom(roomId) > 0;
+    }
+
+    public boolean changeHost(HashMap params){
+        return roomDao.changeHost(params) > 0;
     }
 
     @Override

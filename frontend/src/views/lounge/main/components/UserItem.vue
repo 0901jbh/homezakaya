@@ -37,24 +37,32 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onBeforeMount, onUpdated, onBeforeUpdate } from "vue";
 import { useStore } from 'vuex'
 
 const props = defineProps({
   user: Object,
   friends: Array,
   idx: Number,
+  renderKey: Number,
 })
 const store = useStore()
 
-onMounted(() => {
-  console.log(document.getElementsByClassName("user-state"))
+function userState() {
   let userStateTag = document.getElementsByClassName("user-state")[props.idx]
   if (props.user.state == "offline") {
     userStateTag.style.background = "radial-gradient(50% 50% at 50% 50%, #EE1818 0%, rgba(208, 106, 106, 0) 100%)";
   } else {
     userStateTag.style.background = "radial-gradient(50% 50% at 50% 50%, #1CEE18 0%, rgba(108, 208, 106, 0) 100%)";
   }
+}
+
+onMounted(() => {
+  userState()
+})
+
+onUpdated(() => {
+  userState()
 })
 
 const isFriend = ref(false)

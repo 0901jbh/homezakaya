@@ -39,6 +39,10 @@ public class UserController {
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody UserDto user) {
         Map<String, Object> resultMap = new HashMap<>();
+        if (userService.getUser(user.getUserId()) != null) {
+            resultMap.put("message", "중복된 id입니다.");
+            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.CONFLICT); // 409
+        }
         userService.createUser(user);
         resultMap.put("message", SUCCESS);
         return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.CREATED);
@@ -188,12 +192,8 @@ public class UserController {
             String refreshToken = jwtUtil.createRefreshToken("userInfo", user);
 
             // 토큰 정보 전달
-            result.put("accessToken", accessToken);
-            result.put("refreshToken", refreshToken);
-            result.put("userId", loginUser.getUserId());
-            result.put("nickname", loginUser.getNickname());
-            result.put("mannerPoint", loginUser.getMannerPoint());
-            result.put("alcoholPoint", loginUser.getAlcoholPoint());
+            result.put("access-token", accessToken);
+            result.put("refresh-token", refreshToken);
 
             // refresh 토큰 정보 저장
             loginUser.setRefreshToken(refreshToken);
@@ -228,7 +228,7 @@ public class UserController {
     }
 
     // 토큰 갱신 (session에서 정보 받아와야 함)
-    @PostMapping("/refresh") // api check
+    @PostMapping("/refresh")
     public ResponseEntity<?> refresh(@RequestBody UserDto user, HttpServletResponse response) throws Exception {
         HashMap<String, Object> result = new HashMap<>();
         // refresh token 유효성 검사

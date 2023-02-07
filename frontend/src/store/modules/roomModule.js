@@ -21,16 +21,18 @@ export const roomModule = {
   getters: {
     getCheckPasswordResult(state){
       return state.checkPasswordResult
+    },
+    getRoom(state){
+      return state.room
     }
   },
   actions: {
     // 방 만들기
     createRoom(context, payload){
-      context.dispatch("getRooms");
       return axios.post(`/api/rooms`, payload).then(({ status, data }) => {
         if(status == 201){
-          console.log(data);
-          context.commit("SET_ROOM", data);
+          context.dispatch("getRooms");
+          // context.commit("SET_ROOM", data);
         }
         return data
       }).catch(err => {
@@ -44,7 +46,7 @@ export const roomModule = {
     getRooms(context, payload){
       axios.get(`/api/rooms`).then(({ status, data }) => {
         if(status == 200){
-          console.log(data);
+          console.log("getRooms Success");
           context.commit("SET_ROOMS", data);
         }
       }).catch(err => {
@@ -55,20 +57,21 @@ export const roomModule = {
     },
     // 특정 방 조회
     getRoom(context, payload){
-      axios.get(`/api/rooms/${payload}`).then(({ status, data }) => {
+      return axios.get(`/api/rooms/${payload}`).then(({ status, data }) => {
         if(status == 200){
           console.log(data);
           context.commit("SET_ROOM", data);
         }
+        return data
       }).catch(err => {
         if(err.response.status == 404){
           console.log("노방");
         }
+        return { message: "없는방입니다." }
       });
     },
     // 비공개방 비밀번호 확인
     checkPassword(context , payload){
-      context.dispatch("getRooms");
       return axios.post(`/api/rooms/password`, payload).then(({ status, data }) => {
         if(status == 200){
           console.log("비밀번호 일치")
@@ -86,12 +89,11 @@ export const roomModule = {
     },
     // 방 입장
     enterRoom(context, payload){
-      context.dispatch("getRooms");
       return axios.put(`api/rooms/enter/${payload}`).then(({ status, data }) => {
         console.log(payload)
         if(status == 200){
           console.log("입장 성공");
-          console.log(data.personCount);
+          context.dispatch("getRooms");
         }
         return true
       }).catch(err => {
@@ -108,14 +110,13 @@ export const roomModule = {
     quitRoom(context, payload){
       return axios.put(`api/rooms/quit/${payload}`).then(({ status, data }) => {
         if(status == 200){
-          console.log("퇴장 성공");
-          console.log(data);
+          console.log("quitRoom Success");
           if(data.personCount == 0){
             context.dispatch("removeRoom", payload)
           }
-          else {
-            context.dispatch("getRooms");
-          }
+          // else {
+          //   context.dispatch("getRooms");
+          // }
           return true
         }
       }).catch(err => {
@@ -141,7 +142,7 @@ export const roomModule = {
     createUserInRoom(context, payload){
       return axios.post(`api/userinroom`, payload).then(({ status, data }) => {
         if(status == 201){
-          console.log("유저인룸 생성 성공");
+          console.log("createUserInRoom Success");
         }
         return true
       }).catch(err => {

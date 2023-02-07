@@ -15,9 +15,9 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Random;
 import java.util.UUID;
 
+@PropertySource("classpath:application.properties")
 @Slf4j
 @RequiredArgsConstructor
 @Service

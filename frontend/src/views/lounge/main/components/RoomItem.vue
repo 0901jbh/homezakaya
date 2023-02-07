@@ -48,9 +48,9 @@
 	<div class="error-modal-bg" @click="errorClose"></div>
 	<div class="error-modal-wrap">
 		<div class="error-popup">
-			<div class="error-popup-header">
+			<!-- <div class="error-popup-header">
 				<div class="error-popup-header-title">Wrong Password</div>
-			</div>
+			</div> -->
 			<div class="error-popup-content">
 				<div class="error-sentence">비밀번호가 틀렸습니다.</div>
 				<div class="error-btn-wrapper">
@@ -143,13 +143,13 @@ const privatePopClose = () => {
 }
 
 const errorOpen = (state) => {
-	let titleTag = document.getElementsByClassName("error-popup-header-title")[props.idx];
+	// let titleTag = document.getElementsByClassName("error-popup-header-title")[props.idx];
 	let sentenceTag = document.getElementsByClassName("error-sentence")[props.idx];
 	if (state == 1) {
-		titleTag.innerHTML = "Wrong Password";
+		// titleTag.innerHTML = "Wrong Password";
 		sentenceTag.innerHTML = "비밀번호가 틀렸습니다.";
 	} else {
-		titleTag.innerHTML = "Refuse Enter Room";
+		// titleTag.innerHTML = "Refuse Enter Room";
 		sentenceTag.innerHTML = "입장에 실패했습니다.";
 	}
 	document.getElementsByClassName("error-modal-wrap")[props.idx].style.display = 'block';
@@ -250,8 +250,8 @@ onMounted(() => {
 	transform: translate(-50%, -50%);
 	width: 30%;
 	height: 40%;
-	background: white;
-	border: solid 5px black;
+	background: #252836;
+	border: solid 2px #e27b66;
 	border-radius: 2rem;
 	z-index: 1000;
 }
@@ -261,14 +261,16 @@ onMounted(() => {
 	height: 100%;
 	width: 100%;
 	grid-template-rows: 1fr 11fr;
+	transition: 0.5s ease-out;
+	color: white;
 }
 
 .private-popup-header {
-	background-color: black;
+	background-color: #E27B66;
 	height: 100%;
 	width: 100%;
-	border-bottom: solid 0.5rem #6E0000;
-	border-radius: 1rem 1rem 0 0;
+	/* border-bottom: solid 0.5rem #6E0000; */
+	border-radius: 1.6rem 1.6rem 0 0;
 }
 
 .private-popup-content {
@@ -282,10 +284,16 @@ onMounted(() => {
 	height: 65%;
 	width: 80%;
 	margin: 10%;
+	/* display: grid;
+	text-align: center;
+	grid-template-rows: 2fr 1fr;
+	height: 30%;
+	width: 80%;
+	margin: 10%; */
 }
 
 .private-popup-header-title {
-	color: white;
+	color: black;
 	font-size: 1.3rem;
 	padding: 0 5%;
 	padding-top: 1%;
@@ -313,18 +321,20 @@ onMounted(() => {
 	transform: translate(-50%, -50%);
 	width: 30%;
 	height: 30%;
-	background: white;
-	border: solid 5px black;
+	background: #252836;
+	border: solid 2px #e27b66;
 	border-radius: 2rem;
 	z-index: 1000;
 }
 
 .error-popup {
-	display: grid;
+	display: flex;
+	align-items: center;
 	height: 100%;
 	width: 100%;
 	grid-template-rows: 1fr 11fr;
 	transition: 0.5s ease-out;
+	color: white;
 }
 
 .error-popup-header {
@@ -339,7 +349,7 @@ onMounted(() => {
 	display: grid;
 	text-align: center;
 	grid-template-rows: 2fr 1fr;
-	height: 50%;
+	height: 30%;
 	width: 80%;
 	margin: 10%;
 }
@@ -357,12 +367,12 @@ onMounted(() => {
 }
 
 .el-button {
-	background-color: black !important;
-	color: white !important;
+	background-color: #e27b66 !important;
+	color: black !important;
 }
 
 .el-button:hover {
-	background-color: rgb(118, 118, 118) !important;
-	transition: 0.2s;
+	opacity: 0.75;
+	cursor: pointer;
 }
 </style>

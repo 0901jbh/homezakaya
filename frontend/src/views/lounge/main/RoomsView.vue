@@ -46,7 +46,7 @@ defineExpose(renderKey)
 
 <style scoped>
 .container {
-  height: 90vh;
+  height: 92vh;
   display: grid;
   grid-template-columns: 5fr 2fr;
   margin: 0 4%;
@@ -57,7 +57,7 @@ defineExpose(renderKey)
   /* grid-template-rows: 1fr 5fr; */
   height: 86vh;
   padding-right: 4vh;
-  margin-top: 3vh;
+  /* margin-top: 3vh; */
 }
 
 .title {
@@ -89,22 +89,23 @@ defineExpose(renderKey)
 
 .rooms {
   background: #252836;
-  border: 0.3rem solid #000000;
+  /* border: 0.3rem solid #000000; */
   border-radius: 30px;
   padding: 4vh;
-  margin-bottom: 4vh;
+  /* margin-bottom: 4vh; */
+  height: 80vh;
 }
 
 /* 새로고침 버튼 */
 
 .reload-btn-wrapper {
   position: fixed;
-  bottom: 3%;
-  right: 3%;
+  bottom: 4vh;
+  right: 2vw;
 
   height: 4rem;
   width: 4rem;
-  background: #d4d4d4;
+  background: #e27b66;
   border: 0.3rem solid black;
   border-radius: 50%;
   transition: rotate 1s;
@@ -125,7 +126,7 @@ defineExpose(renderKey)
 }
 
 .reload-btn-wrapper:hover {
-  background-color: #ffffff;
+  background-color: #e27b66;
   rotate: 360deg;
   cursor: pointer;
 }

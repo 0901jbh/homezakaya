@@ -12,23 +12,17 @@
     <div class="tab_content" id="user_content">
       <input class="search-bar" type="text" v-model="data.userInput" @keyup.enter="searchUser"
         placeholder="press enter key for search">
-      <UserItem 
-        v-for="(user, idx) in data.searchUsers" 
-        :key="idx"
-        :idx="idx"
-        :user="user"
-        :friends="data.friends"
-        :renderKey="data.renderKey"
-      />
-		</div>
-	</div>
+      <UserItem v-for="(user, idx) in data.searchUsers" :key="idx" :idx="idx" :user="user" :friends="data.friends"
+        :renderKey="data.renderKey" />
+    </div>
+  </div>
   <!-- 따라가기 거부됨 팝업창 -->
   <div class="user-not-in-modal-bg" @click="notInRoomClose"></div>
   <div class="user-not-in-modal-wrap">
     <div class="user-not-in-popup">
-      <div class="user-not-in-popup-header">
+      <!-- <div class="user-not-in-popup-header">
         <div class="user-not-in-popup-header-title">Refuse Follow Friend</div>
-      </div>
+      </div> -->
       <div class="user-not-in-popup-content">
         <div>해당 친구는 참여중인 방이 없습니다.</div>
         <div class="btn-wrapper">
@@ -46,9 +40,9 @@
   <div class="follow-private-modal-bg" @click="followPrivatePopClose"></div>
   <div class="follow-private-modal-wrap">
     <div class="follow-private-popup">
-      <div class="follow-private-popup-header">
+      <!-- <div class="follow-private-popup-header">
         <div class="follow-private-popup-header-title">Private Room</div>
-      </div>
+      </div> -->
       <div class="follow-private-popup-content">
         <div style="margin-bottom:3%;">해당 방은 비공개방입니다.</div>
         <div style="margin-bottom:5%;">비밀번호를 입력해주세요.</div>
@@ -68,9 +62,9 @@
   <div class="follow-error-modal-bg" @click="followErrorClose"></div>
   <div class="follow-error-modal-wrap">
     <div class="follow-error-popup">
-      <div class="follow-error-popup-header">
+      <!-- <div class="follow-error-popup-header">
         <div class="follow-error-popup-header-title">Wrong Password</div>
-      </div>
+      </div> -->
       <div class="follow-error-popup-content">
         <div class="sentence">비밀번호가 틀렸습니다.</div>
         <div class="follow-error-btn-wrapper">
@@ -217,13 +211,13 @@ const followPrivatePopClose = () => {
 }
 
 const followErrorOpen = (state) => {
-  let titleTag = document.querySelector(".follow-error-popup-header-title");
+  // let titleTag = document.querySelector(".follow-error-popup-header-title");
   let sentenceTag = document.querySelector(".sentence");
   if (state == 1) {
-    titleTag.innerHTML = "Wrong Password";
+    // titleTag.innerHTML = "Wrong Password";
     sentenceTag.innerHTML = "비밀번호가 틀렸습니다.";
   } else {
-    titleTag.innerHTML = "Refuse Enter Room";
+    // titleTag.innerHTML = "Refuse Enter Room";
     sentenceTag.innerHTML = "입장에 실패했습니다.";
   }
   document.getElementsByClassName("follow-error-modal-wrap")[0].style.display = 'block';
@@ -239,10 +233,10 @@ const followErrorClose = () => {
 <style scoped>
 /* 탭 전체 스타일 */
 .tabs {
-  margin-top: 3vh;
+  /* margin-top: 3vh; */
   margin-left: 6%;
   width: 94%;
-  height: 81vh;
+  height: 85vh;
 }
 
 /* 탭 스타일 */
@@ -252,12 +246,13 @@ const followErrorClose = () => {
   font-size: 1.3rem;
   font-weight: 700;
   border-radius: 30px;
-  background-color: #f8f8f8;
-  box-shadow: -4px -4px 15px rgba(255, 255, 255, 0.5), 4px 4px 15px rgba(0, 0, 0, 0.5), inset 4px 4px 15px rgba(255, 255, 255, 0.5);
+  background-color: #1f1d2b;
+  /* box-shadow: -4px -4px 15px rgba(255, 255, 255, 0.5), 4px 4px 15px rgba(0, 0, 0, 0.5), inset 4px 4px 15px rgba(255, 255, 255, 0.5); */
+  box-shadow: 0px 0px 15px #1f1d2b;
   line-height: 50px;
   font-size: 16px;
   text-align: center;
-  color: #333333;
+  color: white;
   display: block;
   float: left;
   text-align: center;
@@ -288,8 +283,8 @@ input[name="tab_item"] {
   clear: both;
   overflow: hidden;
   height: 83%;
-  background: #FFFFFF;
-  border: 0.3rem solid #000000;
+  background: #1f1d2b;
+  /* border: 0.3rem solid #000000; */
   border-radius: 30px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
@@ -297,14 +292,14 @@ input[name="tab_item"] {
 /* 선택 된 탭 콘텐츠를 표시 */
 #friend:checked~#friend_content {
   display: flex;
-	flex-direction: column;
-	overflow-y: scroll;
+  flex-direction: column;
+  overflow-y: scroll;
 }
 
 #user:checked~#user_content {
   display: flex;
-	flex-direction: column;
-	overflow-y: scroll;
+  flex-direction: column;
+  overflow-y: scroll;
 }
 
 /* 스크롤 가리기 */
@@ -314,8 +309,9 @@ input[name="tab_item"] {
 
 /* 선택된 탭 스타일 */
 .tabs input:checked+.tab_item {
-  background-color: black;
-  color: #fff;
+  background-color: #e27b66;
+  box-shadow: 0px 0px 15px #e27b66;
+  color: black;
 }
 
 /* 검색창 */
@@ -328,8 +324,13 @@ input[name="tab_item"] {
   border: 0;
   border-radius: 15px;
   outline: none;
-  background-color: rgb(233, 233, 233);
+  background-color: #252836;
+  color: white;
 }
+
+/* .search-bar::placeholder {
+  color: #cbcbcb;
+} */
 
 /* 친구가 방안에 없음 팝업창 */
 .user-not-in-modal-bg {
@@ -352,18 +353,20 @@ input[name="tab_item"] {
   transform: translate(-50%, -50%);
   width: 30%;
   height: 30%;
-  background: white;
-  border: solid 5px black;
+  background: #252836;
+  border: solid 2px #e27b66;
   border-radius: 2rem;
   z-index: 1000;
 }
 
 .user-not-in-popup {
-  display: grid;
+  display: flex;
+  align-items: center;
   height: 100%;
   width: 100%;
   grid-template-rows: 1fr 11fr;
   transition: 0.5s ease-out;
+  color: white;
 }
 
 .user-not-in-popup-header {
@@ -378,7 +381,7 @@ input[name="tab_item"] {
   display: grid;
   text-align: center;
   grid-template-rows: 2fr 1fr;
-  height: 50%;
+  height: 30%;
   width: 80%;
   margin: 10%;
 }
@@ -396,13 +399,13 @@ input[name="tab_item"] {
 }
 
 .el-button {
-  background-color: black !important;
-  color: white !important;
+  background-color: #e27b66 !important;
+  color: black !important;
 }
 
 .el-button:hover {
-  background-color: rgb(118, 118, 118) !important;
-  transition: 0.2s;
+  opacity: 0.75;
+  cursor: pointer;
 }
 
 /* 비공개방 비밀번호 입력 */
@@ -425,17 +428,20 @@ input[name="tab_item"] {
   transform: translate(-50%, -50%);
   width: 30%;
   height: 40%;
-  background: white;
-  border: solid 5px black;
+  background: #252836;
+  border: solid 2px #e27b66;
   border-radius: 2rem;
   z-index: 1000;
 }
 
 .follow-private-popup {
-  display: grid;
+  display: flex;
+  align-items: center;
   height: 100%;
   width: 100%;
   grid-template-rows: 1fr 11fr;
+  transition: 0.5s ease-out;
+  color: white;
 }
 
 .follow-private-popup-header {
@@ -447,11 +453,17 @@ input[name="tab_item"] {
 }
 
 .follow-private-popup-content {
-  display: flex;
+  /* display: flex;
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
   height: 65%;
+  width: 80%;
+  margin: 10%; */
+  display: grid;
+  text-align: center;
+  grid-template-rows: 2fr 1fr;
+  height: 30%;
   width: 80%;
   margin: 10%;
 }
@@ -485,18 +497,20 @@ input[name="tab_item"] {
   transform: translate(-50%, -50%);
   width: 30%;
   height: 30%;
-  background: white;
-  border: solid 5px black;
+  background: #252836;
+  border: solid 2px #e27b66;
   border-radius: 2rem;
   z-index: 1000;
 }
 
 .follow-error-popup {
-  display: grid;
+  display: flex;
+  align-items: center;
   height: 100%;
   width: 100%;
   grid-template-rows: 1fr 11fr;
   transition: 0.5s ease-out;
+  color: white;
 }
 
 .follow-error-popup-header {
@@ -511,7 +525,7 @@ input[name="tab_item"] {
   display: grid;
   text-align: center;
   grid-template-rows: 2fr 1fr;
-  height: 50%;
+  height: 30%;
   width: 80%;
   margin: 10%;
 }

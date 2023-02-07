@@ -4,8 +4,7 @@
 		<div id="nametag">
 			<!-- <img v-if="isHost" src="../../../../assets/crown.png" alt="crown img"
 				style="display: inline-block; width:20px; height:20px; padding-right: 5px;" /> -->
-			<p>{{ clientId }}</p>
-			<p>{{ clientNick }}</p>
+			<p>{{ username }}</p>
 		</div>
 	</div>
 </template>
@@ -25,17 +24,9 @@ export default {
 	},
 
 	computed: {
-		clientId() {
-			const { clientId } = this.getConnectionData();
-			return clientId;
-		},
-		clientNick() {
-			const { clientNick } = this.getConnectionData();
-			return clientNick;
-		},
-		isHost() {
-			const { isHost } = this.getConnectionData();
-			return isHost;
+		username() {
+			const { username } = this.getConnectionData();
+			return username;
 		},
 	},
 

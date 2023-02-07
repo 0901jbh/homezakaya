@@ -1,12 +1,25 @@
 <template>
 	<div class="room-state" @click="clickRoomIcon">
-		<img src="../../../../assets/circle.png" alt="circle img" style="height: 50%; align-self: center;">
+		<img v-if="props.room.category == '자유'" src="../../../../assets/free.png" alt="free img"
+			style="height: 50%; align-self: center;">
+		<img v-if="props.room.category == '맥주'" src="../../../../assets/beer.png" alt="beer img"
+			style="height: 50%; align-self: center;">
+		<img v-if="props.room.category == '소주'" src="../../../../assets/soju.png" alt="soju img"
+			style="height: 50%; align-self: center;">
+		<img v-if="props.room.category == '양주'" src="../../../../assets/whisky.png" alt="whisky img"
+			style="height: 50%; align-self: center;">
+		<img v-if="props.room.category == '사케'" src="../../../../assets/sake.png" alt="sake img"
+			style="height: 50%; align-self: center;">
 		<div class="title">{{ props.room.title }}</div>
 		<div class="content">
 			<div>{{ props.room.category }}</div>
 			<div>{{ props.room.personCount }} / {{ props.room.personLimit }}</div>
-			<div v-if="secret">공개</div>
-			<div v-else>비공개</div>
+			<div v-if="secret">
+				<img src="../../../../assets/unlock.png" alt="unlock img" style="height: 80%;">
+			</div>
+			<div v-else>
+				<img src="../../../../assets/lock.png" alt="lock img" style="height: 80%;">
+			</div>
 		</div>
 	</div>
 	<!-- 비공개방 비밀번호 입력창 -->
@@ -168,7 +181,7 @@ onMounted(() => {
 	flex-direction: column;
 	justify-content: space-between;
 	align-items: center;
-	background: linear-gradient(#252836 10%, #1f1d2b 40%);
+	background: linear-gradient(#252836 20%, #1f1d2b 40%);
 	width: 100%;
 	height: 100%;
 	font-size: 1rem;

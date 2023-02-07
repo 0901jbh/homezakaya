@@ -1,10 +1,10 @@
 <template>
   <div class="intro" v-if="!data.isEnter">
-    <HeaderItem :isEnter="data.isEnter" @clickTitle="clickTitle"/>
+    <HeaderItem :isEnter="data.isEnter" @clickTitle="clickTitle" />
   </div>
   <div class="login" v-if="data.isEnter">
     <header>
-      <HeaderItem :isEnter="data.isEnter"/>
+      <HeaderItem :isEnter="data.isEnter" />
     </header>
     <div class="container">
       <div>
@@ -64,7 +64,7 @@ const data = ref({
 })
 
 const onSubmit = () => {
-  router.push({ name : "rooms" })
+  router.push({ name: "rooms" })
   console.log('Log-In!');
 }
 

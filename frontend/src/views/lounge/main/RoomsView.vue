@@ -4,11 +4,11 @@
   </header>
   <div class="container">
     <div class="title-rooms">
-      <div class="title">
+      <!-- <div class="title">
         <div class="content">
           Table
         </div>
-      </div>
+      </div> -->
       <div class="rooms">
         <RoomsIndexItem :key="renderKey" />
       </div>
@@ -54,9 +54,10 @@ defineExpose(renderKey)
 
 .title-rooms {
   display: grid;
-  grid-template-rows: 1fr 5fr;
-  height: 90vh;
+  /* grid-template-rows: 1fr 5fr; */
+  height: 86vh;
   padding-right: 4vh;
+  margin-top: 3vh;
 }
 
 .title {

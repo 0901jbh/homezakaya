@@ -2,7 +2,7 @@
 	<div class="rooms-container">
 		<div class="create-room">
 			<div class="create-room-wrapper btn-open" @click="popOpen">
-				<div>+</div>
+				<img src="../../../../assets/plus.png" alt="plus img" style="width: 50px;">
 			</div>
 		</div>
 		<div class="room" v-for="(room, idx) in form.rooms" :key="idx">
@@ -161,8 +161,7 @@ const passwordClose = () => {
 	background-position: center;
 	background-size: contain;
 	background-repeat: no-repeat; */
-	margin-right: 2%;
-	margin-bottom: 2%;
+	margin: 1.5%;
 }
 
 .create-room-wrapper {
@@ -172,6 +171,8 @@ const passwordClose = () => {
 	font-size: 3rem;
 	justify-content: center;
 	align-items: center;
+	background: linear-gradient(#252836 10%, #1f1d2b 40%);
+	border-radius: 10px;
 }
 
 .room {

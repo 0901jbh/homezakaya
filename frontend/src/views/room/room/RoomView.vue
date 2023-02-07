@@ -105,7 +105,7 @@
               </div>
             </template>
           </el-popover>
-          <div class="content" @click="leaveSession">Exit</div>
+          <div class="content" @click="exitBtn">Exit</div>
         </div>
       </div>
     </div>
@@ -122,7 +122,7 @@ import { useStore } from 'vuex';
 
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
-const APPLICATION_SERVER_URL = "https://i8a606.p.ssafy.io:8443/";
+const APPLICATION_SERVER_URL = "http://localhost:5000/";
 const OPENVIDU_SERVER_SECRET = 'ssafy';
 
 export default {
@@ -344,6 +344,10 @@ export default {
       this.session.on('signal:change-host', (event) => {
         this.eventData = JSON.parse(event.data);
         this.hostId = this.eventData.userId;
+        this.store.dispatch("roomModule/changeHost",{
+          roomId: this.mySessionId,
+          hostId: this.hostId,
+        });
       })
 
       // --- 4) Connect to the session with a valid user token ---
@@ -435,29 +439,12 @@ export default {
     },
 
     async createSession(sessionId) {
-      const response = await axios.post(APPLICATION_SERVER_URL + 'openvidu/api/sessions', { customSessionId: sessionId }, {
-        headers: {
-            Authorization: `Basic ${btoa(
-              `OPENVIDUAPP:${OPENVIDU_SERVER_SECRET}`
-            )}`,
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET,POST',
-          }
-        });
+      const response = await axios.post(APPLICATION_SERVER_URL + 'api/sessions', { customSessionId: sessionId });
       return response.data; // The sessionId
     },
 
     async createToken(sessionId) {
-      const response = await axios.post(APPLICATION_SERVER_URL + 'openvidu/api/sessions/' + sessionId + '/connections', {
-        headers: {
-            Authorization: `Basic ${btoa(
-              `OPENVIDUAPP:${OPENVIDU_SERVER_SECRET}`
-            )}`,
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET,POST',
-          }
-        }
-      );
+      const response = await axios.post(APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections');
       return response.data; // The token
     },
 
@@ -482,6 +469,13 @@ export default {
       const user = this.store.state.userModule.user;
       this.myUserId = user.userId;
       this.myUserName = user.nickname;
+    },
+
+    exitBtn() {
+      if(this.hostId == this.myUserId && this.headCount > 1){
+        this.changeHost();
+      }
+      this.leaveSession();
     },
 
     //게임 기능

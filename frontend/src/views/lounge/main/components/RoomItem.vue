@@ -1,24 +1,24 @@
 <template>
 	<div class="room-state" @click="clickRoomIcon">
-		<img v-if="props.room.category == '자유'" src="../../../../assets/free.png" alt="free img"
+		<img v-if="props.room.category == '자유'" src="@/assets/images/free.png" alt="free img"
 			style="height: 50%; align-self: center;">
-		<img v-if="props.room.category == '맥주'" src="../../../../assets/beer.png" alt="beer img"
+		<img v-if="props.room.category == '맥주'" src="@/assets/images/beer.png" alt="beer img"
 			style="height: 50%; align-self: center;">
-		<img v-if="props.room.category == '소주'" src="../../../../assets/soju.png" alt="soju img"
+		<img v-if="props.room.category == '소주'" src="@/assets/images/soju.png" alt="soju img"
 			style="height: 50%; align-self: center;">
-		<img v-if="props.room.category == '양주'" src="../../../../assets/whisky.png" alt="whisky img"
+		<img v-if="props.room.category == '양주'" src="@/assets/images/whisky.png" alt="whisky img"
 			style="height: 50%; align-self: center;">
-		<img v-if="props.room.category == '사케'" src="../../../../assets/sake.png" alt="sake img"
+		<img v-if="props.room.category == '사케'" src="@/assets/images/sake.png" alt="sake img"
 			style="height: 50%; align-self: center;">
 		<div class="title">{{ props.room.title }}</div>
 		<div class="content">
 			<div>{{ props.room.category }}</div>
 			<div>{{ props.room.personCount }} / {{ props.room.personLimit }}</div>
 			<div v-if="secret">
-				<img src="../../../../assets/unlock.png" alt="unlock img" style="height: 80%;">
+				<img src="@/assets/images/unlock.png" alt="unlock img" style="height: 80%;">
 			</div>
 			<div v-else>
-				<img src="../../../../assets/lock.png" alt="lock img" style="height: 80%;">
+				<img src="@/assets/images/lock.png" alt="lock img" style="height: 80%;">
 			</div>
 		</div>
 	</div>
@@ -118,7 +118,7 @@ const enterRoom = () => {
 		if (result) {
 			store.dispatch('roomModule/enterRoom', props.room.roomId).then((result) => {
 				if (result) {
-					router.push({ name: 'wait', params: { roomId: props.room.roomId }})
+					router.push({ name: 'wait', params: { roomId: props.room.roomId } })
 				}
 				else {
 					errorOpen(2)
@@ -187,10 +187,6 @@ onMounted(() => {
 	font-size: 1rem;
 	cursor: pointer;
 	border-radius: 10px;
-	/* background-image: url('../../../../assets/table.png');
-	background-position: center;
-	background-size: contain;
-	background-repeat: no-repeat; */
 }
 
 .room-state .title {

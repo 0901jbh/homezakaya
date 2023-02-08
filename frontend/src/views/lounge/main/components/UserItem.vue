@@ -7,9 +7,9 @@
       </div>
     </div>
     <div class="second-line">
-      <img src="../../../../assets/manner_w.png" alt="manner_w img" style="width:10%; height:15%; ">
+      <img src="@/assets/images/manner_w.png" alt="manner_w img" style="width:10%; height:15%; ">
       <div>{{ props.user.mannerPoint }}</div>
-      <img src="../../../../assets/alcohol_w.png" alt="alcohol_w img" style="width:10%; height:15%; ">
+      <img src="@/assets/images/alcohol_w.png" alt="alcohol_w img" style="width:10%; height:15%; ">
       <div>{{ props.user.alcoholPoint }}잔</div>
       <div v-if="!isFriend" class="request-friend" type="button" @click="sendRequest">친구 요청</div>
       <div v-if="isFriend" class="request-friend"></div>

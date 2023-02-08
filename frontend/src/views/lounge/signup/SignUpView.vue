@@ -1,6 +1,6 @@
 <template>
   <header>
-    <HeaderItem :isEnter="true"/>
+    <HeaderItem :isEnter="true" />
   </header>
   <div class="container">
     <div class="signup-title">회원가입</div>

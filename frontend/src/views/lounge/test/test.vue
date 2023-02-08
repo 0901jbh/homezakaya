@@ -12,7 +12,10 @@ const store = useStore();
 
 const startBtn = () => {
   // store.dispatch("gameModule/updateUser", "video");
-  store.dispatch("userModule/removeUser", "ddd");
+  store.dispatch("userModule/userLogin", {
+    userId: "ssafy",
+    password: "ssafy",
+  });
   // store.dispatch("roomModule/quitRoom", 2)
   // .then((result) => {
   //   if (result) {

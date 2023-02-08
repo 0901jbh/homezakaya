@@ -78,6 +78,10 @@ const onSubmit = async () => {
     userId: data.value.id,
     password: data.value.password,
   });
+  await store.dispatch(
+    "userModule/getUserInfo",
+    sessionStorage.getItem("access-token")
+  );
   router.push({ name: "rooms" });
 };
 

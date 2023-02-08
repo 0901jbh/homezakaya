@@ -7,42 +7,67 @@
     <div class="signup-form">
       <el-form :model="form" label-width="150px">
         <el-form-item label="아이디">
-          <el-input v-model="form.id" disabled>
-          </el-input>
+          <el-input v-model="data.id" disabled> </el-input>
         </el-form-item>
         <el-form-item label="비밀번호">
-          <el-input v-model="form.password" placeholder="비밀번호를 입력해주세요" show-password />
+          <el-input
+            v-model="data.password"
+            placeholder="비밀번호를 입력해주세요"
+            show-password
+          />
         </el-form-item>
         <el-form-item label="재입력">
-          <el-input v-model="form.password2" placeholder="비밀번호를 재입력해주세요" show-password>
+          <el-input
+            v-model="data.password2"
+            placeholder="비밀번호를 재입력해주세요"
+            show-password
+          >
             <template #append>
               <el-button @click="isCorrect">비밀번호확인</el-button>
             </template>
           </el-input>
         </el-form-item>
         <el-form-item label="닉네임">
-          <el-input v-model="form.nickname" placeholder="닉네임을 입력해주세요" clearable>
+          <el-input
+            v-model="data.nickname"
+            placeholder="닉네임을 입력해주세요"
+            clearable
+          >
             <template #append>
               <el-button @click="nicknamecheck">중복확인</el-button>
             </template>
           </el-input>
         </el-form-item>
         <el-form-item label="이름">
-          <el-input v-model="form.name" disabled />
+          <el-input v-model="data.name" disabled />
         </el-form-item>
         <el-form-item label="성별">
           <!-- <el-input v-model="form.gender" placeholder="성별선택으로 바꿀예정" clearable /> -->
-          <el-radio-group v-model="form.gender" fill="black" size="large" disabled>
+          <el-radio-group
+            v-model="data.gender"
+            fill="black"
+            size="large"
+            disabled
+          >
             <el-radio-button label="남" />
             <el-radio-button label="녀" />
           </el-radio-group>
         </el-form-item>
         <el-form-item label="생년월일">
           <!-- <el-input v-model="form.birth" placeholder="생년월일을 입력해주세요 ex)1996-05-18" clearable /> -->
-          <el-date-picker v-model="form.birth" type="date" style="width: 100%" disabled />
+          <el-date-picker
+            v-model="data.birth"
+            type="date"
+            style="width: 100%"
+            disabled
+          />
         </el-form-item>
         <el-form-item label="이메일">
-          <el-input v-model="form.email" placeholder="이메일을 입력해주세요" clearable>
+          <el-input
+            v-model="data.email"
+            placeholder="이메일을 입력해주세요"
+            clearable
+          >
             <template #append>
               <el-button @click="emailsend">인증</el-button>
             </template>
@@ -57,16 +82,26 @@
         </el-form-item> -->
         <el-form-item label="주량">
           <!-- <el-input v-model="form.alcohol" placeholder="주량을 입력해주세요 (소주 기준)" clearable /> -->
-          <el-input-number v-model="form.alcohol" size=large :precision="1" :step="0.5" :min="0" />
+          <el-input-number
+            v-model="data.alcohol"
+            size="large"
+            :precision="1"
+            :step="0.5"
+            :min="0"
+          />
           <span class="el-form-item__label">&nbsp;잔 (소주)</span>
         </el-form-item>
         <el-form-item>
           <div class="btn">
-            <RouterLink to="/rooms" style="text-decoration:none;"><el-button type="info" size="large"
-                @click="onSubmit">수정 완료</el-button></RouterLink>
+            <RouterLink to="/rooms" style="text-decoration: none"
+              ><el-button type="info" size="large" @click="onSubmit"
+                >수정 완료</el-button
+              ></RouterLink
+            >
           </div>
           <div class="btn">
-            <RouterLink to="/rooms" style="text-decoration:none;"><el-button type="info" size="large">돌아가기</el-button>
+            <RouterLink to="/rooms" style="text-decoration: none"
+              ><el-button type="info" size="large">돌아가기</el-button>
             </RouterLink>
           </div>
         </el-form-item>
@@ -79,73 +114,92 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import UserHeader from '../menu/UserHeader.vue'
-import FooterItem from '../menu/FooterItem.vue'
+import { ref } from "vue";
+import { ElMessage, ElMessageBox } from "element-plus";
+import UserHeader from "../menu/UserHeader.vue";
+import FooterItem from "../menu/FooterItem.vue";
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
 
-const form = reactive({
-  id: '',
-  password: '',
-  password2: '',
-  nickname: '',
-  name: '',
-  gender: '',
-  birth: '',
-  email: '',
-  emailcheck: '',
-  alcohol: 0,
-})
+const router = useRouter();
+const store = useStore();
 
-let flag = ref(false)
+const data = ref({
+  id: store.state.userModule.user.userId,
+  password: store.state.userModule.user.password,
+  password2: "",
+  nickname: store.state.userModule.user.nickname,
+  name: store.state.userModule.user.username,
+  gender: store.state.userModule.user.gender,
+  birth: store.state.userModule.user.birthDate,
+  email: store.state.userModule.user.email,
+  emailcheck: "",
+  alcohol: store.state.userModule.user.alcoholPoint,
+});
 
-const onSubmit = () => {
-  console.log('submit!')
-}
+let flag = ref(false);
 
-const idcheck = () => {
-  console.log('id check!')
-}
+// 막힌 form 정보 빈값으로 들어옴 (update 가능 값, 유지될 값) getUserInfo로 한번 뿌려줘야 됨
+const onSubmit = async () => {
+  await store.dispatch("userModule/updateUser", {
+    userId: data.value.id,
+    password: data.value.password,
+    nickname: data.value.nickname,
+    username: data.value.name,
+    gender: data.value.gender,
+    birthDate: data.value.birth,
+    email: data.value.email,
+    alcoholPoint: data.value.alcohol,
+  });
 
-const nicknamecheck = () => {
-  console.log('nickname check!')
-}
+  console.log("submit!");
+  router.push({ name: "rooms" });
+};
+
+const idcheck = async () => {
+  await store.dispatch("userModule/idcheck", data.value.id);
+  console.log("id check!");
+};
+
+const nicknamecheck = async () => {
+  await store.dispatch("userModule/nicknameCheck", data.value.nickname);
+  console.log("nickname check!");
+};
 
 const emailsend = () => {
-  console.log('email send!')
-  ElMessageBox.prompt('인증번호를 입력해주세요.', '메일인증', {
-    confirmButtonText: 'OK',
-    cancelButtonText: 'Cancel',
+  console.log("email send!");
+  ElMessageBox.prompt("인증번호를 입력해주세요.", "메일인증", {
+    confirmButtonText: "OK",
+    cancelButtonText: "Cancel",
   })
-    .then(({ }) => {
-      console.log('email confirm!')
+    .then(({}) => {
+      console.log("email confirm!");
       ElMessage({
-        type: 'success',
+        type: "success",
         message: `인증되었습니다.`,
-      })
+      });
     })
     .catch(() => {
       ElMessage({
-        type: 'info',
-        message: '입력이 취소되었습니다.',
-      })
-    })
-}
+        type: "info",
+        message: "입력이 취소되었습니다.",
+      });
+    });
+};
 
 // const emailconfirm = () => {
 //   console.log('email confirm!')
 // }
 
 function isCorrect() {
-  if (form.password == form.password2) {
-    flag = true
-    console.log('right password!')
+  if (data.value.password == data.value.password2) {
+    flag = true;
+    console.log("right password!");
   } else {
-    flag = false
-    console.log('wrong password!')
+    flag = false;
+    console.log("wrong password!");
   }
 }
-
 </script>
 
 <style scoped>
@@ -157,11 +211,11 @@ function isCorrect() {
 }
 
 .signup-title {
-  font-family: 'Inter';
+  font-family: "Inter";
   font-style: normal;
   font-weight: 800;
   font-size: 8vh;
-  color: #9D0101;
+  color: #9d0101;
   margin-top: 5vh;
 }
 
@@ -181,7 +235,7 @@ function isCorrect() {
 }
 
 .el-radio-button__inner:hover {
-  color: black
+  color: black;
 }
 
 .el-form-item__label {

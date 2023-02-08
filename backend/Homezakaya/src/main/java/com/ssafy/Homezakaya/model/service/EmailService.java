@@ -25,7 +25,7 @@ public class EmailService {
 
     private final JavaMailSender javaMailSender;
     private final UserService userService;
-    private final String ePw = UUID.randomUUID().toString().replace("-", "").substring(0, 10);
+    private String ePw;
     private String temPw;
 
     @Value("${spring.mail.username}")
@@ -36,6 +36,9 @@ public class EmailService {
 //        log.info("보내는 대상 : " + to);
 //        log.info("인증 번호 : " + ePw);
         MimeMessage message = javaMailSender.createMimeMessage();
+
+        ePw = UUID.randomUUID().toString().replace("-", "").substring(0, 10);
+        log.info(ePw);
 
         message.addRecipients(MimeMessage.RecipientType.TO, to);
         message.setSubject("HOMEZAKAYA 인증코드");
@@ -84,6 +87,7 @@ public class EmailService {
 
 
     // 인증번호 발송
+
     /**
      * @param to : 인증번호를 받을 메일 주소
      * @return
@@ -102,6 +106,7 @@ public class EmailService {
     }
 
     // 임시 비밀번호 발송
+
     /**
      * @param to : 인증번호를 받을 메일 주소
      * @return

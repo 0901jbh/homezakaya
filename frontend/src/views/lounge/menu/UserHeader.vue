@@ -3,11 +3,17 @@
     <RouterLink to="/rooms" style="text-decoration: none">
       <div class="title">Homezakaya</div>
     </RouterLink>
-    <el-popover :width="300" popper-style="background: #252836; border: solid 2px #e27b66; padding: 20px;"
-      trigger="click">
+    <el-popover
+      :width="300"
+      popper-style="background: #252836; border: solid 2px #e27b66; padding: 20px;"
+      trigger="click"
+    >
       <template #reference>
-        <img src="@/assets/images/profile.png" alt="profile img"
-          style="width:60px; height:60px; padding-right: 1vw; cursor:pointer;">
+        <img
+          src="@/assets/images/profile.png"
+          alt="profile img"
+          style="width: 60px; height: 60px; padding-right: 1vw; cursor: pointer"
+        />
       </template>
       <template #default>
         <div
@@ -20,15 +26,57 @@
           >
             {{ data.nickname }}
           </p>
-          <div class="MyInfo_manner"
-            style="margin: 0; display: flex; gap: 16px; flex-direction: row; justify-content: center;">
-            <img src="@/assets/images/manner_w.png" alt="manner_w img" style="width:40px; height:40px;">
-            <p style="margin: 0; font-size: 30px; color: white; align-self:center;">{{ data.mannerPoint }}</p>
+          <div
+            class="MyInfo_manner"
+            style="
+              margin: 0;
+              display: flex;
+              gap: 16px;
+              flex-direction: row;
+              justify-content: center;
+            "
+          >
+            <img
+              src="@/assets/images/manner_w.png"
+              alt="manner_w img"
+              style="width: 40px; height: 40px"
+            />
+            <p
+              style="
+                margin: 0;
+                font-size: 30px;
+                color: white;
+                align-self: center;
+              "
+            >
+              {{ data.mannerPoint }}
+            </p>
           </div>
-          <div class="MyInfo_alcohol"
-            style="margin: 0; display: flex; gap: 16px; flex-direction: row; justify-content: center;">
-            <img src="@/assets/images/alcohol_w.png" alt="alcohol_w img" style="width:40px; height:40px;">
-            <p style="margin: 0; font-size: 30px; color: white; align-self:center;">{{ data.alcoholPoint }}잔</p>
+          <div
+            class="MyInfo_alcohol"
+            style="
+              margin: 0;
+              display: flex;
+              gap: 16px;
+              flex-direction: row;
+              justify-content: center;
+            "
+          >
+            <img
+              src="@/assets/images/alcohol_w.png"
+              alt="alcohol_w img"
+              style="width: 40px; height: 40px"
+            />
+            <p
+              style="
+                margin: 0;
+                font-size: 30px;
+                color: white;
+                align-self: center;
+              "
+            >
+              {{ data.alcoholPoint }}잔
+            </p>
           </div>
           <RouterLink
             class="MyInfo_edit content"
@@ -42,7 +90,7 @@
             to="/"
             style="text-decoration: none"
           >
-            로그아웃
+            <el-button @click="logout">로그아웃</el-button>
           </RouterLink>
         </div>
       </template>
@@ -63,13 +111,13 @@ const data = ref({
 
 <style scoped>
 @font-face {
-  font-family: 'dokdo';
-  src: url('@/assets/fonts/Dokdo-Regular.ttf')
+  font-family: "dokdo";
+  src: url("@/assets/fonts/Dokdo-Regular.ttf");
 }
 
 @font-face {
-  font-family: 'eastsea';
-  src: url('@/assets/fonts/EastSeaDokdo-Regular.ttf')
+  font-family: "eastsea";
+  src: url("@/assets/fonts/EastSeaDokdo-Regular.ttf");
 }
 
 .head {

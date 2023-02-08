@@ -67,6 +67,7 @@ export const userModule = {
           }
         })
         .catch((err) => {
+          console.log(err);
           if (err.response.status == 409) {
             console.log("중복된 id 입니다.");
           }
@@ -75,8 +76,8 @@ export const userModule = {
     },
 
     // nickname 중복확인 - ok
-    nicknameCheck(context, payload) {
-      return axios
+    async nicknameCheck(context, payload) {
+      await axios
         .get(`/api/users/nickname/${payload}`)
         .then(({ status, data }) => {
           if (status == 200) {
@@ -92,14 +93,42 @@ export const userModule = {
         });
     },
 
+    // email 인증, id 찾기, pw 찾기
+    sendEmail(context, payload) {
+      axios
+        .post(`/api/users/login/mailConfirm`, payload)
+        .then(({ status, data }) => {
+          if (status == 200) {
+            console.log(data);
+            context.commit("SET_USER_INFO", data); // 인증번호 확인용
+            console.log("인증메일 발송 완료");
+          } else {
+            console.log("이미 가입된 이메일 입니다.");
+          }
+        })
+        .catch((err) => {
+          // 필요한가?
+          if (err.response.status == 404) {
+            console.log("발송 실패");
+          }
+        });
+    },
+
     // 회원 가입 - ok
-    createUser(context, payload) {
-      return axios.post(`/api/users`, payload).then(({ status, data }) => {
-        if (status == 200) {
-          console.log("회원가입 성공"); // console 출력 안됨
-          context.commit("SET_USER", data);
-        }
-      });
+    async createUser(context, payload) {
+      await axios
+        .post(`/api/users`, payload)
+        .then(({ status, data }) => {
+          if (status == 200) {
+            console.log("회원가입 성공"); // console 출력 안됨
+            context.commit("SET_USER", data);
+          }
+        })
+        .catch((err) => {
+          if (err.response.status == 500) {
+            console.log("회원가입 실패");
+          }
+        });
     },
 
     // 회원 정보 조회 (내정보) - ok
@@ -136,7 +165,7 @@ export const userModule = {
         });
     },
 
-    // 로그인 (세션에 토큰 정보 받아오기) - ok
+    // 로그인 - ok
     async userLogin(context, payload) {
       await axios
         .post(`/api/users/login`, payload)
@@ -145,27 +174,12 @@ export const userModule = {
             let accessToken = data["access-token"];
             let refreshToken = data["refresh-token"];
 
-            // console.log(data);
-
             context.commit("SET_IS_LOGIN", true);
             context.commit("SET_IS_LOGIN_ERROR", false);
             context.commit("SET_IS_VALID_TOKEN", true);
 
             sessionStorage.setItem("access-token", accessToken);
             sessionStorage.setItem("refresh-token", refreshToken);
-
-            // 토큰 decode
-            let decodedToken = jwtDecode(
-              sessionStorage.getItem("access-token")
-            );
-            // console.log("getUserInfo() decodeToken :: ", decodedToken);
-            context.commit("SET_USER_INFO", decodedToken); //user에 저장
-            // console.log(decodedToken.mannerPoint);
-
-            sessionStorage.setItem("userId", decodedToken.userId);
-            sessionStorage.setItem("nickname", decodedToken.nickname);
-            sessionStorage.setItem("mannerPoint", decodedToken.mannerPoint);
-            sessionStorage.setItem("alcoholPoint", decodedToken.alcoholPoint);
 
             console.log("로그인 성공");
           } else {
@@ -213,10 +227,9 @@ export const userModule = {
         .get(`/api/users/${decodedToken.userId}`)
         .then(({ status, data }) => {
           if (status == 200) {
-            console.log("data: ", data);
-            context.commit("SET_USER_INFO", response.data.user); //user에 저장
+            // console.log("data: ", data);
+            context.commit("SET_USER_INFO", data); //user에 저장
           } else {
-            // console.log(response.data);
             console.error("Failed to retrieve user information");
           }
         })
@@ -257,7 +270,7 @@ export const userModule = {
                 }
                 alert("RefreshToken 기간 만료!!! 다시 로그인해 주세요.");
                 context.commit("SET_IS_LOGIN", false);
-                context.commit("SET_USER_INFO", null);
+                context.commit("SET_USER_INFO", {});
                 context.commit("SET_IS_VALID_TOKEN", false);
                 router.push({ name: "login" });
               },
@@ -293,7 +306,7 @@ export const userModule = {
         .then(({ status, data }) => {
           if (status == 200) {
             context.commit("SET_IS_LOGIN", false);
-            context.commit("SET_USER_INFO", null);
+            context.commit("SET_USER_INFO", {});
             context.commit("SET_IS_VALID_TOKEN", false);
 
             sessionStorage.clear();
@@ -309,7 +322,4 @@ export const userModule = {
         });
     },
   },
-
-  // email 인증, id 찾기, pw 찾기
-  sendEmail(context, payload) {},
 };

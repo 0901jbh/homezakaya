@@ -107,7 +107,7 @@ export default {
         console.warn(exception);
       });
 
-      this.getToken().then((token) => {
+      this.getToken(this.roomId).then((token) => {
         this.session.connect(token, { username: this.myUserName })
           .then(() => {
 
@@ -122,7 +122,6 @@ export default {
               mirror: true,
             });
 
-            this.mainStreamManager = publisher;
             this.publisher = publisher;
 
             this.session.publish(this.publisher);
@@ -139,7 +138,6 @@ export default {
       if (this.session) this.session.disconnect();
 
       this.session = undefined;
-      this.mainStreamManager = undefined;
       this.publisher = undefined;
       this.OV = undefined;
 

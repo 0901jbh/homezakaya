@@ -221,7 +221,7 @@ export const userModule = {
           }
         })
         .catch((err) => {
-          if (status == 401) {
+          if (err.response.status == 401) {
             console.log("인증되지 않은 토큰");
           }
         });

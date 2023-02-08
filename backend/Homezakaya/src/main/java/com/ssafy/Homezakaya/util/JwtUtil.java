@@ -17,7 +17,7 @@ public class JwtUtil {
 
     // 어세스 토큰 유효시간 | 20s
     private long accessTokenValidTime = 20 * 1000L; // 30 * 60 * 1000L;
-    // 리프레시 토큰 유효시간 | 1m
+    // 리프레시 토큰 유효시간 | 5m
     private long refreshTokenValidTime = 5 * 60 * 1000L;
 
 
@@ -27,7 +27,7 @@ public class JwtUtil {
 
     // 토큰 생성 (데이터 추가로 담기 가능 : userId, password, email, exp 넘김)
     public String createAccessToken(String claimId, UserDto user) throws UnsupportedEncodingException {
-        return Jwts.builder().setHeaderParam("alg", "HS256").setHeaderParam("type", "JWT").claim("userId", user.getUserId()).claim("password", user.getPassword()).claim("email", user.getEmail()).claim("mannerPoint", user.getMannerPoint()).claim("alcoholPoint", user.getAlcoholPoint()).setExpiration(new Date(System.currentTimeMillis() + accessTokenValidTime)).signWith(io.jsonwebtoken.SignatureAlgorithm.HS256, SALT.getBytes("UTF-8")).compact();
+        return Jwts.builder().setHeaderParam("alg", "HS256").setHeaderParam("type", "JWT").claim("userId", user.getUserId()).claim("nickname", user.getNickname()).claim("mannerPoint", user.getMannerPoint()).claim("alcoholPoint", user.getAlcoholPoint()).setExpiration(new Date(System.currentTimeMillis() + accessTokenValidTime)).signWith(io.jsonwebtoken.SignatureAlgorithm.HS256, SALT.getBytes("UTF-8")).compact();
     }
 
     // Refresh Token 생성 (인증정보 X)
@@ -38,7 +38,7 @@ public class JwtUtil {
     // 토큰 정보 반환 (토큰에 문제 발생 시 RuntimeError 발생)
     public Map<String, Object> checkAndGetClaims(final String jwt) {
         Jws<Claims> claims = Jwts.parser().setSigningKey(SALT.getBytes()).parseClaimsJws(jwt);
-        log.trace("claims: {}", claims);
+        log.info("claims: {}", claims);
         return claims.getBody();
     }
 }

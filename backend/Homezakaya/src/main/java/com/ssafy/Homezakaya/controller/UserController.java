@@ -188,8 +188,8 @@ public class UserController {
 
         if (loginUser != null && user.getPassword().equals(loginUser.getPassword())) {
             // 인증 성공 시 accessToken, refreshToken 생성
-            String accessToken = jwtUtil.createAccessToken("userInfo", user);
-            String refreshToken = jwtUtil.createRefreshToken("userInfo", user);
+            String accessToken = jwtUtil.createAccessToken("userInfo", loginUser);
+            String refreshToken = jwtUtil.createRefreshToken("userInfo", loginUser);
 
             // 토큰 정보 전달
             result.put("access-token", accessToken);

@@ -1,6 +1,6 @@
 <template>
   <div class="head">
-    <RouterLink to="/rooms" style="text-decoration:none;">
+    <RouterLink to="/rooms" style="text-decoration: none">
       <div class="title">Homezakaya</div>
     </RouterLink>
     <el-popover :width="300" popper-style="background: #252836; border: solid 2px #e27b66; padding: 20px;"
@@ -10,8 +10,14 @@
           style="width:60px; height:60px; padding-right: 1vw; cursor:pointer;">
       </template>
       <template #default>
-        <div class="MyInfo" style="display: flex; gap: 32px; flex-direction: column">
-          <p class="MyInfo_nickname" style="margin: 0; font-size: 30px; color: white; align-self:center;">
+        <div
+          class="MyInfo"
+          style="display: flex; gap: 32px; flex-direction: column"
+        >
+          <p
+            class="MyInfo_nickname"
+            style="margin: 0; font-size: 30px; color: white; align-self: center"
+          >
             {{ data.nickname }}
           </p>
           <div class="MyInfo_manner"
@@ -24,10 +30,18 @@
             <img src="@/assets/images/alcohol_w.png" alt="alcohol_w img" style="width:40px; height:40px;">
             <p style="margin: 0; font-size: 30px; color: white; align-self:center;">{{ data.alcoholPoint }}잔</p>
           </div>
-          <RouterLink class="MyInfo_edit content" to="/edit" style="text-decoration:none;">
+          <RouterLink
+            class="MyInfo_edit content"
+            to="/edit"
+            style="text-decoration: none"
+          >
             정보수정
           </RouterLink>
-          <RouterLink class="MyInfo_logout content" to="/" style="text-decoration:none;">
+          <RouterLink
+            class="MyInfo_logout content"
+            to="/"
+            style="text-decoration: none"
+          >
             로그아웃
           </RouterLink>
         </div>
@@ -37,14 +51,14 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useStore } from 'vuex'
-const store = useStore()
+import { ref } from "vue";
+import { useStore } from "vuex";
+const store = useStore();
 const data = ref({
   nickname: store.state.userModule.user.nickname,
   mannerPoint: store.state.userModule.user.mannerPoint,
   alcoholPoint: store.state.userModule.user.alcoholPoint,
-})
+});
 </script>
 
 <style scoped>
@@ -68,7 +82,7 @@ const data = ref({
 }
 
 .title {
-  font-family: 'dokdo';
+  font-family: "dokdo";
   color: white;
   font-size: 2.5rem;
   font-weight: 600;

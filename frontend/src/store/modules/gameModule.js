@@ -114,7 +114,22 @@ export const gameModule = {
         console.log(texts);
         context.commit("SET_TEXTS", texts);
       }
-    }
+    },
+    // 정확도 검사
+    getAccuracy(context, payload) {
+      axios
+      .post(`api/games/accuracy`, payload)
+      .then(({ status, data }) => {
+        if (status == 200) {
+          console.log("정확도:",data.accuracy,"%");
+        }
+      })
+      .catch((err) => {
+        if (err.status == 500) {
+          console.log("500 에러");
+        }
+      });
+    },
   }
 };
  

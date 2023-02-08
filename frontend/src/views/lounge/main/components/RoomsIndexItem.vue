@@ -14,12 +14,12 @@
 	<div class="modal-wrap">
 		<div class="create-room-popup">
 			<div class="popup-header">
-				<div class="popup-header-title">Create Room</div>
+				<div class="popup-header-title">방 만들기</div>
 			</div>
 			<div class="popup-content">
-				<el-form class="create-room-form" :model="form" label-width="30%" label-position="left">
+				<el-form class="create-room-form" :model="form" label-width="20%" label-position="left">
 					<el-form-item label="방 제목">
-						<el-input v-model="form.title" />
+						<el-input v-model="form.title" placeholder="방 제목을 입력해주세요" />
 					</el-form-item>
 					<div>
 						<el-form-item label="주종">
@@ -44,7 +44,7 @@
 						</el-form-item>
 					</div>
 					<el-form-item label="공개여부">
-						<el-radio-group v-model="form.private" fill="black">
+						<el-radio-group v-model="form.private" fill="#e27b66">
 							<el-radio-button label="공개" @click="passwordClose" />
 							<el-radio-button label="비공개" @click="passwordOpen" />
 						</el-radio-group>
@@ -53,13 +53,12 @@
 						<el-input v-model="form.password" placeholder="비밀번호를 입력해주세요" show-password />
 					</el-form-item>
 					<el-form-item style="width:100%;">
-						<div class="btn">
-							<el-button type="info" size="large" @click="createRoom">Create</el-button>
-						</div>
-						<div class="btn">
-							<RouterLink to="/rooms" style="text-decoration:none;"><el-button type="info" size="large"
-									@click="popClose">Cancel</el-button></RouterLink>
-						</div>
+						<el-button type="info" size="large" @click="createRoom">Create</el-button>
+						<el-button type="info" size="large" @click="popClose">
+							<RouterLink to="/rooms" style="text-decoration:none; color: black;">
+								Cancel
+							</RouterLink>
+						</el-button>
 					</el-form-item>
 				</el-form>
 			</div>
@@ -141,6 +140,11 @@ const passwordClose = () => {
 </script>
 
 <style scoped>
+@font-face {
+	font-family: 'hansans';
+	src: url('@/assets/fonts/BlackHanSans-Regular.ttf')
+}
+
 .rooms-container {
 	display: flex;
 	width: 100%;
@@ -148,6 +152,7 @@ const passwordClose = () => {
 	flex-direction: row;
 	flex-wrap: wrap;
 	overflow-y: scroll;
+	scroll-snap-type: y mandatory;
 }
 
 .rooms-container::-webkit-scrollbar {
@@ -156,8 +161,9 @@ const passwordClose = () => {
 
 .create-room {
 	width: 30%;
-	height: 40%;
-	margin: 1.5%;
+	height: 45%;
+	padding: 2.5% 1.5%;
+	scroll-snap-align: start;
 }
 
 .create-room-wrapper {
@@ -173,8 +179,9 @@ const passwordClose = () => {
 
 .room {
 	width: 30%;
-	height: 40%;
-	margin: 1.5%;
+	height: 45%;
+	padding: 2.5% 1.5%;
+	scroll-snap-align: start;
 }
 
 .room-wrapper {
@@ -192,6 +199,7 @@ const passwordClose = () => {
 	cursor: pointer;
 }
 
+/* 방만들기 */
 .modal-bg {
 	display: none;
 	width: 100%;
@@ -202,6 +210,7 @@ const passwordClose = () => {
 	right: 0;
 	z-index: 999;
 	transition: 0.5s ease-out;
+	backdrop-filter: blur(4px) brightness(60%);
 }
 
 .modal-wrap {
@@ -211,7 +220,7 @@ const passwordClose = () => {
 	left: 50%;
 	transform: translate(-50%, -50%);
 	width: 35%;
-	height: 45%;
+	height: 55%;
 	background: #252836;
 	border: solid 2px #e27b66;
 	border-radius: 2rem;
@@ -240,8 +249,7 @@ const passwordClose = () => {
 	align-items: start;
 	flex-direction: column;
 	width: 80%;
-	margin: 0% 10%;
-	margin-top: 10%;
+	margin: 10%;
 	/* display: grid;
 	text-align: center;
 	grid-template-rows: 2fr 1fr;
@@ -252,7 +260,8 @@ const passwordClose = () => {
 
 .popup-header-title {
 	color: black;
-	font-size: 1.3rem;
+	font-size: 2rem;
+	font-family: 'hansans';
 	padding: 0 5%;
 	padding-top: 1%;
 }
@@ -268,6 +277,7 @@ const passwordClose = () => {
 .el-button {
 	background-color: #e27b66 !important;
 	color: black !important;
+	border: none;
 }
 
 .el-button:hover {

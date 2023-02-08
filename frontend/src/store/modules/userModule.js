@@ -5,8 +5,8 @@ export const userModule = {
   namespaced: true,
   state: () => ({
     user: {
-      userId: "power916",
-      nickname: "태형",
+      userId: "korealdw",
+      nickname: "동우",
       mannerPoint: 3,
       alcoholPoint: 7,
     }, // user 전체 정보

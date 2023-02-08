@@ -6,23 +6,26 @@
     <el-popover :width="300" popper-style="background: #252836; border: solid 2px #e27b66; padding: 20px;"
       trigger="click">
       <template #reference>
-        <img src="@/assets/images/profile.png" alt="profile img"
-          style="width:60px; height:60px; padding-right: 1vw; cursor:pointer;">
+        <!-- <img src="@/assets/images/profile.png" alt="profile img"
+          style="width:60px; height:60px; padding-right: 1vw; cursor:pointer;"> -->
+        <div style="color: white; padding-right: 2vw; font-size: 30px; font-family: hansans; cursor: pointer;">
+          오늘도 즐거운 술자리, {{ data.nickname }}님!
+        </div>
       </template>
       <template #default>
         <div class="MyInfo" style="display: flex; gap: 32px; flex-direction: column">
-          <p class="MyInfo_nickname" style="margin: 0; font-size: 30px; color: white; align-self:center;">
+          <!-- <p class="MyInfo_nickname" style="margin: 0; font-size: 30px; color: white; align-self:center;">
             {{ data.nickname }}
-          </p>
+          </p> -->
           <div class="MyInfo_manner"
             style="margin: 0; display: flex; gap: 16px; flex-direction: row; justify-content: center;">
             <img src="@/assets/images/manner_w.png" alt="manner_w img" style="width:40px; height:40px;">
-            <p style="margin: 0; font-size: 30px; color: white; align-self:center;">{{ data.mannerPoint }}</p>
+            <p style="margin: 0; font-size: 20px; color: white; align-self:center;">매너 도수는 {{ data.mannerPoint }}점</p>
           </div>
           <div class="MyInfo_alcohol"
             style="margin: 0; display: flex; gap: 16px; flex-direction: row; justify-content: center;">
             <img src="@/assets/images/alcohol_w.png" alt="alcohol_w img" style="width:40px; height:40px;">
-            <p style="margin: 0; font-size: 30px; color: white; align-self:center;">{{ data.alcoholPoint }}잔</p>
+            <p style="margin: 0; font-size: 20px; color: white; align-self:center;">알콜 도수는 {{ data.alcoholPoint }}잔</p>
           </div>
           <RouterLink class="MyInfo_edit content" to="/edit" style="text-decoration:none;">
             정보수정
@@ -58,6 +61,11 @@ const data = ref({
   src: url('@/assets/fonts/EastSeaDokdo-Regular.ttf')
 }
 
+@font-face {
+  font-family: 'hansans';
+  src: url('@/assets/fonts/BlackHanSans-Regular.ttf')
+}
+
 .head {
   background-color: #252836;
   height: 8vh;
@@ -72,14 +80,7 @@ const data = ref({
   color: white;
   font-size: 2.5rem;
   font-weight: 600;
-  padding-left: 1vw;
-}
-
-.info {
-  color: white;
-  font-size: 4vh;
-  font-weight: 600;
-  margin-right: 1vw;
+  padding-left: 2vw;
 }
 
 .content {

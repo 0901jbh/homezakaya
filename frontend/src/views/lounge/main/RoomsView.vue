@@ -3,15 +3,13 @@
     <UserHeader />
   </header>
   <div class="container">
-    <div class="title-rooms">
-      <!-- <div class="title">
+    <!-- <div class="title">
         <div class="content">
           Table
         </div>
       </div> -->
-      <div class="rooms">
-        <RoomsIndexItem :key="renderKey" />
-      </div>
+    <div class="rooms">
+      <RoomsIndexItem :key="renderKey" />
     </div>
     <FriendIndex :key="renderKey" />
   </div>
@@ -52,21 +50,13 @@ defineExpose(renderKey)
   margin: 0 4%;
 }
 
-.title-rooms {
-  display: grid;
-  /* grid-template-rows: 1fr 5fr; */
-  height: 86vh;
-  padding-right: 4vh;
-  /* margin-top: 3vh; */
-}
-
-.title {
+/* .title {
   display: flex;
   align-items: center;
   padding: 0 4%;
-}
+} */
 
-.content {
+/* .content {
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -85,7 +75,7 @@ defineExpose(renderKey)
   background: #000000;
   box-shadow: -4px -4px 15px rgba(255, 255, 255, 0.5), 4px 4px 15px rgba(0, 0, 0, 0.5), inset 4px 4px 15px rgba(255, 255, 255, 0.5);
   border-radius: 53px;
-}
+} */
 
 .rooms {
   background: #252836;
@@ -100,7 +90,7 @@ defineExpose(renderKey)
 
 .reload-btn-wrapper {
   position: fixed;
-  bottom: 4vh;
+  bottom: 5vh;
   right: 2vw;
 
   height: 4rem;

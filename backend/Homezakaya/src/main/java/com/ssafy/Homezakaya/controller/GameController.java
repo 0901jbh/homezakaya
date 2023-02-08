@@ -7,9 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.ssafy.Homezakaya.model.dto.SentenceDto;
 import com.ssafy.Homezakaya.model.dto.TopicDto;
@@ -48,7 +46,7 @@ public class GameController{
 		}
 
 	}
-	
+
 	@GetMapping("/sentence")
 	private ResponseEntity<?> sentenceList(){
 		Map<String, Object> resultMap = new HashMap<>();
@@ -72,7 +70,17 @@ public class GameController{
 		}
 	}
 	
-	
-	
-	
+	// 정확도 검사
+	@PostMapping("/accuracy")
+	private ResponseEntity<?> getAccuracy(@RequestBody SentenceDto sentenceDto) {
+		Map<String, Object> resultMap = new HashMap<>();
+		try {
+			int result = sentenceService.calculateAccuracy(sentenceDto.getContent(), sentenceDto.getStrPerson());
+			resultMap.put("accuracy", result);
+			return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.internalServerError().build();
+		}
+	}
 }

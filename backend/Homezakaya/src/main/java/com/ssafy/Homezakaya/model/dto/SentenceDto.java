@@ -9,6 +9,6 @@ import lombok.*;
 public class SentenceDto {
 	private int topicId;
 	private String content;
-	
+	private String strPerson; // 음성인식으로 입력 받은 값
 	
 }

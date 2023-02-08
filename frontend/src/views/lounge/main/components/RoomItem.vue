@@ -1,24 +1,24 @@
 <template>
 	<div class="room-state" @click="clickRoomIcon">
-		<img v-if="props.room.category == '자유'" src="../../../../assets/free.png" alt="free img"
+		<img v-if="props.room.category == '자유'" src="@/assets/images/free.png" alt="free img"
 			style="height: 50%; align-self: center;">
-		<img v-if="props.room.category == '맥주'" src="../../../../assets/beer.png" alt="beer img"
+		<img v-if="props.room.category == '맥주'" src="@/assets/images/beer.png" alt="beer img"
 			style="height: 50%; align-self: center;">
-		<img v-if="props.room.category == '소주'" src="../../../../assets/soju.png" alt="soju img"
+		<img v-if="props.room.category == '소주'" src="@/assets/images/soju.png" alt="soju img"
 			style="height: 50%; align-self: center;">
-		<img v-if="props.room.category == '양주'" src="../../../../assets/whisky.png" alt="whisky img"
+		<img v-if="props.room.category == '양주'" src="@/assets/images/whisky.png" alt="whisky img"
 			style="height: 50%; align-self: center;">
-		<img v-if="props.room.category == '사케'" src="../../../../assets/sake.png" alt="sake img"
+		<img v-if="props.room.category == '사케'" src="@/assets/images/sake.png" alt="sake img"
 			style="height: 50%; align-self: center;">
 		<div class="title">{{ props.room.title }}</div>
 		<div class="content">
 			<div>{{ props.room.category }}</div>
 			<div>{{ props.room.personCount }} / {{ props.room.personLimit }}</div>
 			<div v-if="secret">
-				<img src="../../../../assets/unlock.png" alt="unlock img" style="height: 80%;">
+				<img src="@/assets/images/unlock.png" alt="unlock img" style="height: 80%;">
 			</div>
 			<div v-else>
-				<img src="../../../../assets/lock.png" alt="lock img" style="height: 80%;">
+				<img src="@/assets/images/lock.png" alt="lock img" style="height: 80%;">
 			</div>
 		</div>
 	</div>
@@ -48,9 +48,9 @@
 	<div class="error-modal-bg" @click="errorClose"></div>
 	<div class="error-modal-wrap">
 		<div class="error-popup">
-			<div class="error-popup-header">
+			<!-- <div class="error-popup-header">
 				<div class="error-popup-header-title">Wrong Password</div>
-			</div>
+			</div> -->
 			<div class="error-popup-content">
 				<div class="error-sentence">비밀번호가 틀렸습니다.</div>
 				<div class="error-btn-wrapper">
@@ -118,7 +118,7 @@ const enterRoom = () => {
 		if (result) {
 			store.dispatch('roomModule/enterRoom', props.room.roomId).then((result) => {
 				if (result) {
-					router.push({ name: 'wait', params: { roomId: props.room.roomId }})
+					router.push({ name: 'wait', params: { roomId: props.room.roomId } })
 				}
 				else {
 					errorOpen(2)
@@ -143,13 +143,13 @@ const privatePopClose = () => {
 }
 
 const errorOpen = (state) => {
-	let titleTag = document.getElementsByClassName("error-popup-header-title")[props.idx];
+	// let titleTag = document.getElementsByClassName("error-popup-header-title")[props.idx];
 	let sentenceTag = document.getElementsByClassName("error-sentence")[props.idx];
 	if (state == 1) {
-		titleTag.innerHTML = "Wrong Password";
+		// titleTag.innerHTML = "Wrong Password";
 		sentenceTag.innerHTML = "비밀번호가 틀렸습니다.";
 	} else {
-		titleTag.innerHTML = "Refuse Enter Room";
+		// titleTag.innerHTML = "Refuse Enter Room";
 		sentenceTag.innerHTML = "입장에 실패했습니다.";
 	}
 	document.getElementsByClassName("error-modal-wrap")[props.idx].style.display = 'block';
@@ -187,10 +187,6 @@ onMounted(() => {
 	font-size: 1rem;
 	cursor: pointer;
 	border-radius: 10px;
-	/* background-image: url('../../../../assets/table.png');
-	background-position: center;
-	background-size: contain;
-	background-repeat: no-repeat; */
 }
 
 .room-state .title {
@@ -250,8 +246,8 @@ onMounted(() => {
 	transform: translate(-50%, -50%);
 	width: 30%;
 	height: 40%;
-	background: white;
-	border: solid 5px black;
+	background: #252836;
+	border: solid 2px #e27b66;
 	border-radius: 2rem;
 	z-index: 1000;
 }
@@ -261,14 +257,16 @@ onMounted(() => {
 	height: 100%;
 	width: 100%;
 	grid-template-rows: 1fr 11fr;
+	transition: 0.5s ease-out;
+	color: white;
 }
 
 .private-popup-header {
-	background-color: black;
+	background-color: #E27B66;
 	height: 100%;
 	width: 100%;
-	border-bottom: solid 0.5rem #6E0000;
-	border-radius: 1rem 1rem 0 0;
+	/* border-bottom: solid 0.5rem #6E0000; */
+	border-radius: 1.6rem 1.6rem 0 0;
 }
 
 .private-popup-content {
@@ -282,10 +280,16 @@ onMounted(() => {
 	height: 65%;
 	width: 80%;
 	margin: 10%;
+	/* display: grid;
+	text-align: center;
+	grid-template-rows: 2fr 1fr;
+	height: 30%;
+	width: 80%;
+	margin: 10%; */
 }
 
 .private-popup-header-title {
-	color: white;
+	color: black;
 	font-size: 1.3rem;
 	padding: 0 5%;
 	padding-top: 1%;
@@ -313,18 +317,20 @@ onMounted(() => {
 	transform: translate(-50%, -50%);
 	width: 30%;
 	height: 30%;
-	background: white;
-	border: solid 5px black;
+	background: #252836;
+	border: solid 2px #e27b66;
 	border-radius: 2rem;
 	z-index: 1000;
 }
 
 .error-popup {
-	display: grid;
+	display: flex;
+	align-items: center;
 	height: 100%;
 	width: 100%;
 	grid-template-rows: 1fr 11fr;
 	transition: 0.5s ease-out;
+	color: white;
 }
 
 .error-popup-header {
@@ -339,7 +345,7 @@ onMounted(() => {
 	display: grid;
 	text-align: center;
 	grid-template-rows: 2fr 1fr;
-	height: 50%;
+	height: 30%;
 	width: 80%;
 	margin: 10%;
 }
@@ -357,12 +363,12 @@ onMounted(() => {
 }
 
 .el-button {
-	background-color: black !important;
-	color: white !important;
+	background-color: #e27b66 !important;
+	color: black !important;
 }
 
 .el-button:hover {
-	background-color: rgb(118, 118, 118) !important;
-	transition: 0.2s;
+	opacity: 0.75;
+	cursor: pointer;
 }
 </style>

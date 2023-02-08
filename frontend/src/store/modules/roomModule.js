@@ -89,7 +89,7 @@ export const roomModule = {
     },
     // 방 입장
     enterRoom(context, payload){
-      return axios.put(`api/rooms/enter/${payload}`).then(({ status, data }) => {
+      return axios.put(`api/rooms/${payload}/enter`).then(({ status, data }) => {
         console.log(payload)
         if(status == 200){
           console.log("입장 성공");
@@ -108,7 +108,7 @@ export const roomModule = {
     },
     // 방 퇴장
     quitRoom(context, payload){
-      return axios.put(`api/rooms/quit/${payload}`).then(({ status, data }) => {
+      return axios.put(`api/rooms/${payload}/quit`).then(({ status, data }) => {
         if(status == 200){
           console.log("quitRoom Success");
           if(data.personCount == 0){
@@ -122,8 +122,20 @@ export const roomModule = {
       }).catch(err => {
         if(err.response.status == 404){
           console.log("노방");
+          console.log(payload)
         }
         return false
+      });
+    },
+    changeHost(context, payload){
+      axios.put(`api/rooms/${payload.roomId}/host`, payload.hostId).then(({ status }) => {
+        if(status == 200){
+          console.log("방장 변경 성공!");
+        }
+      }).catch(err => {
+        if(err.response.status == 404){
+          console.log("방이 없거나 유저가 없다.");
+        }
       });
     },
     // 방 삭제

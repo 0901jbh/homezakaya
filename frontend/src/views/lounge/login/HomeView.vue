@@ -1,52 +1,45 @@
 <template>
-  <div class="intro" v-if="!data.isEnter">
+  <!-- <div class="intro" v-if="!data.isEnter">
     <HeaderItem :isEnter="data.isEnter" @clickTitle="clickTitle" />
   </div>
   <div class="login" v-if="data.isEnter">
+  <div class="login">
     <header>
       <HeaderItem :isEnter="data.isEnter" />
-    </header>
-    <div class="container">
-      <div>
-        <img src="../../../assets/HomeLogin.jpg" alt="izakaya img" style="height:90vh;">
+    </header> -->
+  <div class="container">
+    <div class="wrapper">
+      <div class="box">
+        <div class="title">Homezakaya</div>
+        <div class="comment">좋은 사람들과 새로운 술자리</div>
       </div>
-      <div class="wrapper" style="width:80vh;">
+      <div>
         <div class="box">
-          <div class="title">Homezakaya</div>
-          <div class="comment">좋은 사람들과 새로운 술자리</div>
-        </div>
-        <div>
-          <div class="box">
+          <el-form margin-top="10vh">
+            <el-form-item size='large'>
+              <el-input v-model="data.id" placeholder="아이디를 입력해주세요" clearable />
+            </el-form-item>
+            <el-form-item size="large">
+              <el-input v-model="data.password" placeholder="비밀번호를 입력해주세요" show-password />
+            </el-form-item>
+            <el-form-item>
+              <div class="btn">
+                <el-button type="info" size="large" @click="onSubmit">로그인</el-button>
+              </div>
+            </el-form-item>
             <div>
-              <el-form label-width="10vw" margin-top="10vh">
-                <el-form-item label="아이디" size='large'>
-                  <el-input v-model="data.id" placeholder="아이디를 입력해주세요" clearable />
-                </el-form-item>
-                <br>
-                <el-form-item label="비밀번호" size="large">
-                  <el-input v-model="data.password" placeholder="비밀번호를 입력해주세요" show-password />
-                </el-form-item>
-                <br>
-                <br>
-                <el-form-item>
-                  <div class="btn">
-                    <el-button type="info" size="large" @click="onSubmit">로그인</el-button>
-                  </div>
-                  <div class="btn" @click="SignUpRouter">
-                    <RouterLink to="/signup" style="text-decoration:none;"><el-button type="info"
-                        size="large">회원가입</el-button></RouterLink>
-                  </div>
-                </el-form-item>
-              </el-form>
+              계정이 없으신가요?
+              <RouterLink to="/signup" style="text-decoration:none; color: #E27B66;">회원가입</RouterLink>
             </div>
-          </div>
+          </el-form>
         </div>
       </div>
     </div>
-    <footer>
-      <FooterItem />
-    </footer>
   </div>
+  <footer>
+    <FooterItem />
+  </footer>
+  <!-- </div> -->
 </template>
 
 <script setup>
@@ -77,56 +70,83 @@ const clickTitle = () => {
 <style scoped>
 @font-face {
   font-family: 'dokdo';
-  src: url('../../../assets/fonts/Dokdo-Regular.ttf')
+  src: url('@/assets/fonts/Dokdo-Regular.ttf')
 }
 
 @font-face {
   font-family: 'eastsea';
-  src: url('../../../assets/fonts/EastSeaDokdo-Regular.ttf')
+  src: url('@/assets/fonts/EastSeaDokdo-Regular.ttf')
 }
 
 .container {
-  display: grid;
-  grid-template-columns: 2fr 3fr;
-  height: 90vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* grid-template-columns: 2fr 3fr; */
+  height: 100vh;
+  background-image: url('@/assets/images/main.png');
+  background-size: cover;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: hsl(229.41, 18.68%, 17.84%, 80%);
+  height: 80%;
+  width: 1000px;
+  color: #CBCBCB;
 }
 
 .title {
   font-family: 'dokdo';
-  color: #9D0101;
+  color: #E27B66;
   font-style: normal;
   font-weight: 700;
   font-size: 12vh;
   text-align: center;
-  padding-top: 5vh;
+  /* padding-top: 5vh; */
 }
 
 .comment {
-  align-self: flex-end;
+  /* align-self: flex-end; */
   font-family: 'dokdo';
   font-weight: 600;
   font-size: 4vh;
-  padding-top: 3vh;
+  /* padding-top: 3vh; */
+  text-align: center;
 }
 
 .box {
-  margin-top: 5vh;
-  padding-left: 5vw;
+  /* margin-top: 5vh; */
+  /* padding-left: 5vw; */
   display: flex;
-  justify-content: center;
+  justify-content: space-evenly;
+  align-items: center;
   flex-direction: column;
 }
 
-.btn {
-  margin-left: 4vw;
-}
-
 .el-button {
-  background-color: black !important;
+  background-color: #E27B66;
+  width: 300px;
+  border: none;
 }
 
 .el-button:hover {
-  background-color: rgb(118, 118, 118) !important;
-  transition: 0.2s;
+  opacity: 0.75;
+  cursor: pointer;
+}
+
+.el-form {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding-top: 50px;
+}
+
+.el-input {
+  background-color: #252836;
+  width: 300px;
 }
 </style>

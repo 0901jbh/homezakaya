@@ -1,11 +1,6 @@
 <template>
   <header>
-    <RoomHeader
-      :title="title"
-      :category="category"
-      :headCount="headCount"
-      :headCountMax="headCountMax"
-    />
+    <RoomHeader :title="title" :category="category" :headCount="headCount" :headCountMax="headCountMax" />
   </header>
   <div id="main-container" class="container">
 
@@ -20,7 +15,7 @@
         }">
           <user-video class="video" :stream-manager="publisher" my-video="true" />
           <user-video class="video" v-for="sub in subscribers" :key="sub.stream.connection.connectionId"
-            :stream-manager="sub" my-video="false" @kickUser="kickUser" @changeHost="changeHost"/>
+            :stream-manager="sub" my-video="false" @kickUser="kickUser" @changeHost="changeHost" />
         </div>
         <div id="chatting-container" class="col-md-4">
           <div id="chats" ref="message_scroll">
@@ -47,7 +42,7 @@
           </div>
           <form id="send-form" @submit.prevent="sendMessage">
             <input v-model="newMessage" placeholder="Type your message here" />
-            <img src="../../../assets/message.png" alt="message img" @click="sendMessage"
+            <img src="@/assets/images/message.png" alt="message img" @click="sendMessage"
               style="width:30px; height:30px; cursor: pointer">
           </form>
         </div>
@@ -55,15 +50,16 @@
       <div id="option-footer">
         <div id="mute">
           <div class="onoff" @click="clickMuteVideo">
-            <img v-if="videoActive" src="../../../assets/video_on.png" alt="video on img" />
-            <img v-else src="../../../assets/video_off.png" alt="video on img" />
+            <img v-if="videoActive" src="@/assets/images/video_on.png" alt="video on img" />
+            <img v-else src="@/assets/images/video_off.png" alt="video on img" />
           </div>
           <div class="onoff" @click="clickMuteAudio">
-            <img v-if="audioActive" src="../../../assets/audio_on.png" alt="audio on img" />
-            <img v-else src="../../../assets/audio_off.png" alt="audio on img" />
+            <img v-if="audioActive" src="@/assets/images/audio_on.png" alt="audio on img" />
+            <img v-else src="@/assets/images/audio_off.png" alt="audio on img" />
           </div>
         </div>
         <div id="btns">
+          <div class="content" @click="infoOpen">Info</div>
           <el-popover v-if="myUserId == hostId" :width="300"
             popper-style="background: rgb(235 153 153); border: rgb(235 153 153); box-shadow: rgb(14 18 22 / 35%) 0px 10px 38px -10px, rgb(14 18 22 / 20%) 0px 10px 20px -15px; padding: 15px;"
             trigger="click">
@@ -90,7 +86,7 @@
               <div class="content">Invite</div>
             </template>
             <template #default>
-              <div v-if=" friends.length == 0 ">
+              <div v-if="friends.length == 0">
                 초대 가능한 친구가 없어요
               </div>
               <div class="online_friend" v-for="friend in friends" :key="friend"
@@ -105,10 +101,39 @@
               </div>
             </template>
           </el-popover>
-          <div class="content" @click="leaveSession">Exit</div>
+          <div class="content" @click="exitBtn">Exit</div>
         </div>
       </div>
     </div>
+  </div>
+  <!-- gameInfo popup -->
+  <div class="game-info-modal-bg" @click="infoClose"></div>
+  <div class="game-info-modal-wrap">
+    <div class="left-arrow" @click="leftClick()"></div>
+    <div class="game-info-popup">
+      <div class="page1">
+        <div class="game-info-title"> 웃음 참기 게임 </div>
+        <div class="game-info-sentence">
+          내용1
+        </div>
+      </div>
+      <div class="page2">
+        <div class="game-info-title"> 나 진짜 안취했어! </div>
+        <div class="game-info-sentence">
+          내용2
+        </div>
+      </div>
+      <div class="page3">
+        <div class="game-info-title"> 랜덤 대화 주제 </div>
+        <div class="game-info-sentence">
+          내용3
+        </div>
+      </div>
+    </div>
+    <div class="game-info-btn-wrapper">
+      <div class="btn" @click="infoClose">닫기</div>
+    </div>
+    <div class="right-arrow" @click="rightClick()"></div>
   </div>
   <div></div>
 </template>
@@ -122,7 +147,7 @@ import { useStore } from 'vuex';
 
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
-const APPLICATION_SERVER_URL = "https://i8a606.p.ssafy.io:8443/";
+const APPLICATION_SERVER_URL = "http://localhost:5000/";
 const OPENVIDU_SERVER_SECRET = 'ssafy';
 
 export default {
@@ -169,6 +194,8 @@ export default {
 
       gameStatus: 0,
       games: ['일반', '할머니 게임', '나 안취했어', '랜덤 대화주제'],
+
+      infoPage: 1,
     };
   },
 
@@ -181,27 +208,27 @@ export default {
     },
   },
   watch: {
-    isSmile(value){
+    isSmile(value) {
       console.log("감지지지지지ㅣㅈ" + value);
-      if(value){
+      if (value) {
         this.session.signal({
-            data: JSON.stringify(this.myUserName),
-            type: 'smile'
+          data: JSON.stringify(this.myUserName),
+          type: 'smile'
+        })
+          .then(() => {
+            console.log('웃탐!!');
           })
-            .then(() => {
-              console.log('웃탐!!');
-            })
-            .catch(error => {
-              console.error(error);
-            })
+          .catch(error => {
+            console.error(error);
+          })
       }
     },
-    isFinished(value){
+    isFinished(value) {
       console.log("감감감감감감감감지" + value);
-      if(value){
+      if (value) {
         this.session.signal({
           //말할 문장, 말한 문장 담아서 보내기
-          data: JSON.stringify({sentence : this.store.state.gameModule.sentence, speech : this.store.state.gameModule.texts}),
+          data: JSON.stringify({ sentence: this.store.state.gameModule.sentence, speech: this.store.state.gameModule.texts }),
           type: 'detect-audio'
         })
           .then(() => {
@@ -317,8 +344,9 @@ export default {
         this.eventData = JSON.parse(event.data);
         console.log(this.eventData.username + "님 말 할 준비 하세용");
         console.log(this.store.state.gameModule.sentence);
-        if(this.eventData.username == this.myUserName)
+        if (this.eventData.username == this.myUserName) {
           this.store.dispatch("gameModule/getSpeech");
+        }
       })
 
       this.session.on('signal:detect-audio', (event) => {
@@ -335,15 +363,19 @@ export default {
       this.session.on('signal:kick', (event) => {
         this.eventData = JSON.parse(event.data);
         console.log(this.eventData.username);
-        if(this.eventData.username == this.myUserName){
+        if (this.eventData.username == this.myUserName) {
           alert("강퇴당함");
           this.leaveSession();
         }
       })
-      
+
       this.session.on('signal:change-host', (event) => {
         this.eventData = JSON.parse(event.data);
         this.hostId = this.eventData.userId;
+        this.store.dispatch("roomModule/changeHost", {
+          roomId: this.mySessionId,
+          hostId: this.hostId,
+        });
       })
 
       // --- 4) Connect to the session with a valid user token ---
@@ -399,14 +431,14 @@ export default {
 
       // Remove beforeunload listener
       window.removeEventListener("beforeunload", this.leaveSession);
-      
+
       this.$router.push({ name: 'rooms' });
       this.store.dispatch("roomModule/quitRoom", this.mySessionId)
-      .then((result) => {
-        if (result) {
-          this.store.dispatch("roomModule/removeUserInRoom",this.store.state.userModule.user.userId)
-        }
-      })
+        .then((result) => {
+          if (result) {
+            this.store.dispatch("roomModule/removeUserInRoom", this.store.state.userModule.user.userId)
+          }
+        })
     },
 
     // updateMainVideoStreamManager(stream) {
@@ -435,29 +467,12 @@ export default {
     },
 
     async createSession(sessionId) {
-      const response = await axios.post(APPLICATION_SERVER_URL + 'openvidu/api/sessions', { customSessionId: sessionId }, {
-        headers: {
-            Authorization: `Basic ${btoa(
-              `OPENVIDUAPP:${OPENVIDU_SERVER_SECRET}`
-            )}`,
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET,POST',
-          }
-        });
+      const response = await axios.post(APPLICATION_SERVER_URL + 'api/sessions', { customSessionId: sessionId });
       return response.data; // The sessionId
     },
 
     async createToken(sessionId) {
-      const response = await axios.post(APPLICATION_SERVER_URL + 'openvidu/api/sessions/' + sessionId + '/connections', {
-        headers: {
-            Authorization: `Basic ${btoa(
-              `OPENVIDUAPP:${OPENVIDU_SERVER_SECRET}`
-            )}`,
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET,POST',
-          }
-        }
-      );
+      const response = await axios.post(APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections');
       return response.data; // The token
     },
 
@@ -484,10 +499,17 @@ export default {
       this.myUserName = user.nickname;
     },
 
+    exitBtn() {
+      if (this.hostId == this.myUserId && this.headCount > 1) {
+        this.changeHost();
+      }
+      this.leaveSession();
+    },
+
     //게임 기능
     startBtn(idx) {
       this.gameStatus = idx;
-      switch(this.gameStatus){
+      switch (this.gameStatus) {
         case 1:
           //게임화면 켜지고 게임 룰 설명하고
           //웃음탐지 시그널 보내고
@@ -496,6 +518,7 @@ export default {
           })
             .then(() => {
               console.log('웃탐시작');
+              // 각 게임에 맞는 화면 시작
             })
             .catch(error => {
               console.error(error);
@@ -504,7 +527,7 @@ export default {
         case 2:
           this.session.signal({
             //체크할 닉네임 보내기
-            data: JSON.stringify({username : this.myUserName}),
+            data: JSON.stringify({ username: this.myUserName }),
             type: 'not-drunk'
           })
             .then(() => {
@@ -516,7 +539,7 @@ export default {
           break;
         case 3:
           this.session.signal({
-            data: JSON.stringify({topic : this.store.state.gameModule.topic}),
+            data: JSON.stringify({ topic: this.store.state.gameModule.topic }),
             type: 'random-topic'
           })
             .then(() => {
@@ -526,14 +549,61 @@ export default {
             .catch(error => {
               console.error(error);
             })
+
           break;
+
       }
-      
     },
 
-    kickUser(username){
+    infoOpen() {
+      document.getElementsByClassName("game-info-modal-wrap")[0].style.display = "block";
+      document.getElementsByClassName("game-info-modal-bg")[0].style.display = "block";
+    },
+
+    infoClose() {
+      document.getElementsByClassName("game-info-modal-wrap")[0].style.display = "none";
+      document.getElementsByClassName("game-info-modal-bg")[0].style.display = "none";
+      this.infoPage = 1;
+      document.getElementsByClassName("game-info-popup")[0].style.transform = "translateX(0%)";
+    },
+
+    leftClick() {
+      const number1 = 1 / 3 * 100
+      const number2 = 2 / 3 * 100
+      if (this.infoPage == 1) {
+        document.getElementsByClassName("game-info-popup")[0].style.transform = `translateX(${-number2}%)`;
+        this.infoPage = 3
+      }
+      else if (this.infoPage == 2) {
+        document.getElementsByClassName("game-info-popup")[0].style.transform = "translateX(0%)";
+        this.infoPage = 1
+      }
+      else {
+        document.getElementsByClassName("game-info-popup")[0].style.transform = `translateX(${-number1}%)`;
+        this.infoPage = 2
+      }
+    },
+
+    rightClick() {
+      const number1 = 1 / 3 * 100
+      const number2 = 2 / 3 * 100
+      if (this.infoPage == 1) {
+        document.getElementsByClassName("game-info-popup")[0].style.transform = `translateX(${-number1}%)`;
+        this.infoPage = 2
+      }
+      else if (this.infoPage == 2) {
+        document.getElementsByClassName("game-info-popup")[0].style.transform = `translateX(${-number2}%)`;
+        this.infoPage = 3
+      }
+      else {
+        document.getElementsByClassName("game-info-popup")[0].style.transform = "translateX(0%)";
+        this.infoPage = 1
+      }
+    },
+
+    kickUser(username) {
       this.session.signal({
-        data: JSON.stringify({username : username}),
+        data: JSON.stringify({ username: username }),
         type: 'kick'
       })
         .then(() => {
@@ -544,9 +614,9 @@ export default {
         })
     },
 
-    changeHost(userId){
+    changeHost(userId) {
       this.session.signal({
-        data: JSON.stringify({userId : userId}),
+        data: JSON.stringify({ userId: userId }),
         type: 'change-host'
       })
         .then(() => {
@@ -1019,6 +1089,115 @@ a:hover .demo-logo {
   box-shadow: -4px -4px 15px rgba(255, 255, 255, 0.5), 4px 4px 15px rgba(0, 0, 0, 0.5), inset 4px 4px 15px rgba(255, 255, 255, 0.5);
   border-radius: 53px;
 
+  cursor: pointer;
+}
+
+/* 게임 시작시 도움말창 */
+.game-info-modal-bg {
+  display: none;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 998;
+  transition: 0.5s ease-out;
+}
+
+.game-info-modal-wrap {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50%;
+  height: 50%;
+  background: #2E303F;
+  border: 2px solid #CBCBCB;
+  border-radius: 30px;
+  z-index: 999;
+  overflow: hidden;
+}
+
+.game-info-popup {
+  display: flex;
+  flex-wrap: nowrap;
+  height: 100%;
+  width: 300%;
+  transition: all .3s ease-in;
+}
+
+.game-info-popup>div[class*="page"] {
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-template-rows: 2fr 5fr 3fr;
+  justify-content: center;
+  align-items: center;
+  padding: 0 5%;
+}
+
+.game-info-title {
+  font-size: 2rem;
+  color: white;
+}
+
+.game-info-sentence {
+  text-align: center;
+  color: white;
+}
+
+.game-info-btn-wrapper {
+  width: auto;
+  height: auto;
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  text-align: center;
+  z-index: 1001;
+}
+
+.btn {
+  height: 2.5rem;
+  width: 4rem;
+  line-height: 2.5rem;
+  background: #E27B66;
+  border-radius: 20px;
+  transition: all .1s ease-in;
+}
+
+.btn:hover {
+  transform: scale(1.2, 1.2);
+  cursor: pointer;
+}
+
+.left-arrow,
+.right-arrow {
+  width: 5vw;
+  height: 5vw;
+  top: 42%;
+  position: absolute;
+  vertical-align: middle;
+  transition: all .05s ease-in;
+  z-index: 1001;
+}
+
+.left-arrow {
+  left: 5%;
+  background: url('@/assets/images/left_arrow.png') center center /100% no-repeat;
+}
+
+.right-arrow {
+  right: 5%;
+  background: url('@/assets/images//right_arrow.png') center center /100% no-repeat;
+}
+
+.left-arrow:hover,
+.right-arrow:hover {
+  transform: scale(1.2, 1.2);
   cursor: pointer;
 }
 </style>

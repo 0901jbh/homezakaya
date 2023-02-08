@@ -22,12 +22,12 @@ const props = defineProps({
 <style scoped>
 @font-face {
   font-family: 'dokdo';
-  src: url('../../../assets/fonts/Dokdo-Regular.ttf')
+  src: url('@/assets/fonts/Dokdo-Regular.ttf')
 }
 
 @font-face {
   font-family: 'eastsea';
-  src: url('../../../assets/fonts/EastSeaDokdo-Regular.ttf')
+  src: url('@/assets/fonts/EastSeaDokdo-Regular.ttf')
 }
 
 .head {

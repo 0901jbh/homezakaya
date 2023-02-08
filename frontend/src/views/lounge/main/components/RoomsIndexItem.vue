@@ -2,7 +2,7 @@
 	<div class="rooms-container">
 		<div class="create-room">
 			<div class="create-room-wrapper btn-open" @click="popOpen">
-				<img src="../../../../assets/plus.png" alt="plus img" style="width: 50px;">
+				<img src="@/assets/images/plus.png" alt="plus img" style="width: 50px;">
 			</div>
 		</div>
 		<div class="room" v-for="(room, idx) in form.rooms" :key="idx">
@@ -157,10 +157,6 @@ const passwordClose = () => {
 .create-room {
 	width: 30%;
 	height: 40%;
-	/* background-image: url('../../../../assets/table.png');
-	background-position: center;
-	background-size: contain;
-	background-repeat: no-repeat; */
 	margin: 1.5%;
 }
 
@@ -215,9 +211,9 @@ const passwordClose = () => {
 	left: 50%;
 	transform: translate(-50%, -50%);
 	width: 35%;
-	height: 60%;
-	background: white;
-	border: solid 5px black;
+	height: 45%;
+	background: #252836;
+	border: solid 2px #e27b66;
 	border-radius: 2rem;
 	z-index: 1000;
 }
@@ -228,14 +224,15 @@ const passwordClose = () => {
 	width: 100%;
 	grid-template-rows: 1fr 11fr;
 	transition: 0.5s ease-out;
+	color: white;
 }
 
 .popup-header {
-	background-color: black;
+	background-color: #E27B66;
 	height: 100%;
 	width: 100%;
-	border-bottom: solid 0.5rem #6E0000;
-	border-radius: 1rem 1rem 0 0;
+	/* border-bottom: solid 0.5rem #6E0000; */
+	border-radius: 1.6rem 1.6rem 0 0;
 }
 
 .popup-content {
@@ -245,10 +242,16 @@ const passwordClose = () => {
 	width: 80%;
 	margin: 0% 10%;
 	margin-top: 10%;
+	/* display: grid;
+	text-align: center;
+	grid-template-rows: 2fr 1fr;
+	height: 30%;
+	width: 80%;
+	margin: 10%; */
 }
 
 .popup-header-title {
-	color: white;
+	color: black;
 	font-size: 1.3rem;
 	padding: 0 5%;
 	padding-top: 1%;
@@ -263,13 +266,13 @@ const passwordClose = () => {
 }
 
 .el-button {
-	background-color: black !important;
-	color: white !important;
+	background-color: #e27b66 !important;
+	color: black !important;
 }
 
 .el-button:hover {
-	background-color: rgb(118, 118, 118) !important;
-	transition: 0.2s;
+	opacity: 0.75;
+	cursor: pointer;
 }
 
 .el-radio-button__inner:hover {

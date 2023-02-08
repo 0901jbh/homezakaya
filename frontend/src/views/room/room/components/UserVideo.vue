@@ -15,9 +15,9 @@
 					</p>
 					<div class="user_manner_alcohol"
 						style="margin: 0; display: flex; gap: 16px; flex-direction: row; justify-content: center;">
-						<img src="../../../../assets/manner.png" alt="manner img" style="width:28px; height:28px;">
+						<img src="@/assets/images/manner_w.png" alt="manner_w img" style="width:28px; height:28px;">
 						<p style="margin: 0; font-size: 20px; color: white; align-self:center;">3.5</p>
-						<img src="../../../../assets/alcohol.png" alt="alcohol img" style="width:28px; height:28px;">
+						<img src="@/assets/images/alcohol_w.png" alt="alcohol_w img" style="width:28px; height:28px;">
 						<p style="margin: 0; font-size: 20px; color: white; align-self:center;">14잔</p>
 					</div>
 					<!-- <div class="content" style="width: 60%; text-decoration:none;">
@@ -31,7 +31,8 @@
 					<div v-if="myVideo == 'false' && isHost" class="content" style="width: 60%; text-decoration:none;">
 						방장 변경
 					</div>
-					<div v-if="myVideo == 'false' && isHost" @click="kick" class="content" style="width: 60%; text-decoration:none;">
+					<div v-if="myVideo == 'false' && isHost" @click="kick" class="content"
+						style="width: 60%; text-decoration:none;">
 						강제 퇴장
 					</div>
 				</div>
@@ -41,7 +42,7 @@
 			<ov-video :stream-manager="streamManager" @click="userInfo" />
 		</div> -->
 		<div id="nametag">
-			<img v-if="isHost" src="../../../../assets/crown.png" alt="crown img"
+			<img v-if="isHost" src="@/assets/images/crown.png" alt="crown img"
 				style="display: inline-block; width:20px; height:20px; padding-right: 5px;" />
 			<p>{{ username }}</p>
 		</div>
@@ -76,7 +77,7 @@ export default {
 			const { username } = this.getConnectionData();
 			return username;
 		},
-		userId(){
+		userId() {
 			const { userId } = this.getConnectionData();
 			return userId;
 		},
@@ -84,7 +85,7 @@ export default {
 			const clientData = this.getConnectionData();
 			return clientData.hostId == clientData.userId;
 		},
-		isFriend(){
+		isFriend() {
 			const clientData = this.getConnectionData();
 			return clientData.friends.includes(clientData.userId);
 		}
@@ -100,10 +101,10 @@ export default {
 		userInfo() {
 			console.log("클릭")
 		},
-		kick (){
+		kick() {
 			this.$emit('kickUser', this.username);
 		},
-		host(){
+		host() {
 			this.$emit('changeHost', this.userId);
 		}
 	},

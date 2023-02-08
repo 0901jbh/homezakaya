@@ -70,15 +70,15 @@ const clickTitle = () => {
 <style scoped>
 @font-face {
   font-family: 'dokdo';
-  src: url('../../../assets/fonts/Dokdo-Regular.ttf')
+  src: url('@/assets/fonts/Dokdo-Regular.ttf')
 }
 
 @font-face {
   font-family: 'eastsea';
-  src: url('../../../assets/fonts/EastSeaDokdo-Regular.ttf')
+  src: url('@/assets/fonts/EastSeaDokdo-Regular.ttf')
 }
 
-.head{
+.head {
   position: block;
   top: 0px;
   height: 57vh;
@@ -89,9 +89,9 @@ const clickTitle = () => {
   padding-top: 33vh;
 }
 
-.title{
+.title {
   display: block;
-  margin-left:35vw;
+  margin-left: 35vw;
   /* margin-top:33vh; */
   width: max-content;
   font-family: 'dokdo';

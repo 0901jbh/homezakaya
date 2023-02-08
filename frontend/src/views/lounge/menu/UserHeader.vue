@@ -3,20 +3,11 @@
     <RouterLink to="/rooms" style="text-decoration: none">
       <div class="title">Homezakaya</div>
     </RouterLink>
-    <!-- <div class="info">
-      <img src="../../../assets/profile.png" alt="profile img" style="width:60px; height:60px;">
-    </div> -->
-    <el-popover
-      :width="300"
-      popper-style="background: rgb(235 153 153); border: rgb(235 153 153); box-shadow: rgb(14 18 22 / 35%) 0px 10px 38px -10px, rgb(14 18 22 / 20%) 0px 10px 20px -15px; padding: 20px;"
-      trigger="click"
-    >
+    <el-popover :width="300" popper-style="background: #252836; border: solid 2px #e27b66; padding: 20px;"
+      trigger="click">
       <template #reference>
-        <img
-          src="../../../assets/profile.png"
-          alt="profile img"
-          style="width: 60px; height: 60px; padding-right: 1vw"
-        />
+        <img src="@/assets/images/profile.png" alt="profile img"
+          style="width:60px; height:60px; padding-right: 1vw; cursor:pointer;">
       </template>
       <template #default>
         <div
@@ -29,57 +20,15 @@
           >
             {{ data.nickname }}
           </p>
-          <div
-            class="MyInfo_manner"
-            style="
-              margin: 0;
-              display: flex;
-              gap: 16px;
-              flex-direction: row;
-              justify-content: center;
-            "
-          >
-            <img
-              src="../../../assets/manner.png"
-              alt="manner img"
-              style="width: 40px; height: 40px"
-            />
-            <p
-              style="
-                margin: 0;
-                font-size: 30px;
-                color: white;
-                align-self: center;
-              "
-            >
-              {{ data.mannerPoint }}
-            </p>
+          <div class="MyInfo_manner"
+            style="margin: 0; display: flex; gap: 16px; flex-direction: row; justify-content: center;">
+            <img src="@/assets/images/manner_w.png" alt="manner_w img" style="width:40px; height:40px;">
+            <p style="margin: 0; font-size: 30px; color: white; align-self:center;">{{ data.mannerPoint }}</p>
           </div>
-          <div
-            class="MyInfo_alcohol"
-            style="
-              margin: 0;
-              display: flex;
-              gap: 16px;
-              flex-direction: row;
-              justify-content: center;
-            "
-          >
-            <img
-              src="../../../assets/alcohol.png"
-              alt="alcohol img"
-              style="width: 40px; height: 40px"
-            />
-            <p
-              style="
-                margin: 0;
-                font-size: 30px;
-                color: white;
-                align-self: center;
-              "
-            >
-              {{ data.alcoholPoint }}잔
-            </p>
+          <div class="MyInfo_alcohol"
+            style="margin: 0; display: flex; gap: 16px; flex-direction: row; justify-content: center;">
+            <img src="@/assets/images/alcohol_w.png" alt="alcohol_w img" style="width:40px; height:40px;">
+            <p style="margin: 0; font-size: 30px; color: white; align-self:center;">{{ data.alcoholPoint }}잔</p>
           </div>
           <RouterLink
             class="MyInfo_edit content"
@@ -114,19 +63,19 @@ const data = ref({
 
 <style scoped>
 @font-face {
-  font-family: "dokdo";
-  src: url("../../../assets/fonts/Dokdo-Regular.ttf");
+  font-family: 'dokdo';
+  src: url('@/assets/fonts/Dokdo-Regular.ttf')
 }
 
 @font-face {
-  font-family: "eastsea";
-  src: url("../../../assets/fonts/EastSeaDokdo-Regular.ttf");
+  font-family: 'eastsea';
+  src: url('@/assets/fonts/EastSeaDokdo-Regular.ttf')
 }
 
 .head {
-  background-color: black;
+  background-color: #252836;
   height: 8vh;
-  border-bottom: solid 2vh #6e0000;
+  /* border-bottom: solid 2vh #6E0000; */
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -161,12 +110,11 @@ const data = ref({
   left: 52px;
   top: 105px;
 
-  color: white;
+  color: black;
   font-size: 1rem;
   font-weight: 70;
-  background: rgb(121 65 65);
-  box-shadow: -4px -4px 15px rgba(255, 255, 255, 0.5),
-    4px 4px 15px rgba(0, 0, 0, 0.5), inset 4px 4px 15px rgba(255, 255, 255, 0.5);
+  background: #e27b66;
+  box-shadow: 0px -0x 15px #e27b66;
   border-radius: 53px;
 }
 </style>

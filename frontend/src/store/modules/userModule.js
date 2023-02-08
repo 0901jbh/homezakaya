@@ -4,12 +4,12 @@ import jwtDecode from "jwt-decode";
 export const userModule = {
   namespaced: true,
   state: () => ({
-    // user: {
-    //   userId: "power916",
-    //   nickname: "태형",
-    //   mannerPoint: 3,
-    //   alcoholPoint: 7,
-    // }, // user 전체 정보
+    user: {
+      userId: "power916",
+      nickname: "태형",
+      mannerPoint: 3,
+      alcoholPoint: 7,
+    }, // user 전체 정보
 
     isLogin: false, // 로그인상태
     isLoginError: false,

@@ -9,7 +9,7 @@
         <el-form :model="form" label-width="150px">
           <el-form-item label="아이디">
             <el-input
-              v-model="form.id"
+              v-model="data.id"
               placeholder="아이디를 입력해주세요"
               clearable
             >
@@ -20,14 +20,14 @@
           </el-form-item>
           <el-form-item label="비밀번호">
             <el-input
-              v-model="form.password"
+              v-model="data.password"
               placeholder="비밀번호를 입력해주세요"
               show-password
             />
           </el-form-item>
           <el-form-item label="재입력">
             <el-input
-              v-model="form.password2"
+              v-model="data.password2"
               placeholder="비밀번호를 재입력해주세요"
               show-password
             >
@@ -38,7 +38,7 @@
           </el-form-item>
           <el-form-item label="닉네임">
             <el-input
-              v-model="form.nickname"
+              v-model="data.nickname"
               placeholder="닉네임을 입력해주세요"
               clearable
             >
@@ -49,14 +49,14 @@
           </el-form-item>
           <el-form-item label="이름">
             <el-input
-              v-model="form.name"
+              v-model="data.name"
               placeholder="이름을 입력해주세요"
               clearable
             />
           </el-form-item>
           <el-form-item label="성별">
             <!-- <el-input v-model="form.gender" placeholder="성별선택으로 바꿀예정" clearable /> -->
-            <el-radio-group v-model="form.gender" fill="black" size="large">
+            <el-radio-group v-model="data.gender" fill="black" size="large">
               <el-radio-button label="남" />
               <el-radio-button label="녀" />
             </el-radio-group>
@@ -64,7 +64,7 @@
           <el-form-item label="생년월일">
             <!-- <el-input v-model="form.birth" placeholder="생년월일을 입력해주세요 ex)1996-05-18" clearable /> -->
             <el-date-picker
-              v-model="form.birth"
+              v-model="data.birth"
               type="date"
               placeholder="생년월일을 입력해주세요"
               style="width: 100%"
@@ -72,7 +72,7 @@
           </el-form-item>
           <el-form-item label="이메일">
             <el-input
-              v-model="form.email"
+              v-model="data.email"
               placeholder="이메일을 입력해주세요"
               clearable
             >
@@ -91,7 +91,7 @@
           <el-form-item label="주량">
             <!-- <el-input v-model="form.alcohol" placeholder="주량을 입력해주세요 (소주 기준)" clearable /> -->
             <el-input-number
-              v-model="form.alcohol"
+              v-model="data.alcohol"
               size="large"
               :precision="1"
               :step="0.5"
@@ -123,28 +123,15 @@
 </template>
 
 <script setup>
-import { reactive, ref } from "vue";
+import { ref } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import HeaderItem from "../menu/HeaderItem.vue";
 import FooterItem from "../menu/FooterItem.vue";
-import { useStore } from "vuex";
 import { useRouter } from "vue-router";
+import { useStore } from "vuex";
 
 const router = useRouter();
 const store = useStore();
-
-// const form = reactive({
-//   id: "",
-//   password: "",
-//   password2: "",
-//   nickname: "",
-//   name: "",
-//   gender: "",
-//   birth: "",
-//   email: "",
-//   emailcheck: "",
-//   alcohol: 0,
-// });
 
 const data = ref({
   id: "",
@@ -155,7 +142,7 @@ const data = ref({
   gender: "",
   birth: "",
   email: "",
-  emailcheck: "",
+  emailCode: "",
   alcohol: 0,
 });
 
@@ -163,40 +150,51 @@ let flag = ref(false);
 
 const onSubmit = async () => {
   await store.dispatch("userModule/createUser", {
-    userId: date.value.id,
-    password: form.password,
-    nickname: form.value.nickname,
-    username: form.value.name,
-    gender: form.value.gender,
-    birth: form.value.birth,
-    email: form.value.email,
-    alcoholPoint: form.value.alcohol,
+    userId: data.value.id,
+    password: data.value.password,
+    nickname: data.value.nickname,
+    username: data.value.name,
+    gender: data.value.gender,
+    birthDate: data.value.birth,
+    email: data.value.email,
+    alcoholPoint: data.value.alcohol,
   });
-  router.push({ name: "rooms" });
   console.log("submit!");
+  router.push({ name: "home" });
 };
 
 const idcheck = async () => {
-  await store.dispatch("userModule/createUser", form.value.id);
+  await store.dispatch("userModule/idcheck", data.value.id);
   console.log("id check!");
 };
 
-const nicknamecheck = () => {
+const nicknamecheck = async () => {
+  await store.dispatch("userModule/nicknameCheck", data.value.nickname);
   console.log("nickname check!");
 };
 
-const emailsend = () => {
+const emailsend = async () => {
+  const form = new FormData();
+  form.append("email", data.value.email);
+  await store.dispatch("userModule/sendEmail", form);
   console.log("email send!");
   ElMessageBox.prompt("인증번호를 입력해주세요.", "메일인증", {
     confirmButtonText: "OK",
     cancelButtonText: "Cancel",
   })
-    .then(({}) => {
-      console.log("email confirm!");
-      ElMessage({
-        type: "success",
-        message: `인증되었습니다.`,
-      });
+    .then(({ value }) => {
+      if (value == store.state.userModule.user.emailCode) {
+        console.log("email confirm!");
+        ElMessage({
+          type: "success",
+          message: `인증되었습니다.`,
+        });
+      } else {
+        ElMessage({
+          type: "error",
+          message: "인증이 실패했습니다.",
+        });
+      }
     })
     .catch(() => {
       ElMessage({
@@ -206,12 +204,8 @@ const emailsend = () => {
     });
 };
 
-const emailconfirm = () => {
-  console.log("email confirm!");
-};
-
 function isCorrect() {
-  if (form.password == form.password2) {
+  if (data.value.password == data.value.password2) {
     flag = true;
     console.log("right password!");
   } else {

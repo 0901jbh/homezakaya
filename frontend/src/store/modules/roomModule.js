@@ -127,6 +127,17 @@ export const roomModule = {
         return false
       });
     },
+    changeHost(context, payload){
+      axios.put(`api/rooms/${payload.roomId}/host`, payload.hostId).then(({ status }) => {
+        if(status == 200){
+          console.log("방장 변경 성공!");
+        }
+      }).catch(err => {
+        if(err.response.status == 404){
+          console.log("방이 없거나 유저가 없다.");
+        }
+      });
+    },
     // 방 삭제
     removeRoom(context, payload){
       axios.delete(`api/rooms/${payload}`).then(({ status }) => {

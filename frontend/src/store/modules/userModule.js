@@ -1,15 +1,15 @@
-import axios from "axios";
-import jwtDecode from "jwt-decode";
+import axios from "axios"
+import jwtDecode from "jwt-decode"
 
 export const userModule = {
   namespaced: true,
   state: () => ({
-    // user: {
-    //   userId: "power916",
-    //   nickname: "태형",
-    //   mannerPoint: 3,
-    //   alcoholPoint: 7,
-    // }, // user 전체 정보
+    user: {
+      userId: "power916",
+      nickname: "태형",
+      mannerPoint: 3,
+      alcoholPoint: 7,
+    }, // user 전체 정보
 
     isLogin: false, // 로그인상태
     isLoginError: false,
@@ -18,25 +18,25 @@ export const userModule = {
   }),
   getters: {
     checkUserInfo: function (state) {
-      return state.userInfo;
+      return state.userInfo
     },
     checkToken: function (state) {
-      return state.isValidToken;
+      return state.isValidToken
     },
   },
   mutations: {
     SET_IS_LOGIN: (state, isLogin) => {
-      state.isLogin = isLogin;
+      state.isLogin = isLogin
     },
     SET_IS_LOGIN_ERROR: (state, isLoginError) => {
-      state.isLoginError = isLoginError;
+      state.isLoginError = isLoginError
     },
     SET_IS_VALID_TOKEN: (state, isValidToken) => {
-      state.isValidToken = isValidToken;
+      state.isValidToken = isValidToken
     },
     SET_USER_INFO: (state, userInfo) => {
-      state.isLogin = true;
-      state.userInfo = userInfo;
+      state.isLogin = true
+      state.userInfo = userInfo
     },
   },
 
@@ -47,14 +47,14 @@ export const userModule = {
         .post(`/api/users`, payload)
         .then(({ status, data }) => {
           if (status == 201) {
-            console.log("회원가입 성공");
+            console.log("회원가입 성공")
           }
         })
         .catch((err) => {
           if (err.response.status === 409) {
-            console.log("이미 존재하는 유저입니다."); // 콘솔에
+            console.log("이미 존재하는 유저입니다.") // 콘솔에
           }
-        });
+        })
     },
     // id 중복확인 - ok
     idcheck(context, payload) {
@@ -125,13 +125,13 @@ export const userModule = {
         .put(`/api/users`, payload)
         .then(({ status, data }) => {
           if (status == 200) {
-            console.log("정보 수정 완료");
-            context.commit("SET_USER_INFO", data);
+            console.log("정보 수정 완료")
+            context.commit("SET_USER_INFO", data)
           }
         })
         .catch((err) => {
           if (err.response.status == 404) {
-            console.log("유저없음");
+            console.log("유저없음")
           }
         })
     },
@@ -142,32 +142,32 @@ export const userModule = {
         .post(`/api/users/login`, payload)
         .then(({ status, data }) => {
           if (status == 200) {
-            let accessToken = data["access-token"];
-            let refreshToken = data["refresh-token"];
+            let accessToken = data["access-token"]
+            let refreshToken = data["refresh-token"]
 
-            console.log(data);
+            console.log(data)
             // console.log(
             //   "login success token created!!!! >> ",
             //   accessToken,
             //   refreshToken
             // );
-            context.commit("SET_IS_LOGIN", true);
-            context.commit("SET_IS_LOGIN_ERROR", false);
-            context.commit("SET_IS_VALID_TOKEN", true);
+            context.commit("SET_IS_LOGIN", true)
+            context.commit("SET_IS_LOGIN_ERROR", false)
+            context.commit("SET_IS_VALID_TOKEN", true)
 
-            sessionStorage.setItem("access-token", accessToken);
-            sessionStorage.setItem("refresh-token", refreshToken);
+            sessionStorage.setItem("access-token", accessToken)
+            sessionStorage.setItem("refresh-token", refreshToken)
 
-            console.log("로그인 성공");
+            console.log("로그인 성공")
           } else {
-            commit("SET_IS_LOGIN", false);
-            commit("SET_IS_LOGIN_ERROR", true);
-            commit("SET_IS_VALID_TOKEN", false);
+            commit("SET_IS_LOGIN", false)
+            commit("SET_IS_LOGIN_ERROR", true)
+            commit("SET_IS_VALID_TOKEN", false)
           }
         })
         .catch((err) => {
           if (err.response.status == 401) {
-            console.log("로그인 실패");
+            console.log("로그인 실패")
           }
         })
     },
@@ -178,41 +178,41 @@ export const userModule = {
         .get(`/api/users/logout/${payload}`)
         .then(({ status, data }) => {
           if (status == 200) {
-            context.commit("SET_IS_LOGIN", false);
-            context.commit("SET_USER_INFO", null);
-            context.commit("SET_IS_VALID_TOKEN", false);
+            context.commit("SET_IS_LOGIN", false)
+            context.commit("SET_USER_INFO", null)
+            context.commit("SET_IS_VALID_TOKEN", false)
 
-            sessionStorage.clear();
+            sessionStorage.clear()
 
-            console.log("로그아웃 완료");
+            console.log("로그아웃 완료")
           } else {
-            console.log("유저 정보 없음");
+            console.log("유저 정보 없음")
           }
         })
         .catch((err) => {
           if (err.response.status == 401) {
-            console.log("로그아웃 실패");
+            console.log("로그아웃 실패")
           }
-        });
+        })
     },
 
     // 회원 정보 조회 (내정보) - ok
     getUserInfo(context, payload) {
-      let decodedToken = jwtDecode(payload); // 토큰 정보
-      console.log("getUserInfo() decodeToken :: ", decodedToken);
+      let decodedToken = jwtDecode(payload) // 토큰 정보
+      console.log("getUserInfo() decodeToken :: ", decodedToken)
       axios
         .get(`/api/users/${decodedToken.userId}`)
         .then(({ status, data }) => {
           if (status == 200) {
-            context.commit("SET_USER_INFO", response.data.userInfo); //userInfo에 저장
+            context.commit("SET_USER_INFO", response.data.userInfo) //userInfo에 저장
           } else {
-            console.log(response.data);
-            console.error("Failed to retrieve user information");
+            console.log(response.data)
+            console.error("Failed to retrieve user information")
           }
         })
         .catch((err) => {
           if (err.response.status == 401) {
-            console.log("인증되지 않은 토큰");
+            console.log("인증되지 않은 토큰")
           }
         })
     },
@@ -222,43 +222,43 @@ export const userModule = {
       console.log(
         "토큰 재발급 >> 기존 토큰 정보 : {}",
         sessionStorage.getItem("access-token")
-      );
+      )
       axios
         .post(`/api/users/refresh`, payload)
         .then(({ status, data }) => {
-          console.log(status);
+          console.log(status)
           if (status == 200) {
-            let accessToken = data["access-token"];
-            console.log("재발급 완료 >> 새로운 토큰 : {}", accessToken);
-            sessionStorage.setItem("access-token", accessToken);
-            context.commit("SET_IS_VALID_TOKEN", true);
+            let accessToken = data["access-token"]
+            console.log("재발급 완료 >> 새로운 토큰 : {}", accessToken)
+            sessionStorage.setItem("access-token", accessToken)
+            context.commit("SET_IS_VALID_TOKEN", true)
           }
         })
         .catch((err) => {
           if (err.status == 401) {
-            console.log("토큰 갱신 실패");
+            console.log("토큰 갱신 실패")
             userLogout(
               state.userInfo.userId,
               ({ data }) => {
                 if (data.message === 200) {
-                  console.log("리프레시 토큰 제거 성공");
+                  console.log("리프레시 토큰 제거 성공")
                 } else {
-                  console.log("리프레시 토큰 제거 실패");
+                  console.log("리프레시 토큰 제거 실패")
                 }
-                alert("RefreshToken 기간 만료!!! 다시 로그인해 주세요.");
-                context.commit("SET_IS_LOGIN", false);
-                context.commit("SET_USER_INFO", null);
-                context.commit("SET_IS_VALID_TOKEN", false);
-                router.push({ name: "login" });
+                alert("RefreshToken 기간 만료!!! 다시 로그인해 주세요.")
+                context.commit("SET_IS_LOGIN", false)
+                context.commit("SET_USER_INFO", null)
+                context.commit("SET_IS_VALID_TOKEN", false)
+                router.push({ name: "login" })
               },
               (error) => {
-                console.log(error);
-                context.commit("SET_IS_LOGIN", false);
-                context.commit("SET_USER_INFO", null);
+                console.log(error)
+                context.commit("SET_IS_LOGIN", false)
+                context.commit("SET_USER_INFO", null)
               }
-            );
+            )
           }
-        });
+        })
     },
 
     // 매너도수
@@ -267,13 +267,13 @@ export const userModule = {
         .put(`/api/users/point/${payload.userId}`, payload)
         .then(({ status, data }) => {
           if (status == 200) {
-            console.log(data);
-            console.log("매너도수 평가 완료");
+            console.log(data)
+            console.log("매너도수 평가 완료")
           }
         })
         .catch((err) => {
-          console.log(err);
-        });
+          console.log(err)
+        })
     },
 
     // 회원 탈퇴 (db에서 삭제) - ok
@@ -282,21 +282,21 @@ export const userModule = {
         .delete(`/api/users/${payload}`)
         .then(({ status, data }) => {
           if (status == 200) {
-            context.commit("SET_IS_LOGIN", false);
-            context.commit("SET_USER_INFO", null);
-            context.commit("SET_IS_VALID_TOKEN", false);
+            context.commit("SET_IS_LOGIN", false)
+            context.commit("SET_USER_INFO", null)
+            context.commit("SET_IS_VALID_TOKEN", false)
 
-            sessionStorage.clear();
+            sessionStorage.clear()
 
-            console.log("회원 탈퇴 성공");
+            console.log("회원 탈퇴 성공")
           }
         })
         .catch((err) => {
           // 필요한가?
           if (err.response.status == 404) {
-            console.log("존재하지 않는 ID");
+            console.log("존재하지 않는 ID")
           }
-        });
+        })
     },
   },
 }

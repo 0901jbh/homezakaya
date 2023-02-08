@@ -38,7 +38,8 @@ import { useStore } from 'vuex';
 
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
-const APPLICATION_SERVER_URL = "http://localhost:5000/";
+const OPENVIDU_SERVER_URL = 'https://i8a606.p.ssafy.io:8443';
+const OPENVIDU_SERVER_SECRET = 'ssafy';
 
 export default {
   name: "WaitView",
@@ -152,15 +153,69 @@ export default {
       return await this.createToken(sessionId);
     },
 
-    async createSession(sessionId) {
-      const response = await axios.post(APPLICATION_SERVER_URL + 'api/sessions', { customSessionId: sessionId });
-      return response.data; // The sessionId
+    createSession(sessionId) {
+      return new Promise((resolve, reject) => {
+        let data = JSON.stringify({ customSessionId: sessionId });
+        axios
+          .post(`${OPENVIDU_SERVER_URL}/openvidu/api/sessions`, data, {
+            headers: {
+              Authorization: `Basic ${btoa(
+                `OPENVIDUAPP:${OPENVIDU_SERVER_SECRET}`
+              )}`,
+              'Content-Type': 'application/json',
+            },
+          })
+          .then((response) => {
+            resolve(response.data.id);
+          })
+          .catch((response) => {
+            let error = { ...response };
+            if (error?.response?.status === 409) {
+              resolve(sessionId);
+            } else if (
+              window.confirm(
+                `No connection to OpenVidu Server. This may be a certificate error at "${OPENVIDU_SERVER_URL}"\n\nClick OK to navigate and accept it. ` +
+                  `If no certificate warning is shown, then check that your OpenVidu Server is up and running at "${OPENVIDU_SERVER_URL}"`
+              )
+            ) {
+              window.location.assign(`${OPENVIDU_SERVER_URL}/accept-certificate`);
+            }
+          });
+      });
     },
 
-    async createToken(sessionId) {
-      const response = await axios.post(APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections');
-      return response.data; // The token
+    createToken(sessionId) {
+      return new Promise((resolve, reject) => {
+        let data = {};
+        axios
+          .post(
+            `${OPENVIDU_SERVER_URL}/openvidu/api/sessions/${sessionId}/connection`,
+            data,
+            {
+              headers: {
+                Authorization: `Basic ${btoa(
+                  `OPENVIDUAPP:${OPENVIDU_SERVER_SECRET}`
+                )}`,
+                'Content-Type': 'application/json',
+              },
+            }
+          )
+          .then((response) => {
+            resolve(response.data.token);
+          })
+          .catch((error) => reject(error));
+      });
     },
+
+    // async createSession(sessionId) {
+    //   const response = await axios.post(APPLICATION_SERVER_URL + 'api/sessions', { customSessionId: sessionId });
+    //   return response.data; // The sessionId
+    // },
+
+    // async createToken(sessionId) {
+    //   const response = await axios.post(APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections');
+    //   return response.data; // The token
+    // },
 
     async getRoom() {
       const roomData = await this.store.dispatch("roomModule/getRoom", this.$route.params.roomId);

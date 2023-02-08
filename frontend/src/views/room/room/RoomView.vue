@@ -15,7 +15,7 @@
         }">
           <user-video class="video" :streamManager="publisher" :myVideo="true" />
           <user-video class="video" v-for="sub in subscribers" :key="sub.stream.connection.connectionId"
-            :streamManager="sub" :myVideo="false" @kickUser="kickUser" @changeHost="changeHost" />
+            :streamManager="sub" :myVideo="false" :isHostView="hostId == myUserId" @kickUser="kickUser" @changeHost="changeHost" @friendRequest="friendRequest" />
         </div>
         <div id="chatting-container" class="col-md-4">
           <div id="chats" ref="message_scroll">
@@ -145,6 +145,7 @@ import axios from "axios";
 import UserVideo from "./components/UserVideo.vue";
 import { useStore } from 'vuex';
 
+const APPLICATION_SERVER_URL = 'http://localhost:5000';
 const OPENVIDU_SERVER_URL = 'https://i8a606.p.ssafy.io:8443';
 const OPENVIDU_SERVER_SECRET = 'ssafy';
 
@@ -521,12 +522,12 @@ export default {
     },
 
     // async createSession(sessionId) {
-    //   const response = await axios.post(APPLICATION_SERVER_URL + 'api/sessions', { customSessionId: sessionId });
+    //   const response = await axios.post(APPLICATION_SERVER_URL + '/api/sessions', { customSessionId: sessionId });
     //   return response.data; // The sessionId
     // },
 
     // async createToken(sessionId) {
-    //   const response = await axios.post(APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections');
+    //   const response = await axios.post(APPLICATION_SERVER_URL + '/api/sessions/' + sessionId + '/connections');
     //   return response.data; // The token
     // },
 
@@ -541,8 +542,8 @@ export default {
       const room = JSON.parse(JSON.stringify(roomData));
       this.title = room.title;
       this.category = room.category;
-      // this.headCount = room.personCount;
-      this.headCount = 1;
+      this.headCount = room.personCount;
+      // this.headCount = 1;
       this.headCountMax = room.personLimit;
       this.hostId = room.hostId;
     },
@@ -672,15 +673,22 @@ export default {
         .catch(error => {
           console.error(error);
         })
-    }
+    },
+
+    friendRequest(userId) {
+      this.store.dispatch("friendModule/sendRequest",{
+        userAId: this.myUserId,
+        userBId: userId
+      });
+    },
   },
 
   created() {
   },
 
-  mounted() {
-    this.getFriends();
-    this.getRoom();
+  async mounted() {
+    await this.getFriends();
+    await this.getRoom();
     this.getUser();
 
     this.store.dispatch("gameModule/getSentence");

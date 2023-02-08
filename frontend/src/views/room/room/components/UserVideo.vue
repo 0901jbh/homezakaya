@@ -25,13 +25,13 @@
 					</div> -->
 					<el-rate v-if="!myVideo" v-model="manner_rate" size="large" allow-half
 						style="justify-content: center;" />
-					<div v-if="!myVideo && !isFriend" class="content" style="width: 60%; text-decoration:none;">
+					<div v-if="!myVideo && !isFriend" @click="friend" class="content" style="width: 60%; text-decoration:none;">
 						친구 추가
 					</div>
-					<div v-if="!myVideo && isHost" class="content" style="width: 60%; text-decoration:none;">
+					<div v-if="!myVideo && isHostView" @click="host" class="content" style="width: 60%; text-decoration:none;">
 						방장 변경
 					</div>
-					<div v-if="!myVideo && isHost" @click="kick" class="content"
+					<div v-if="!myVideo && isHostView" @click="kick" class="content"
 						style="width: 60%; text-decoration:none;">
 						강제 퇴장
 					</div>
@@ -63,6 +63,7 @@ export default {
 	props: {
 		streamManager: Object,
 		myVideo: Boolean,
+		isHostView: Boolean,
 	},
 
 	data() {
@@ -98,6 +99,7 @@ export default {
 	methods: {
 		getConnectionData() {
 			const { connection } = this.streamManager.stream;
+			console.log(JSON.parse(connection.data));
 			return JSON.parse(connection.data);
 		},
 		userInfo() {
@@ -108,6 +110,9 @@ export default {
 		},
 		host() {
 			this.$emit('changeHost', this.userId);
+		},
+		friend(){
+			this.$emit('friendRequest', this.userId);
 		}
 	},
 };

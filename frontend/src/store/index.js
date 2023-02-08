@@ -3,6 +3,7 @@ import { userModule } from "@/store/modules/userModule.js";
 import { friendModule } from "@/store/modules/friendModule.js";
 import { roomModule } from "@/store/modules/roomModule.js";
 import { gameModule } from "@/store/modules/gameModule.js";
+import createPersistedState from 'vuex-persistedstate';
 
 export default createStore({
   state: { // 변수들의 집합
@@ -18,5 +19,11 @@ export default createStore({
     friendModule,
     roomModule,
     gameModule,
-  }
+  },
+  plugins: [
+    createPersistedState({
+      // 브라우저 종료시 제거하기 위해 localStorage가 아닌 sessionStorage로 변경. (default: localStorage)
+      storage: sessionStorage,
+    }),
+  ],
 })

@@ -1,8 +1,8 @@
 <template>
 	<div id="video" v-if="streamManager">
-		<ov-video :stream-manager="streamManager" />
+		<ov-video :streamManager="streamManager" />
 		<div id="nametag">
-			<!-- <img v-if="isHost" src="../../../../assets/crown.png" alt="crown img"
+			<!-- <img v-if="isHost" src="@/assets/images/crown.png" alt="crown img"
 				style="display: inline-block; width:20px; height:20px; padding-right: 5px;" /> -->
 			<p>{{ username }}</p>
 		</div>

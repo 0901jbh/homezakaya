@@ -6,9 +6,9 @@
     </div>
     <div class="second-line">친구요청을 보냈습니다.</div>
     <div class="third-line">
-      <img src="../../../../assets/manner_w.png" alt="manner_w img" style="width:10%; height:15%; ">
+      <img src="@/assets/images/manner_w.png" alt="manner_w img" style="width:10%; height:15%; ">
       <div>{{ props.request.mannerPoint }}</div>
-      <img src="../../../../assets/alcohol_w.png" alt="alcohol_w img" style="width:10%; height:15%; ">
+      <img src="@/assets/images/alcohol_w.png" alt="alcohol_w img" style="width:10%; height:15%; ">
       <div>{{ props.request.alcoholPoint }}잔</div>
       <div class="approve" type="button" @click="approveRequest">수락</div>
     </div>

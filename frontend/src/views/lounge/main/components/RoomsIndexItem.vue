@@ -2,7 +2,7 @@
 	<div class="rooms-container">
 		<div class="create-room">
 			<div class="create-room-wrapper btn-open" @click="popOpen">
-				<img src="../../../../assets/plus.png" alt="plus img" style="width: 50px;">
+				<img src="@/assets/images/plus.png" alt="plus img" style="width: 50px;">
 			</div>
 		</div>
 		<div class="room" v-for="(room, idx) in form.rooms" :key="idx">
@@ -107,7 +107,7 @@ const createRoom = () => {
 			roomId: result.roomId,
 		}).then((result) => {
 			if (result) {
-				router.push({ name: 'room', params: { roomId: form.value.roomId } })
+				router.push({ name: 'wait', params: { roomId: form.value.roomId } })
 			}
 		})
 	});
@@ -157,10 +157,6 @@ const passwordClose = () => {
 .create-room {
 	width: 30%;
 	height: 40%;
-	/* background-image: url('../../../../assets/table.png');
-	background-position: center;
-	background-size: contain;
-	background-repeat: no-repeat; */
 	margin: 1.5%;
 }
 

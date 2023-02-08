@@ -10,6 +10,9 @@ import { useStore } from "vuex";
 
 const store = useStore();
 
+const form = new FormData();
+form.append("email", "bestsjj@naver.com");
+
 const startBtn = () => {
   // store.dispatch("gameModule/updateUser", "video");
   // store.dispatch("userModule/userLogout", "suz.dev33");

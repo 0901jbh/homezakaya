@@ -1,11 +1,11 @@
 <template>
-	<div id="video" v-if="streamManager">
+	<div id="video" v-if="streamManager !== undefined">
 		<el-popover :width="250"
 			popper-style="background: rgb(235 153 153); border: rgb(235 153 153); box-shadow: rgb(14 18 22 / 35%) 0px 10px 38px -10px, rgb(14 18 22 / 20%) 0px 10px 20px -15px; padding: 15px;"
 			trigger="click" placement="right">
 			<template #reference>
 				<div id="cam">
-					<ov-video :stream-manager="streamManager" @click="userInfo" />
+					<ov-video :streamManager="streamManager" @click="userInfo" />
 				</div>
 			</template>
 			<template #default>
@@ -15,23 +15,24 @@
 					</p>
 					<div class="user_manner_alcohol"
 						style="margin: 0; display: flex; gap: 16px; flex-direction: row; justify-content: center;">
-						<img src="../../../../assets/manner.png" alt="manner img" style="width:28px; height:28px;">
+						<img src="@/assets/images/manner_w.png" alt="manner_w img" style="width:28px; height:28px;">
 						<p style="margin: 0; font-size: 20px; color: white; align-self:center;">3.5</p>
-						<img src="../../../../assets/alcohol.png" alt="alcohol img" style="width:28px; height:28px;">
+						<img src="@/assets/images/alcohol_w.png" alt="alcohol_w img" style="width:28px; height:28px;">
 						<p style="margin: 0; font-size: 20px; color: white; align-self:center;">14잔</p>
 					</div>
 					<!-- <div class="content" style="width: 60%; text-decoration:none;">
 						별점
 					</div> -->
-					<el-rate v-if="myVideo == 'false'" v-model="manner_rate" size="large" allow-half
+					<el-rate v-if="!myVideo" v-model="manner_rate" size="large" allow-half
 						style="justify-content: center;" />
-					<div v-if="myVideo == 'false' && !isFriend" class="content" style="width: 60%; text-decoration:none;">
+					<div v-if="!myVideo && !isFriend" @click="friend" class="content" style="width: 60%; text-decoration:none;">
 						친구 추가
 					</div>
-					<div v-if="myVideo == 'false' && isHost" class="content" style="width: 60%; text-decoration:none;">
+					<div v-if="!myVideo && isHostView" @click="host" class="content" style="width: 60%; text-decoration:none;">
 						방장 변경
 					</div>
-					<div v-if="myVideo == 'false' && isHost" @click="kick" class="content" style="width: 60%; text-decoration:none;">
+					<div v-if="!myVideo && isHostView" @click="kick" class="content"
+						style="width: 60%; text-decoration:none;">
 						강제 퇴장
 					</div>
 				</div>
@@ -41,7 +42,7 @@
 			<ov-video :stream-manager="streamManager" @click="userInfo" />
 		</div> -->
 		<div id="nametag">
-			<img v-if="isHost" src="../../../../assets/crown.png" alt="crown img"
+			<img v-if="isHost" src="@/assets/images/crown.png" alt="crown img"
 				style="display: inline-block; width:20px; height:20px; padding-right: 5px;" />
 			<p>{{ username }}</p>
 		</div>
@@ -61,7 +62,8 @@ export default {
 
 	props: {
 		streamManager: Object,
-		myVideo: String,
+		myVideo: Boolean,
+		isHostView: Boolean,
 	},
 
 	data() {
@@ -76,7 +78,7 @@ export default {
 			const { username } = this.getConnectionData();
 			return username;
 		},
-		userId(){
+		userId() {
 			const { userId } = this.getConnectionData();
 			return userId;
 		},
@@ -84,9 +86,12 @@ export default {
 			const clientData = this.getConnectionData();
 			return clientData.hostId == clientData.userId;
 		},
-		isFriend(){
+		isFriend() {
 			const clientData = this.getConnectionData();
-			return clientData.friends.includes(clientData.userId);
+			if(clientData.friends != undefined)
+				return clientData.friends.includes(clientData.userId);
+			else
+				return false;
 		}
 		// isHost 값을 주는 것 보다는 hostId와 clientId가 일치하는지 직접 비교하는게 나을듯
 	},
@@ -94,17 +99,20 @@ export default {
 	methods: {
 		getConnectionData() {
 			const { connection } = this.streamManager.stream;
-			console.log(connection.data);
+			console.log(JSON.parse(connection.data));
 			return JSON.parse(connection.data);
 		},
 		userInfo() {
 			console.log("클릭")
 		},
-		kick (){
+		kick() {
 			this.$emit('kickUser', this.username);
 		},
-		host(){
+		host() {
 			this.$emit('changeHost', this.userId);
+		},
+		friend(){
+			this.$emit('friendRequest', this.userId);
 		}
 	},
 };

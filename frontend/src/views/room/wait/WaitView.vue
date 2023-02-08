@@ -1,26 +1,21 @@
 <template>
   <header>
-    <RoomHeader
-      :title="title"
-      :category="category"
-      :headCount="headCount"
-      :headCountMax="headCountMax"
-    />
+    <RoomHeader :title="title" :category="category" :headCount="headCount" :headCountMax="headCountMax" />
   </header>
   <div id="main-container" class="container">
     <div id="session">
       <div id="container">
-        <user-video :stream-manager="mainStreamManager" />
+        <user-video :streamManager="publisher" />
       </div>
       <div id="option-footer">
         <div id="mute">
           <div class="onoff" @click="clickMuteVideo">
-            <img v-if="videoActive" src="../../../assets/video_on.png" alt="video on img" />
-            <img v-else src="../../../assets/video_off.png" alt="video on img" />
+            <img v-if="videoActive" src="@/assets/images/video_on.png" alt="video on img" />
+            <img v-else src="@/assets/images/video_off.png" alt="video on img" />
           </div>
           <div class="onoff" @click="clickMuteAudio">
-            <img v-if="audioActive" src="../../../assets/audio_on.png" alt="audio on img" />
-            <img v-else src="../../../assets/audio_off.png" alt="audio on img" />
+            <img v-if="audioActive" src="@/assets/images/audio_on.png" alt="audio on img" />
+            <img v-else src="@/assets/images/audio_off.png" alt="audio on img" />
           </div>
         </div>
         <div id="btns" style="align-self: center;">
@@ -43,7 +38,9 @@ import { useStore } from 'vuex';
 
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
-const APPLICATION_SERVER_URL = "http://localhost:5000/";
+const APPLICATION_SERVER_URL = 'http://localhost:5000';
+const OPENVIDU_SERVER_URL = 'https://i8a606.p.ssafy.io:8443';
+const OPENVIDU_SERVER_SECRET = 'ssafy';
 
 export default {
   name: "WaitView",
@@ -59,7 +56,6 @@ export default {
       // OpenVidu objects
       OV: undefined,
       session: undefined,
-      mainStreamManager: undefined,
       publisher: undefined,
       // subscribers: [],
 
@@ -69,8 +65,8 @@ export default {
 
       title: "",
       category: "",
-      headCountMax: Number,
-      headCount: Number,
+      headCountMax: 8,
+      headCount: 1,
 
       videoActive: false,
       audioActive: false,
@@ -79,7 +75,7 @@ export default {
 
   methods: {
     enterRoom() {
-      this.$router.push({ name: 'room', params: { roomId: this.roomId }, query: { video : this.videoActive, audio : this.audioActive } })
+      this.$router.push({ name: 'room', params: { roomId: this.roomId }, query: { video: this.videoActive, audio: this.audioActive } })
     },
 
     clickMuteVideo() {
@@ -111,7 +107,7 @@ export default {
         console.warn(exception);
       });
 
-      this.getToken().then((token) => {
+      this.getToken(this.myUserName + "-" + this.roomId).then((token) => {
         this.session.connect(token, { username: this.myUserName })
           .then(() => {
 
@@ -123,10 +119,9 @@ export default {
               resolution: "640x480",
               frameRate: 30,
               insertMode: "APPEND",
-              mirror: false,
+              mirror: true,
             });
 
-            this.mainStreamManager = publisher;
             this.publisher = publisher;
 
             this.session.publish(this.publisher);
@@ -143,7 +138,6 @@ export default {
       if (this.session) this.session.disconnect();
 
       this.session = undefined;
-      this.mainStreamManager = undefined;
       this.publisher = undefined;
       this.OV = undefined;
 
@@ -152,26 +146,82 @@ export default {
       this.$router.push({ name: 'rooms' });
     },
 
-    async getToken(myUserId) {
-      const sessionId = await this.createSession(myUserId);
+    async getToken(mySessionId) {
+      console.log(mySessionId);
+      const sessionId = await this.createSession(mySessionId);
       return await this.createToken(sessionId);
     },
 
-    async createSession(sessionId) {
-      const response = await axios.post(APPLICATION_SERVER_URL + 'api/sessions', { customSessionId: sessionId });
-      return response.data; // The sessionId
+    createSession(sessionId) {
+      return new Promise((resolve, reject) => {
+        let data = JSON.stringify({ customSessionId: sessionId });
+        axios
+          .post(`${OPENVIDU_SERVER_URL}/openvidu/api/sessions`, data, {
+            headers: {
+              Authorization: `Basic ${btoa(
+                `OPENVIDUAPP:${OPENVIDU_SERVER_SECRET}`
+              )}`,
+              'Content-Type': 'application/json',
+            },
+          })
+          .then((response) => {
+            resolve(response.data.id);
+          })
+          .catch((response) => {
+            let error = { ...response };
+            if (error?.response?.status === 409) {
+              resolve(sessionId);
+            } else if (
+              window.confirm(
+                `No connection to OpenVidu Server. This may be a certificate error at "${OPENVIDU_SERVER_URL}"\n\nClick OK to navigate and accept it. ` +
+                  `If no certificate warning is shown, then check that your OpenVidu Server is up and running at "${OPENVIDU_SERVER_URL}"`
+              )
+            ) {
+              window.location.assign(`${OPENVIDU_SERVER_URL}/accept-certificate`);
+            }
+          });
+      });
     },
 
-    async createToken(sessionId) {
-      const response = await axios.post(APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections');
-      return response.data; // The token
+    createToken(sessionId) {
+      return new Promise((resolve, reject) => {
+        let data = {};
+        axios
+          .post(
+            `${OPENVIDU_SERVER_URL}/openvidu/api/sessions/${sessionId}/connection`,
+            data,
+            {
+              headers: {
+                Authorization: `Basic ${btoa(
+                  `OPENVIDUAPP:${OPENVIDU_SERVER_SECRET}`
+                )}`,
+                'Content-Type': 'application/json',
+              },
+            }
+          )
+          .then((response) => {
+            resolve(response.data.token);
+          })
+          .catch((error) => reject(error));
+      });
     },
+
+    // async createSession(sessionId) {
+    //   const response = await axios.post(APPLICATION_SERVER_URL + '/api/sessions', { customSessionId: sessionId });
+    //   return response.data; // The sessionId
+    // },
+
+    // async createToken(sessionId) {
+    //   const response = await axios.post(APPLICATION_SERVER_URL + '/api/sessions/' + sessionId + '/connections');
+    //   return response.data; // The token
+    // },
 
     async getRoom() {
       const roomData = await this.store.dispatch("roomModule/getRoom", this.$route.params.roomId);
       const room = JSON.parse(JSON.stringify(roomData));
       this.title = room.title;
       this.category = room.category;
+      this.roomId = room.roomId;
       this.headCount = room.personCount;
       this.headCountMax = room.personLimit;
     },

@@ -16,20 +16,34 @@
       <div>
         <div class="box">
           <el-form margin-top="10vh">
-            <el-form-item size='large'>
-              <el-input v-model="data.id" placeholder="아이디를 입력해주세요" clearable />
+            <el-form-item size="large">
+              <el-input
+                v-model="data.id"
+                placeholder="아이디를 입력해주세요"
+                clearable
+              />
             </el-form-item>
             <el-form-item size="large">
-              <el-input v-model="data.password" placeholder="비밀번호를 입력해주세요" show-password />
+              <el-input
+                v-model="data.password"
+                placeholder="비밀번호를 입력해주세요"
+                show-password
+              />
             </el-form-item>
             <el-form-item>
               <div class="btn">
-                <el-button type="info" size="large" @click="onSubmit">로그인</el-button>
+                <el-button type="info" size="large" @click="onSubmit"
+                  >로그인</el-button
+                >
               </div>
             </el-form-item>
             <div>
               계정이 없으신가요?
-              <RouterLink to="/signup" style="text-decoration:none; color: #E27B66;">회원가입</RouterLink>
+              <RouterLink
+                to="/signup"
+                style="text-decoration: none; color: #e27b66"
+                >회원가입</RouterLink
+              >
             </div>
           </el-form>
         </div>
@@ -43,39 +57,44 @@
 </template>
 
 <script setup>
-import HeaderItem from '../menu/HeaderItem.vue'
-import FooterItem from '../menu/FooterItem.vue'
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import HeaderItem from "../menu/HeaderItem.vue";
+import FooterItem from "../menu/FooterItem.vue";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
 
 const router = useRouter();
+const store = useStore();
 
 const data = ref({
-  id: '',
-  password: '',
+  id: "",
+  password: "",
   isEnter: false,
-})
+});
 
-const onSubmit = () => {
-  router.push({ name: "rooms" })
-  console.log('Log-In!');
-}
+const onSubmit = async () => {
+  console.log("Log-In!");
+  await store.dispatch("userModule/userLogin", {
+    userId: data.value.id,
+    password: data.value.password,
+  });
+  router.push({ name: "rooms" });
+};
 
 const clickTitle = () => {
-  data.value.isEnter = !data.value.isEnter
-}
-
+  data.value.isEnter = !data.value.isEnter;
+};
 </script>
 
 <style scoped>
 @font-face {
-  font-family: 'dokdo';
-  src: url('@/assets/fonts/Dokdo-Regular.ttf')
+  font-family: "dokdo";
+  src: url("@/assets/fonts/Dokdo-Regular.ttf");
 }
 
 @font-face {
-  font-family: 'eastsea';
-  src: url('@/assets/fonts/EastSeaDokdo-Regular.ttf')
+  font-family: "eastsea";
+  src: url("@/assets/fonts/EastSeaDokdo-Regular.ttf");
 }
 
 .container {
@@ -84,7 +103,7 @@ const clickTitle = () => {
   align-items: center;
   /* grid-template-columns: 2fr 3fr; */
   height: 100vh;
-  background-image: url('@/assets/images/main.png');
+  background-image: url("@/assets/images/main.png");
   background-size: cover;
 }
 
@@ -96,12 +115,12 @@ const clickTitle = () => {
   background: hsl(229.41, 18.68%, 17.84%, 80%);
   height: 80%;
   width: 1000px;
-  color: #CBCBCB;
+  color: #cbcbcb;
 }
 
 .title {
-  font-family: 'dokdo';
-  color: #E27B66;
+  font-family: "dokdo";
+  color: #e27b66;
   font-style: normal;
   font-weight: 700;
   font-size: 12vh;
@@ -111,7 +130,7 @@ const clickTitle = () => {
 
 .comment {
   /* align-self: flex-end; */
-  font-family: 'dokdo';
+  font-family: "dokdo";
   font-weight: 600;
   font-size: 4vh;
   /* padding-top: 3vh; */
@@ -128,7 +147,7 @@ const clickTitle = () => {
 }
 
 .el-button {
-  background-color: #E27B66;
+  background-color: #e27b66;
   width: 300px;
   border: none;
 }

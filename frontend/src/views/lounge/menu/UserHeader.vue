@@ -106,9 +106,9 @@ import { ref } from "vue";
 import { useStore } from "vuex";
 const store = useStore();
 const data = ref({
-  nickname: store.state.userModule.userInfo.nickname,
-  mannerPoint: store.state.userModule.userInfo.mannerPoint,
-  alcoholPoint: store.state.userModule.userInfo.alcoholPoint,
+  nickname: store.state.userModule.user.nickname,
+  mannerPoint: store.state.userModule.user.mannerPoint,
+  alcoholPoint: store.state.userModule.user.alcoholPoint,
 });
 </script>
 

@@ -5,7 +5,7 @@
   <div id="main-container" class="container">
     <div id="session">
       <div id="container">
-        <user-video :stream-manager="mainStreamManager" />
+        <user-video :streamManager="publisher" />
       </div>
       <div id="option-footer">
         <div id="mute">
@@ -55,7 +55,6 @@ export default {
       // OpenVidu objects
       OV: undefined,
       session: undefined,
-      mainStreamManager: undefined,
       publisher: undefined,
       // subscribers: [],
 
@@ -107,7 +106,7 @@ export default {
         console.warn(exception);
       });
 
-      this.getToken(this.roomId).then((token) => {
+      this.getToken(this.myUserName + "-" + this.roomId).then((token) => {
         this.session.connect(token, { username: this.myUserName })
           .then(() => {
 
@@ -146,8 +145,9 @@ export default {
       this.$router.push({ name: 'rooms' });
     },
 
-    async getToken(myUserId) {
-      const sessionId = await this.createSession(myUserId);
+    async getToken(mySessionId) {
+      console.log(mySessionId);
+      const sessionId = await this.createSession(mySessionId);
       return await this.createToken(sessionId);
     },
 
@@ -220,6 +220,7 @@ export default {
       const room = JSON.parse(JSON.stringify(roomData));
       this.title = room.title;
       this.category = room.category;
+      this.roomId = room.roomId;
       this.headCount = room.personCount;
       this.headCountMax = room.personLimit;
     },

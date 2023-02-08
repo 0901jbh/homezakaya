@@ -1,11 +1,11 @@
 <template>
-	<div id="video" v-if="streamManager">
+	<div id="video" v-if="streamManager !== undefined">
 		<el-popover :width="250"
 			popper-style="background: rgb(235 153 153); border: rgb(235 153 153); box-shadow: rgb(14 18 22 / 35%) 0px 10px 38px -10px, rgb(14 18 22 / 20%) 0px 10px 20px -15px; padding: 15px;"
 			trigger="click" placement="right">
 			<template #reference>
 				<div id="cam">
-					<ov-video :stream-manager="streamManager" @click="userInfo" />
+					<ov-video :streamManager="streamManager" @click="userInfo" />
 				</div>
 			</template>
 			<template #default>
@@ -23,15 +23,15 @@
 					<!-- <div class="content" style="width: 60%; text-decoration:none;">
 						별점
 					</div> -->
-					<el-rate v-if="myVideo == 'false'" v-model="manner_rate" size="large" allow-half
+					<el-rate v-if="!myVideo" v-model="manner_rate" size="large" allow-half
 						style="justify-content: center;" />
-					<div v-if="myVideo == 'false' && !isFriend" class="content" style="width: 60%; text-decoration:none;">
+					<div v-if="!myVideo && !isFriend" class="content" style="width: 60%; text-decoration:none;">
 						친구 추가
 					</div>
-					<div v-if="myVideo == 'false' && isHost" class="content" style="width: 60%; text-decoration:none;">
+					<div v-if="!myVideo && isHost" class="content" style="width: 60%; text-decoration:none;">
 						방장 변경
 					</div>
-					<div v-if="myVideo == 'false' && isHost" @click="kick" class="content"
+					<div v-if="!myVideo && isHost" @click="kick" class="content"
 						style="width: 60%; text-decoration:none;">
 						강제 퇴장
 					</div>
@@ -62,7 +62,7 @@ export default {
 
 	props: {
 		streamManager: Object,
-		myVideo: String,
+		myVideo: Boolean,
 	},
 
 	data() {
@@ -87,7 +87,10 @@ export default {
 		},
 		isFriend() {
 			const clientData = this.getConnectionData();
-			return clientData.friends.includes(clientData.userId);
+			if(clientData.friends != undefined)
+				return clientData.friends.includes(clientData.userId);
+			else
+				return false;
 		}
 		// isHost 값을 주는 것 보다는 hostId와 clientId가 일치하는지 직접 비교하는게 나을듯
 	},
@@ -95,7 +98,6 @@ export default {
 	methods: {
 		getConnectionData() {
 			const { connection } = this.streamManager.stream;
-			console.log(connection.data);
 			return JSON.parse(connection.data);
 		},
 		userInfo() {

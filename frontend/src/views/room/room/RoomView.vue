@@ -13,9 +13,9 @@
           'under-six': this.headCount == 5 || this.headCount == 6,
           'under-eight': this.headCount == 7 || this.headCount == 8,
         }">
-          <user-video class="video" :stream-manager="publisher" my-video="true" />
+          <user-video class="video" :streamManager="publisher" :myVideo="true" />
           <user-video class="video" v-for="sub in subscribers" :key="sub.stream.connection.connectionId"
-            :stream-manager="sub" my-video="false" @kickUser="kickUser" @changeHost="changeHost" />
+            :streamManager="sub" :myVideo="false" @kickUser="kickUser" @changeHost="changeHost" />
         </div>
         <div id="chatting-container" class="col-md-4">
           <div id="chats" ref="message_scroll">
@@ -101,7 +101,7 @@
               </div>
             </template>
           </el-popover>
-          <div class="content" @click="exitBtn">Exit</div>
+          <div class="content" @click="leaveSession">Exit</div>
         </div>
       </div>
     </div>
@@ -145,8 +145,6 @@ import axios from "axios";
 import UserVideo from "./components/UserVideo.vue";
 import { useStore } from 'vuex';
 
-axios.defaults.headers.post["Content-Type"] = "application/json";
-
 const OPENVIDU_SERVER_URL = 'https://i8a606.p.ssafy.io:8443';
 const OPENVIDU_SERVER_SECRET = 'ssafy';
 
@@ -172,10 +170,10 @@ export default {
       // Join form
       mySessionId: this.$route.params.roomId,
 
-      newMessage: null,
+      newMessage: "",
       messages: [],
-      messageData: null,
-      eventData: null,
+      messageData: "",
+      eventData: {},
 
       title: "",
       category: "",
@@ -209,7 +207,6 @@ export default {
   },
   watch: {
     isSmile(value) {
-      console.log("감지지지지지ㅣㅈ" + value);
       if (value) {
         this.session.signal({
           data: JSON.stringify(this.myUserName),
@@ -224,7 +221,6 @@ export default {
       }
     },
     isFinished(value) {
-      console.log("감감감감감감감감지" + value);
       if (value) {
         this.session.signal({
           //말할 문장, 말한 문장 담아서 보내기
@@ -232,7 +228,6 @@ export default {
           type: 'detect-audio'
         })
           .then(() => {
-            console.log('끝!!!!');
             this.store.dispatch("gameModule/getSentence");
           })
           .catch(error => {
@@ -264,7 +259,6 @@ export default {
       }
     },
     clickMuteVideo() {
-      console.log(this.videoActive);
       if (this.publisher.stream.videoActive) {
         this.publisher.publishVideo(false)
         this.videoActive = false
@@ -419,6 +413,11 @@ export default {
     },
 
     leaveSession() {
+      if (this.hostId == this.myUserId && this.subscribers.length > 0) {
+        console.log(this.subscribers[0]);
+        this.changeHost(this.subscribers[0].stream.streamManager.stream.connection.data.userId);
+      }
+
       // --- 7) Leave the session by calling 'disconnect' method over the Session object ---
       if (this.session) this.session.disconnect();
 
@@ -432,13 +431,14 @@ export default {
       // Remove beforeunload listener
       window.removeEventListener("beforeunload", this.leaveSession);
 
-      this.$router.push({ name: 'rooms' });
       this.store.dispatch("roomModule/quitRoom", this.mySessionId)
         .then((result) => {
           if (result) {
             this.store.dispatch("roomModule/removeUserInRoom", this.store.state.userModule.user.userId)
           }
         })
+      
+      this.$router.push({ name: 'rooms' });
     },
 
     // updateMainVideoStreamManager(stream) {
@@ -551,13 +551,6 @@ export default {
       const user = this.store.state.userModule.user;
       this.myUserId = user.userId;
       this.myUserName = user.nickname;
-    },
-
-    exitBtn() {
-      if (this.hostId == this.myUserId && this.headCount > 1) {
-        this.changeHost();
-      }
-      this.leaveSession();
     },
 
     //게임 기능
@@ -683,21 +676,27 @@ export default {
   },
 
   created() {
-    this.joinSession();
-    this.getFriends();
-    this.getRoom();
-    this.getUser();
-    console.log(this.$route.query.video);
-    this.store.dispatch("gameModule/getSentence");
-    this.store.dispatch("gameModule/getTopic");
   },
 
   mounted() {
+    this.getFriends();
+    this.getRoom();
+    this.getUser();
+
+    this.store.dispatch("gameModule/getSentence");
+    this.store.dispatch("gameModule/getTopic");
+    
+    console.log(this.$route.query.video);
+    this.joinSession();
+  },
+
+  beforeUpdate(){
+    console.log(this);
   },
 
   updated() {
 
-  }
+  },
 };
 
 </script>

@@ -20,7 +20,7 @@
   </footer>
   <div class="reload-btn-wrapper" @click="reload">
     <div class="reload-btn">
-      <img src="../../../assets/circle_arrow.png" alt="circle_arrow">
+      <img src="@/assets/images/circle_arrow.png" alt="circle_arrow">
     </div>
   </div>
 </template>

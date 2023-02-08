@@ -8,9 +8,6 @@
       <HeaderItem :isEnter="data.isEnter" />
     </header> -->
   <div class="container">
-    <!-- <div>
-      <img src="../../../assets/HomeLogin.png" alt="izakaya img" style="height:100vh;">
-    </div> -->
     <div class="wrapper">
       <div class="box">
         <div class="title">Homezakaya</div>
@@ -73,12 +70,12 @@ const clickTitle = () => {
 <style scoped>
 @font-face {
   font-family: 'dokdo';
-  src: url('../../../assets/fonts/Dokdo-Regular.ttf')
+  src: url('@/assets/fonts/Dokdo-Regular.ttf')
 }
 
 @font-face {
   font-family: 'eastsea';
-  src: url('../../../assets/fonts/EastSeaDokdo-Regular.ttf')
+  src: url('@/assets/fonts/EastSeaDokdo-Regular.ttf')
 }
 
 .container {
@@ -87,7 +84,7 @@ const clickTitle = () => {
   align-items: center;
   /* grid-template-columns: 2fr 3fr; */
   height: 100vh;
-  background-image: url('../../../assets/HomeLogin.png');
+  background-image: url('@/assets/images/main.png');
   background-size: cover;
 }
 
@@ -131,8 +128,9 @@ const clickTitle = () => {
 }
 
 .el-button {
-  background-color: #E27B66 !important;
+  background-color: #E27B66;
   width: 300px;
+  border: none;
 }
 
 .el-button:hover {

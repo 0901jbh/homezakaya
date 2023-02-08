@@ -69,8 +69,8 @@ export default {
 
       title: "",
       category: "",
-      headCountMax: Number,
-      headCount: Number,
+      headCountMax: 8,
+      headCount: 1,
 
       videoActive: false,
       audioActive: false,
@@ -123,7 +123,7 @@ export default {
               resolution: "640x480",
               frameRate: 30,
               insertMode: "APPEND",
-              mirror: false,
+              mirror: true,
             });
 
             this.mainStreamManager = publisher;

@@ -187,10 +187,10 @@ export default {
       myUserName: "",
       friends: [],
 
-      // videoActive: JSON.parse(this.$route.query.video),
-      // audioActive: JSON.parse(this.$route.query.audio),
-      videoActive: true,
-      audioActive: true,
+      videoActive: JSON.parse(this.$route.query.video),
+      audioActive: JSON.parse(this.$route.query.audio),
+      // videoActive: true,
+      // audioActive: true,
 
       gameStatus: 0,
       games: ['일반', '할머니 게임', '나 안취했어', '랜덤 대화주제'],
@@ -399,7 +399,7 @@ export default {
               resolution: "640x480", // The resolution of your video
               frameRate: 30, // The frame rate of your video
               insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
-              mirror: false, // Whether to mirror your local video or not
+              mirror: true, // Whether to mirror your local video or not
             });
 
             // Set the main video in the page to display our webcam and store our Publisher

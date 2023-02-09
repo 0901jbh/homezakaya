@@ -100,7 +100,7 @@ const createRoom = () => {
 		category: form.value.category,
 		hostId: form.value.hostId,
 		personLimit: form.value.personLimit,
-		isPrivate: isPrivate,
+		private: isPrivate,
 	}).then((result) => {
 		form.value.roomId = result.roomId
 		store.dispatch('roomModule/doEnterRoom', {

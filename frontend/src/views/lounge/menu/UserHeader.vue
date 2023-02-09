@@ -107,6 +107,13 @@ const data = ref({
   mannerPoint: store.state.userModule.user.mannerPoint,
   alcoholPoint: store.state.userModule.user.alcoholPoint,
 });
+
+const logout = async () => {
+  await store.dispatch(
+    "userModule/userLogout",
+    store.state.userModule.user.userId
+  );
+};
 </script>
 
 <style scoped>

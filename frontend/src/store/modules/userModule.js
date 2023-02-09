@@ -45,7 +45,7 @@ export const userModule = {
     async createUser(context, payload) {
       await axios
         .post(`/api/users`, payload)
-        .then(({ status, data }) => {
+        .then(({status, data}) => {
           if (status == 201) {
             console.log("회원가입 성공");
           }
@@ -60,7 +60,7 @@ export const userModule = {
     async idcheck(context, payload) {
       await axios
         .get(`/api/users/id/${payload}`)
-        .then(({ status, data }) => {
+        .then(({status, data}) => {
           if (status == 200) {
             console.log("사용 가능한 id 입니다.");
             return true;
@@ -79,7 +79,7 @@ export const userModule = {
     async nicknameCheck(context, payload) {
       await axios
         .get(`/api/users/nickname/${payload}`)
-        .then(({ status, data }) => {
+        .then(({status, data}) => {
           if (status == 200) {
             console.log("사용 가능한 nickname 입니다.");
             return true;
@@ -97,7 +97,7 @@ export const userModule = {
     sendEmail(context, payload) {
       axios
         .post(`/api/users/login/mailConfirm`, payload)
-        .then(({ status, data }) => {
+        .then(({status, data}) => {
           if (status == 200) {
             console.log(data);
             context.commit("SET_USER_INFO", data); // 인증번호 확인용
@@ -118,7 +118,7 @@ export const userModule = {
     async createUser(context, payload) {
       await axios
         .post(`/api/users`, payload)
-        .then(({ status, data }) => {
+        .then(({status, data}) => {
           if (status == 200) {
             console.log("회원가입 성공"); // console 출력 안됨
             context.commit("SET_USER", data);
@@ -131,28 +131,11 @@ export const userModule = {
         });
     },
 
-    // 회원 정보 조회 (내정보) - ok
-    getUser(context, payload) {
-      axios
-        .get(`/api/users/${payload}`)
-        .then(({ status, data }) => {
-          if (status == 200) {
-            console.log(data);
-            context.commit("SET_USER", data);
-          }
-        })
-        .catch((err) => {
-          if (err.response.status == 404) {
-            console.log("존재하지 않는 회원 입니다.");
-          }
-        });
-    },
-
     // 회원 정보 수정 - ok
     updateUser(context, payload) {
       axios
         .put(`/api/users`, payload)
-        .then(({ status, data }) => {
+        .then(({status, data}) => {
           if (status == 200) {
             console.log("정보 수정 완료");
             context.commit("SET_USER_INFO", data);
@@ -169,7 +152,7 @@ export const userModule = {
     async userLogin(context, payload) {
       await axios
         .post(`/api/users/login`, payload)
-        .then(({ status, data }) => {
+        .then(({status, data}) => {
           if (status == 200) {
             let accessToken = data["access-token"];
             let refreshToken = data["refresh-token"];
@@ -189,20 +172,20 @@ export const userModule = {
           }
         })
         .catch((err) => {
-          if (err.response.status == 401) {
+          if (err.response == 401) {
             console.log("로그인 실패");
           }
         });
     },
 
     // 로그아웃 (세션 날리기) -  ok
-    userLogout(context, payload) {
-      axios
+    async userLogout(context, payload) {
+      await axios
         .get(`/api/users/logout/${payload}`)
-        .then(({ status, data }) => {
+        .then(({status, data}) => {
           if (status == 200) {
             context.commit("SET_IS_LOGIN", false);
-            context.commit("SET_USER_INFO", null);
+            context.commit("SET_USER_INFO", {});
             context.commit("SET_IS_VALID_TOKEN", false);
 
             sessionStorage.clear();
@@ -220,12 +203,12 @@ export const userModule = {
     },
 
     // 회원 정보 조회 (전체 정보) - ok
-    getUserInfo(context, payload) {
+    async getUserInfo(context, payload) {
       let decodedToken = jwtDecode(payload); // 토큰 정보
       console.log("getUserInfo() decodeToken :: ", decodedToken);
-      axios
+      await axios
         .get(`/api/users/${decodedToken.userId}`)
-        .then(({ status, data }) => {
+        .then(({status, data}) => {
           if (status == 200) {
             // console.log("data: ", data);
             context.commit("SET_USER_INFO", data); //user에 저장
@@ -234,21 +217,21 @@ export const userModule = {
           }
         })
         .catch((err) => {
-          if (err.response.status == 401) {
-            console.log("인증되지 않은 토큰");
-          }
+            console.log("토큰이 만료되어 사용 불가");
+            // commit("SET_IS_VALID_TOKEN", false);
+            
         });
     },
 
     // token refresh
-    tokenRegeneration(context, payload) {
+     tokenRegeneration(context, payload) {
       console.log(
         "토큰 재발급 >> 기존 토큰 정보 : {}",
         sessionStorage.getItem("access-token")
       );
-      axios
+       axios
         .post(`/api/users/refresh`, payload)
-        .then(({ status, data }) => {
+        .then(({status, data}) => {
           console.log(status);
           if (status == 200) {
             let accessToken = data["access-token"];
@@ -262,7 +245,7 @@ export const userModule = {
             console.log("토큰 갱신 실패");
             userLogout(
               state.user.userId,
-              ({ data }) => {
+              ({data}) => {
                 if (data.message === 200) {
                   console.log("리프레시 토큰 제거 성공");
                 } else {
@@ -272,12 +255,12 @@ export const userModule = {
                 context.commit("SET_IS_LOGIN", false);
                 context.commit("SET_USER_INFO", {});
                 context.commit("SET_IS_VALID_TOKEN", false);
-                router.push({ name: "login" });
+                router.push({name: "login"});
               },
               (error) => {
                 console.log(error);
                 context.commit("SET_IS_LOGIN", false);
-                context.commit("SET_USER_INFO", null);
+                context.commit("SET_USER_INFO", {});
               }
             );
           }
@@ -288,7 +271,7 @@ export const userModule = {
     updateMannerPoint(context, payload) {
       return axios
         .put(`/api/users/point/${payload.userId}`, payload)
-        .then(({ status, data }) => {
+        .then(({status, data}) => {
           if (status == 200) {
             console.log(data);
             console.log("매너도수 평가 완료");
@@ -303,7 +286,7 @@ export const userModule = {
     removeUser(context, payload) {
       axios
         .delete(`/api/users/${payload}`)
-        .then(({ status, data }) => {
+        .then(({status, data}) => {
           if (status == 200) {
             context.commit("SET_IS_LOGIN", false);
             context.commit("SET_USER_INFO", {});

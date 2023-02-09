@@ -3,7 +3,6 @@
     <RoomHeader :title="title" :category="category" :headCount="headCount" :headCountMax="headCountMax" />
   </header>
   <div id="main-container" class="container">
-
     <div id="session">
       <div id="container" style="display: flex;">
         <div id="video-container" :class="{
@@ -17,34 +16,42 @@
           <user-video class="video" v-for="sub in subscribers" :key="sub.stream.connection.connectionId"
             :streamManager="sub" :myVideo="false" :isHostView="hostId == myUserId" @kickUser="kickUser" @changeHost="changeHost" @friendRequest="friendRequest" />
         </div>
-        <div id="chatting-container" class="col-md-4">
-          <div id="chats" ref="message_scroll">
-            <div v-for="message in messages" :key="message.id">
-              <!-- 내 채팅 -->
-              <div id="msg_mine" class="msg_box" v-if="message.username == myUserName">
-                <div class="username">
-                  {{ message.username }}
+        <div class="game-chatting-container">
+          <Transition>
+            <div class="game-container" v-if="this.gameStart">
+                <div class="game-title">{{ this.gameTitle }}</div>
+                <div class="game-content">{{ this.gameContent }}</div>
+            </div>
+          </Transition>
+          <div id="chatting-container">
+            <div id="chats" ref="message_scroll">
+              <div v-for="message in messages" :key="message.id">
+                <!-- 내 채팅 -->
+                <div id="msg_mine" class="msg_box" v-if="message.username == myUserName">
+                  <div class="username">
+                    {{ message.username }}
+                  </div>
+                  <div class="msg">
+                    {{ message.text }}
+                  </div>
                 </div>
-                <div class="msg">
-                  {{ message.text }}
-                </div>
-              </div>
-              <!-- 남의 채팅 -->
-              <div id="msg_not_mine" class="msg_box" v-else>
-                <div class="username">
-                  {{ message.username }}
-                </div>
-                <div class="msg">
-                  {{ message.text }}
+                <!-- 남의 채팅 -->
+                <div id="msg_not_mine" class="msg_box" v-else>
+                  <div class="username">
+                    {{ message.username }}
+                  </div>
+                  <div class="msg">
+                    {{ message.text }}
+                  </div>
                 </div>
               </div>
             </div>
+            <form id="send-form" @submit.prevent="sendMessage">
+              <input v-model="newMessage" placeholder="Type your message here" />
+              <img src="@/assets/images/message.png" alt="message img" @click="sendMessage"
+                style="width:30px; height:30px; cursor: pointer">
+            </form>
           </div>
-          <form id="send-form" @submit.prevent="sendMessage">
-            <input v-model="newMessage" placeholder="Type your message here" />
-            <img src="@/assets/images/message.png" alt="message img" @click="sendMessage"
-              style="width:30px; height:30px; cursor: pointer">
-          </form>
         </div>
       </div>
       <div id="option-footer">
@@ -140,10 +147,10 @@
 
 <script>
 import RoomHeader from '../menu/RoomHeader.vue'
-import { OpenVidu } from "openvidu-browser";
-import axios from "axios";
 import UserVideo from "./components/UserVideo.vue";
+import { OpenVidu } from "openvidu-browser";
 import { useStore } from 'vuex';
+import axios from "axios";
 
 const APPLICATION_SERVER_URL = 'http://localhost:5000';
 const OPENVIDU_SERVER_URL = 'https://i8a606.p.ssafy.io:8443';
@@ -194,7 +201,13 @@ export default {
       gameStatus: 0,
       games: ['일반', '할머니 게임', '나 안취했어', '랜덤 대화주제'],
 
+      // 도움말 팝업창 페이지
       infoPage: 1,
+
+      // 게임화면 띄우기
+      gameStart: false,
+      gameTitle: "",
+      gameContent: "",
     };
   },
 
@@ -293,6 +306,11 @@ export default {
         const subscriber = this.session.subscribe(stream);
         this.subscribers.push(subscriber);
         this.headCount++;
+        if (this.gameStart) {
+          if (this.hostId == this.myUserId) {
+            this.startBtn(this.gameStatus)
+          }
+        }
       });
 
       // On every Stream destroyed...
@@ -327,15 +345,21 @@ export default {
       });
 
       this.session.on('signal:detect-smile', (event) => {
+        this.gameStatus = 1
+        this.gameScreenOpen(1);
         this.store.dispatch("gameModule/startSmileGame");
       })
 
       this.session.on('signal:smile', (event) => {
         this.store.dispatch("gameModule/stopDetect");
         console.log(event.data + "님이 웃으셨습니다!!");
+        this.gameContent = `${event.data}님이 웃으셨습니다 !`;
+        setTimeout(() => {this.gameScreenClose()}, 3000);
       })
 
       this.session.on('signal:not-drunk', (event) => {
+        this.gameStatus = 2
+        this.gameScreenOpen(2)
         this.eventData = JSON.parse(event.data);
         console.log(this.eventData.username + "님 말 할 준비 하세용");
         console.log(this.store.state.gameModule.sentence);
@@ -351,8 +375,11 @@ export default {
       })
 
       this.session.on('signal:random-topic', (event) => {
+        this.gameStatus = 3
+        this.gameScreenOpen(3)
         this.eventData = JSON.parse(event.data);
         console.log(this.eventData.topic);
+        this.gameContent = this.eventData.topic;
       })
 
       this.session.on('signal:kick', (event) => {
@@ -592,15 +619,21 @@ export default {
           })
             .then(() => {
               console.log('랜덤주제');
-              this.store.dispatch("gameModule/getTopic");
+              if (!this.gameStart) {
+                this.store.dispatch("gameModule/getTopic").then(() => {
+                  this.gameContent = this.store.state.gameModule.topic
+                });
+              } else {
+                this.gameContent = this.store.state.gameModule.topic
+              }
             })
             .catch(error => {
               console.error(error);
             })
 
           break;
-
       }
+      this.gameScreenOpen(idx)
     },
 
     infoOpen() {
@@ -675,6 +708,21 @@ export default {
         })
     },
 
+    gameScreenOpen(idx){
+      this.gameIdx = idx;
+      this.gameTitle = this.games[idx];
+      this.gameStart = true;
+      document.getElementById("chatting-container").id="chatting-container-small";
+    },
+
+    gameScreenClose(){
+      this.gameTitle = '',
+      this.gameContent = '',
+      this.gameIdx = 0;
+      this.gameStart = false;
+      document.getElementById("chatting-container-small").id="chatting-container";
+    },
+
     friendRequest(userId) {
       this.store.dispatch("friendModule/sendRequest",{
         userAId: this.myUserId,
@@ -728,7 +776,19 @@ export default {
   flex-direction: column;
   background: #e9e9e9;
   border-radius: 30px;
+  height: 100%;
   width: 20vw;
+  transition: all .5s ease;
+}
+
+#chatting-container-small {
+  display: flex;
+  flex-direction: column;
+  background: #e9e9e9;
+  border-radius: 30px;
+  height: 55%;
+  width: 20vw;
+  transition: all .5s ease;
 }
 
 #chats {
@@ -1260,5 +1320,57 @@ a:hover .demo-logo {
 .right-arrow:hover {
   transform: scale(1.2, 1.2);
   cursor: pointer;
+}
+.game-chatting-container{
+  width: 20vw;
+  height: 75vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: all 0.5s ease;
+  animation: open-game-screen .5s;
+  animation-delay: 0.7s;
+  margin-top: 0px;
+}
+
+.v-enter-from,
+.v-leave-to {
+  animation: open-game-screen 0.5s reverse;
+}
+
+@keyframes open-game-screen {
+  0% {
+    height: 0%;
+  }
+  50% {
+    height: 20%;
+  }
+  100% {
+    height: 40%;
+  }
+}
+.game-container{
+  border: solid white;
+  height: 40%;
+  background-color: #2E303F;
+  border: 2px solid #CBCBCB;
+  border-radius: 30px;
+  margin-bottom: 3vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+.game-title {
+  color: white;
+  font-size: 2rem;
+}
+.game-content {
+  color: white;
+  font-size: 1rem;
 }
 </style>

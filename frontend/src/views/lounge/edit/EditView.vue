@@ -133,7 +133,7 @@ const data = ref({
   gender: store.state.userModule.user.gender,
   birth: store.state.userModule.user.birthDate,
   email: store.state.userModule.user.email,
-  emailcheck: "",
+  emailCode: "",
   alcohol: store.state.userModule.user.alcoholPoint,
 });
 
@@ -166,18 +166,28 @@ const nicknamecheck = async () => {
   console.log("nickname check!");
 };
 
-const emailsend = () => {
+const emailsend = async () => {
+  const form = new FormData();
+  form.append("email", data.value.email);
+  await store.dispatch("userModule/sendEmail", form);
   console.log("email send!");
   ElMessageBox.prompt("인증번호를 입력해주세요.", "메일인증", {
     confirmButtonText: "OK",
     cancelButtonText: "Cancel",
   })
-    .then(({}) => {
-      console.log("email confirm!");
-      ElMessage({
-        type: "success",
-        message: `인증되었습니다.`,
-      });
+    .then(({ value }) => {
+      if (value == store.state.userModule.user.emailCode) {
+        console.log("email confirm!");
+        ElMessage({
+          type: "success",
+          message: `인증되었습니다.`,
+        });
+      } else {
+        ElMessage({
+          type: "error",
+          message: "인증이 실패했습니다.",
+        });
+      }
     })
     .catch(() => {
       ElMessage({
@@ -186,10 +196,6 @@ const emailsend = () => {
       });
     });
 };
-
-// const emailconfirm = () => {
-//   console.log('email confirm!')
-// }
 
 function isCorrect() {
   if (data.value.password == data.value.password2) {

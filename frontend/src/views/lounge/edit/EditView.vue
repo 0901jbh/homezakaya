@@ -236,8 +236,8 @@ function isCorrect() {
 }
 
 .el-button:hover {
-  background-color: rgb(118, 118, 118) !important;
-  transition: 0.2s;
+  opacity: 0.75;
+  cursor: pointer;
 }
 
 .el-radio-button__inner:hover {

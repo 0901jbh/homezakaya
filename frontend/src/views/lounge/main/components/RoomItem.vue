@@ -15,7 +15,7 @@
 			<div>{{ props.room.category }}</div>
 			<div>{{ props.room.personCount }} / {{ props.room.personLimit }}</div>
 			<div v-if="props.room.isPrivate">
-				<img src="@/assets/images/unlock.png" alt="unlock img" style="height: 80%;">
+				<img src="@/assets/images/party.png" alt="party img" style="height: 80%;">
 			</div>
 			<div v-else>
 				<img src="@/assets/images/lock.png" alt="lock img" style="height: 80%;">
@@ -26,9 +26,9 @@
 	<div class="private-modal-bg" @click="privatePopClose"></div>
 	<div class="private-modal-wrap">
 		<div class="private-popup">
-			<div class="private-popup-header">
-				<div class="private-popup-header-title">Private Room</div>
-			</div>
+			<!-- <div class="private-popup-header">
+				<div class="private-popup-header-title">비밀번호 입력</div>
+			</div> -->
 			<div class="private-popup-content">
 				<div style="margin-bottom:3%;">해당 방은 비공개방입니다.</div>
 				<div style="margin-bottom:5%;">비밀번호를 입력해주세요.</div>
@@ -222,6 +222,8 @@ const errorClose = () => {
 	left: 0;
 	right: 0;
 	z-index: 999;
+	transition: 0.5s ease-out;
+	backdrop-filter: blur(4px) brightness(60%);
 }
 
 .private-modal-wrap {
@@ -242,18 +244,18 @@ const errorClose = () => {
 	display: grid;
 	height: 100%;
 	width: 100%;
-	grid-template-rows: 1fr 11fr;
+	/* grid-template-rows: 1fr 11fr; */
 	transition: 0.5s ease-out;
 	color: white;
 }
 
-.private-popup-header {
+/* .private-popup-header {
 	background-color: #E27B66;
 	height: 100%;
 	width: 100%;
-	/* border-bottom: solid 0.5rem #6E0000; */
+	border-bottom: solid 0.5rem #6E0000;
 	border-radius: 1.6rem 1.6rem 0 0;
-}
+} */
 
 .private-popup-content {
 	/* display: grid;
@@ -263,7 +265,7 @@ const errorClose = () => {
 	flex-direction: column;
 	justify-content: space-around;
 	align-items: center;
-	height: 65%;
+	height: 80%;
 	width: 80%;
 	margin: 10%;
 	/* display: grid;
@@ -274,12 +276,13 @@ const errorClose = () => {
 	margin: 10%; */
 }
 
-.private-popup-header-title {
+/* .private-popup-header-title {
 	color: black;
-	font-size: 1.3rem;
+	font-size: 1.1rem;
+	font-weight: 1000;
 	padding: 0 5%;
 	padding-top: 1%;
-}
+} */
 
 
 /* 비밀번호 오류 팝업창 */
@@ -314,24 +317,25 @@ const errorClose = () => {
 	align-items: center;
 	height: 100%;
 	width: 100%;
-	grid-template-rows: 1fr 11fr;
+	/* grid-template-rows: 1fr 11fr; */
 	transition: 0.5s ease-out;
 	color: white;
 }
 
-.error-popup-header {
+/* .error-popup-header {
 	background-color: black;
 	height: 100%;
 	width: 100%;
 	border-bottom: solid 0.5rem #6E0000;
 	border-radius: 1rem 1rem 0 0;
-}
+} */
 
 .error-popup-content {
-	display: grid;
-	text-align: center;
-	grid-template-rows: 2fr 1fr;
-	height: 30%;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	align-items: center;
+	height: 70%;
 	width: 80%;
 	margin: 10%;
 }
@@ -341,16 +345,18 @@ const errorClose = () => {
 	justify-content: space-around;
 }
 
+/* 
 .error-popup-header-title {
 	color: white;
 	font-size: 1.3rem;
 	padding: 0 5%;
 	padding-top: 1%;
-}
+} */
 
 .el-button {
 	background-color: #e27b66 !important;
 	color: black !important;
+	border: none;
 }
 
 .el-button:hover {

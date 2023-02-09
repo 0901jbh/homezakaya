@@ -7,9 +7,9 @@
       </div>
     </div>
     <div class="second-line">
-      <img src="@/assets/images/manner_w.png" alt="manner_w img" style="width:10%; height:15%; ">
+      <img src="@/assets/images/manner_w.png" alt="manner_w img" style="height:25px;">
       <div>{{ props.user.mannerPoint }}</div>
-      <img src="@/assets/images/alcohol_w.png" alt="alcohol_w img" style="width:10%; height:15%; ">
+      <img src="@/assets/images/alcohol_w.png" alt="alcohol_w img" style="height:25px;">
       <div>{{ props.user.alcoholPoint }}잔</div>
       <div v-if="!isFriend" class="request-friend" type="button" @click="sendRequest">친구 요청</div>
       <div v-if="isFriend" class="request-friend"></div>
@@ -95,6 +95,9 @@ const requestFriendClose = () => {
 
 <style scoped>
 .wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
   width: 86%;
   height: 10%;
   color: white;
@@ -142,7 +145,7 @@ const requestFriendClose = () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 30%;
+  /* height: 30%; */
   width: 30%;
   background: #e27b66;
   box-shadow: 0px 0px 15px #e27b66;
@@ -167,6 +170,7 @@ const requestFriendClose = () => {
   right: 0;
   z-index: 999;
   transition: 0.5s ease-out;
+  backdrop-filter: blur(4px) brightness(60%);
 }
 
 .request-friend-modal-wrap {
@@ -188,28 +192,29 @@ const requestFriendClose = () => {
   align-items: center;
   height: 100%;
   width: 100%;
-  grid-template-rows: 1fr 11fr;
+  /* grid-template-rows: 1fr 11fr; */
   transition: 0.5s ease-out;
   color: white;
 }
 
-.popup-header {
+/* .popup-header {
   background-color: #E27B66;
   height: 100%;
   width: 100%;
-  /* border-bottom: solid 0.5rem #6E0000; */
+  border-bottom: solid 0.5rem #6E0000;
   border-radius: 1.6rem 1.6rem 0 0;
-}
+} */
 
 .popup-content {
   /* display: flex;
   justify-content: center;
 	align-items: center;
 	flex-direction: column; */
-  display: grid;
-  text-align: center;
-  grid-template-rows: 2fr 1fr;
-  height: 30%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  height: 70%;
   width: 80%;
   margin: 10%;
 }
@@ -219,16 +224,17 @@ const requestFriendClose = () => {
   justify-content: space-around;
 }
 
-.popup-header-title {
+/* .popup-header-title {
   color: black;
   font-size: 1.3rem;
   padding: 0 5%;
   padding-top: 1%;
-}
+} */
 
 .el-button {
   background-color: #e27b66 !important;
   color: black !important;
+  border: none;
 }
 
 .el-button:hover {

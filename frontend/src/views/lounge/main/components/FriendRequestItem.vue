@@ -6,9 +6,9 @@
     </div>
     <div class="second-line">친구요청을 보냈습니다.</div>
     <div class="third-line">
-      <img src="@/assets/images/manner_w.png" alt="manner_w img" style="width:10%; height:15%; ">
+      <img src="@/assets/images/manner_w.png" alt="manner_w img" style="height:25px;">
       <div>{{ props.request.mannerPoint }}</div>
-      <img src="@/assets/images/alcohol_w.png" alt="alcohol_w img" style="width:10%; height:15%; ">
+      <img src="@/assets/images/alcohol_w.png" alt="alcohol_w img" style="height:25px;">
       <div>{{ props.request.alcoholPoint }}잔</div>
       <div class="approve" type="button" @click="approveRequest">수락</div>
     </div>
@@ -23,16 +23,17 @@
       <div class="popup-content">
         <div>친구요청을 거절하시겠습니까?</div>
         <div class="btn-wrapper">
-          <div class="btn">
-            <RouterLink to="/rooms" style="text-decoration:none;">
-              <el-button type="info" size="large" @click="deleteRequest">예</el-button>
+          <el-button type="info" size="large" @click="deleteRequest">
+            <RouterLink to="/rooms" style="text-decoration:none; color: black;">
+              예
             </RouterLink>
-          </div>
-          <div class="btn">
-            <RouterLink to="/rooms" style="text-decoration:none;">
-              <el-button type="info" size="large" @click="deleteRequestClose">아니요</el-button>
+          </el-button>
+          <el-button type="info" size="large" @click="deleteRequestClose">
+            <RouterLink to="/rooms" style="text-decoration:none; color: black;">
+              아니요
             </RouterLink>
-          </div>
+          </el-button>
+
         </div>
       </div>
     </div>
@@ -80,11 +81,15 @@ const deleteRequestClose = () => {
 
 <style scoped>
 .wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
   width: 86%;
   height: 15%;
   color: white;
   /* background: linear-gradient(180deg, #A44242 202.91%, rgba(0, 0, 0, 0.709847) 260.73%, rgba(84, 84, 84, 0) 302.91%); */
-  background: #e27b66;
+  background: #252836;
+  border: solid 2px #e27b66;
   border-radius: 20px;
   padding: 7%;
   font-size: 1rem;
@@ -110,7 +115,7 @@ const deleteRequestClose = () => {
 }
 
 .cancel:hover {
-  color: red;
+  color: #e27b66;
 }
 
 .third-line {
@@ -125,10 +130,11 @@ const deleteRequestClose = () => {
   justify-content: center;
   align-items: center;
   width: 30%;
-  background: #252836;
-  box-shadow: 0px 0px 15px #252836;
+  background: #e27b66;
+  box-shadow: 0px 0px 15px #e27b66;
   border-radius: 20px;
   cursor: pointer;
+  color: black;
 }
 
 .approve:hover {
@@ -146,6 +152,8 @@ const deleteRequestClose = () => {
   left: 0;
   right: 0;
   z-index: 999;
+  transition: 0.5s ease-out;
+  backdrop-filter: blur(4px) brightness(60%);
 }
 
 .delete-request-modal-wrap {
@@ -167,28 +175,29 @@ const deleteRequestClose = () => {
   align-items: center;
   height: 100%;
   width: 100%;
-  grid-template-rows: 1fr 11fr;
+  /* grid-template-rows: 1fr 11fr; */
   transition: 0.5s ease-out;
   color: white;
 }
 
-.popup-header {
+/* .popup-header {
   background-color: black;
   height: 100%;
   width: 100%;
   border-bottom: solid 0.5rem #6E0000;
   border-radius: 1rem 1rem 0 0;
-}
+} */
 
 .popup-content {
   /* display: flex;
   justify-content: center;
 	align-items: center;
 	flex-direction: column; */
-  display: grid;
-  text-align: center;
-  grid-template-rows: 2fr 1fr;
-  height: 30%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  height: 70%;
   width: 80%;
   margin: 10%;
 }
@@ -198,16 +207,17 @@ const deleteRequestClose = () => {
   justify-content: space-around;
 }
 
-.popup-header-title {
+/* .popup-header-title {
   color: white;
   font-size: 1.3rem;
   padding: 0 5%;
   padding-top: 1%;
-}
+} */
 
 .el-button {
   background-color: #e27b66 !important;
   color: black !important;
+  border: none;
 }
 
 .el-button:hover {

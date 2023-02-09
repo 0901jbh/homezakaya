@@ -6,6 +6,7 @@ export const roomModule = {
     rooms: [],
     room: {},
     checkPasswordResult: false,
+    requests: [], // 방초대 리스트
   }),
   mutations: {
     SET_ROOMS(state, payload) {
@@ -17,6 +18,9 @@ export const roomModule = {
     // SET_ROOM_ID(state, payload){
     //   state.roomId = payload;
     // },
+    SET_REQUESTS(state, payload) {
+      state.requests = payload;
+    },
   },
   getters: {
     getCheckPasswordResult(state){
@@ -24,7 +28,10 @@ export const roomModule = {
     },
     getRoom(state){
       return state.room
-    }
+    },
+    getRequests(state){
+      return state.requests;
+    },
   },
   actions: {
     // 방 만들기
@@ -206,6 +213,57 @@ export const roomModule = {
         return false;
       });
       
+    },
+
+    // 방으로 친구 초대 -ok
+    inviteFriend(context, payload){
+      axios.post(`/api/userinroom/invite`, payload).then(({ status, data }) => {
+        if(status == 200){
+          context.dispatch("getInvitesList", payload.toUserId)
+          console.log(data);
+          console.log("초대 요청을 보냈습니다.");
+        } else if (status == 404){
+          console.log("userId가 존재하지 않습니다.")
+        }
+        else if (status == 500){
+          console.log("그 외 서버 관련 에러")
+        }
+      }).catch(err => {
+        console.log(err);
+      });
+    },
+
+    // 초대한 유저 id만 조회 (fromUser) "xx님이 초대 요청을 보냈습니다." - ok
+    getInvitesList(context, payload){
+      axios.get(`api/userinroom/invite/${payload}`).then(({ status, data }) => {
+        if(status == 200){
+          context.commit('SET_REQUESTS', data)
+          // console.log(data[0].fromUserId);
+          console.log("getRequests Success");
+        }else if (status == 404){
+          console.log("userId가 존재하지 않습니다.")
+        }
+        else if (status == 500){
+          console.log("그 외 서버 관련 에러")
+        }
+      }).catch(err => {
+        console.log(err);
+      });
+
+    },
+
+    // 방으로 친구 초대 거절(초대 정보 삭제) - ok
+    removeInvite(context, payload){
+      axios.delete(`api/userinroom/invite/${payload.fromUserId}/${payload.toUserId}`).then(({ status, data }) => {
+        if(status == 200){
+          console.log(data);
+          console.log("방초대 거절 완료");
+        }else if (status == 404) {
+          console.log("방 초대가 없습니다.")
+        }
+      }).catch(err => {
+        console.log(err);
+      });
     },
   }
 };

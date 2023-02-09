@@ -14,7 +14,7 @@
 		<div class="content">
 			<div>{{ props.room.category }}</div>
 			<div>{{ props.room.personCount }} / {{ props.room.personLimit }}</div>
-			<div v-if="secret">
+			<div v-if="props.room.isPrivate">
 				<img src="@/assets/images/party.png" alt="party img" style="height: 80%;">
 			</div>
 			<div v-else>
@@ -65,7 +65,7 @@
 </template>
 
 <script setup>
-import { onMounted, computed, ref } from 'vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
@@ -82,18 +82,13 @@ const data = ref({
 })
 
 const clickRoomIcon = () => {
-	store.dispatch("roomModule/checkPassword", {
-		roomId: props.room.roomId,
-		password: data.value.userInput,
-	}).then((result) => {
-		if (result) {
-			console.log(`${props.room.roomId}번에 입장`)
-			enterRoom()
-		}
-		else {
-			privatePopOpen()
-		}
-	})
+	console.log(props.room);
+	if(props.room.isPrivate){
+		privatePopOpen()
+	}
+	else{
+		enterRoom()
+	}
 }
 
 const clickEnterBtn = () => {
@@ -111,24 +106,15 @@ const clickEnterBtn = () => {
 }
 
 const enterRoom = () => {
-	store.dispatch('roomModule/createUserInRoom', {
+	if(store.dispatch('roomModule/doEnterRoom',{
 		userId: store.state.userModule.user.userId,
 		roomId: props.room.roomId,
-	}).then((result) => {
-		if (result) {
-			store.dispatch('roomModule/enterRoom', props.room.roomId).then((result) => {
-				if (result) {
-					router.push({ name: 'wait', params: { roomId: props.room.roomId } })
-				}
-				else {
-					errorOpen(2)
-				}
-			})
-		}
-		else {
-			errorOpen(2)
-		}
-	})
+	})){
+		router.push({ name: 'wait', params: { roomId: props.room.roomId } })
+	}
+	else{
+		errorOpen(2);
+	}
 }
 
 const privatePopOpen = () => {
@@ -162,16 +148,16 @@ const errorClose = () => {
 	data.value.userInput = '';
 }
 
-const secret = ref()
+// const secret = ref()
 
-onMounted(() => {
-	store.dispatch("roomModule/checkPassword", {
-		roomId: props.room.roomId,
-		password: "",
-	}).then((result) => {
-		secret.value = result
-	});
-});
+// onMounted(() => {
+// 	store.dispatch("roomModule/checkPassword", {
+// 		roomId: props.room.roomId,
+// 		password: "",
+// 	}).then((result) => {
+// 		secret.value = result
+// 	});
+// });
 
 </script>
 

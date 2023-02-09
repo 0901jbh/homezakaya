@@ -3,18 +3,18 @@
 
 <mapper namespace="com.ssafy.Homezakaya.model.dao.RoomDao">
     <insert id="insertRoom" parameterType="RoomDto" >
-        insert into room(title, password, category, hostId, createdTime, personLimit, personCount) values(#{title}, #{password}, #{category}, #{hostId}, #{createdTime}, #{personLimit}, #{personCount})
+        insert into room(title, password, category, hostId, personLimit, isPrivate) values(#{title}, #{password}, #{category}, #{hostId}, #{personLimit}, #{isPrivate})
         <selectKey resultType="int" keyProperty="roomId" order="AFTER">
             SELECT LAST_INSERT_ID()
         </selectKey>
     </insert>
 
     <select id="selectRooms" resultType="RoomDto">
-        select roomId, title, category, hostId, createdTime, personLimit, personCount from room
+        select roomId, title, category, hostId, personLimit, personCount, isPrivate from room
     </select>
 
     <select id="selectRoom" resultType="RoomDto" parameterType="int">
-        select roomId, title, category, hostId, createdTime, personLimit, personCount from room where roomId = #{roomId}
+        select roomId, title, category, hostId, personLimit, personCount, isPrivate from room where roomId = #{roomId}
     </select>
 
     <select id="selectPassword" resultType="String" parameterType="int">

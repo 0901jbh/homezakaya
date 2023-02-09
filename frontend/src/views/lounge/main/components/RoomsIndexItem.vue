@@ -84,24 +84,26 @@ const form = ref({
 	password: '',
 	private: "공개",
 	hostId: store.state.userModule.user.userId,
-	// createdTime: null,
 	rooms: [],
 	roomId: -1,
 })
 
 const createRoom = () => {
-	// form.createdTime = new Date();
+	let isPrivate = true;
+	if(form.value.private == "공개"){
+		isPrivate = false;
+		form.value.password = '';
+	}
 	store.dispatch("roomModule/createRoom", {
 		title: form.value.title,
 		password: form.value.password,
 		category: form.value.category,
-		personLimit: form.value.personLimit,
-		personCount: 1,
 		hostId: form.value.hostId,
-		// createdTime: form.createdTime,
+		personLimit: form.value.personLimit,
+		isPrivate: isPrivate,
 	}).then((result) => {
 		form.value.roomId = result.roomId
-		store.dispatch('roomModule/createUserInRoom', {
+		store.dispatch('roomModule/doEnterRoom', {
 			userId: store.state.userModule.user.userId,
 			roomId: result.roomId,
 		}).then((result) => {

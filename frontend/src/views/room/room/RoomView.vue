@@ -102,7 +102,7 @@
                   style="width: 80%; margin: 0; margin-right: 10px; font-size: 20px; color: white; align-self:center;">
                   {{ friend.nickname }}
                 </p>
-                <div class="content_inside" style="width: 20%; text-decoration:none;">
+                <div @click="inviteFriend(friend.userId)"  class="content_inside" style="width: 20%; text-decoration:none;">
                   Invite
                 </div>
               </div>
@@ -733,10 +733,20 @@ export default {
         userBId: userId
       });
     },
+
+     // 초대 요청 보내기
+    inviteFriend(toUserId){
+      this.store.dispatch("roomModule/inviteFriend",{
+        fromUserId: this.myUserId,
+        toUserId: toUserId
+      });
+    },
   },
 
   created() {
   },
+
+ 
 
   async mounted() {
     await this.getFriends();

@@ -85,13 +85,13 @@ CREATE TABLE IF NOT EXISTS topic (
 
 -- TABLE invitefriend
 CREATE TABLE IF NOT EXISTS invitefriend (
-    fromUser VARCHAR(45) NOT NULL,
-    toUser VARCHAR(45) NOT NULL,
-    PRIMARY KEY (fromUser),
-    FOREIGN KEY (fromUser)
+    fromUserId VARCHAR(45) NOT NULL,
+    toUserId VARCHAR(45) NOT NULL,
+    PRIMARY KEY (fromUserId),
+    FOREIGN KEY (fromUserId)
     REFERENCES friend (userAId)
     ON DELETE CASCADE,
-    FOREIGN KEY (toUser)
+    FOREIGN KEY (toUserId)
     REFERENCES friend (userBId)
     ON DELETE CASCADE
     );

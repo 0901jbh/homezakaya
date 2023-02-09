@@ -27,19 +27,6 @@
       </div>
     </div>
   </div>
-  <div id="error-modal-bg" @click="errorClose"></div>
-	<div id="error-modal-wrap">
-		<div id="error-popup">
-			<div id="error-popup-content">
-				<div id="error-sentence"></div>
-				<div id="error-btn-wrapper">
-					<div id="btn">
-						<el-button type="info" size="large" @click="errorClose">확인</el-button>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
 </template>
 
 <script>
@@ -218,16 +205,6 @@ export default {
       });
     },
 
-    // async createSession(sessionId) {
-    //   const response = await axios.post(APPLICATION_SERVER_URL + '/api/sessions', { customSessionId: sessionId });
-    //   return response.data; // The sessionId
-    // },
-
-    // async createToken(sessionId) {
-    //   const response = await axios.post(APPLICATION_SERVER_URL + '/api/sessions/' + sessionId + '/connections');
-    //   return response.data; // The token
-    // },
-
     async getRoom() {
       const roomData = await this.store.dispatch("roomModule/getRoom", this.$route.params.roomId);
       const room = JSON.parse(JSON.stringify(roomData));
@@ -252,28 +229,9 @@ export default {
           this.$router.push({ name: 'room', params: { roomId: this.roomId }, query: { video: this.videoActive, audio: this.audioActive } })
         }
         else{
-          this.errorOpen(status);
+          this.store.commit("errorModule/SET_STATUS", status);
         }
       });
-    },
-
-    errorOpen(status) {
-      let sentenceTag = document.getElementById("error-sentence");
-      if(status == 401){
-        sentenceTag.innerHTML = "이미 다른 방에 참여중인 유저입니다.";
-      }
-      else if(status == 404) {
-        sentenceTag.innerHTML = "해당 방을 찾을 수 없습니다.";
-      } else if(status == 409){
-        sentenceTag.innerHTML = "방 인원이 가득 찼습니다.";
-      }
-      document.getElementById("error-modal-wrap").style.display = 'block';
-      document.getElementById("error-modal-bg").style.display = 'block';
-    },
-
-    errorClose() {
-      document.getElementById("error-modal-wrap").style.display = 'none';
-      document.getElementById("error-modal-bg").style.display = 'none';
     },
   },
 
@@ -720,85 +678,5 @@ a:hover .demo-logo {
   width: 30%;
   height: 2vh;
   padding: 5px 10px;
-}
-
-
-/* 비밀번호 오류 팝업창 */
-#error-modal-bg {
-	display: none;
-	width: 100%;
-	height: 100%;
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	z-index: 999;
-	transition: 0.5s ease-out;
-}
-
-#error-modal-wrap {
-	display: none;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	width: 30%;
-	height: 30%;
-	background: #252836;
-	border: solid 2px #e27b66;
-	border-radius: 2rem;
-	z-index: 1000;
-}
-
-#error-popup {
-	display: flex;
-	align-items: center;
-	height: 100%;
-	width: 100%;
-	/* grid-template-rows: 1fr 11fr; */
-	transition: 0.5s ease-out;
-	color: white;
-}
-
-/* .error-popup-header {
-	background-color: black;
-	height: 100%;
-	width: 100%;
-	border-bottom: solid 0.5rem #6E0000;
-	border-radius: 1rem 1rem 0 0;
-} */
-
-#error-popup-content {
-	display: flex;
-	flex-direction: column;
-	justify-content: space-around;
-	align-items: center;
-	height: 70%;
-	width: 80%;
-	margin: 10%;
-}
-
-#error-btn-wrapper {
-	display: flex;
-	justify-content: space-around;
-}
-
-/* 
-.error-popup-header-title {
-	color: white;
-	font-size: 1.3rem;
-	padding: 0 5%;
-	padding-top: 1%;
-} */
-
-.el-button {
-	background-color: #e27b66 !important;
-	color: black !important;
-	border: none;
-}
-
-.el-button:hover {
-	opacity: 0.75;
-	cursor: pointer;
 }
 </style>

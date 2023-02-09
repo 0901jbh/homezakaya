@@ -5,7 +5,6 @@
   <div class="container">
     <div class="wrapper">
       <div class="signup-title">회원가입</div>
-      <div> </div>
       <div class="signup-form">
         <el-form :model="form" label-width="0px">
 
@@ -14,7 +13,6 @@
           <div v-else-if="data.idUnchecked" style="color: red;">아이디 중복확인을 해주세요.</div>
           <div v-else-if="data.idChecked">아이디 사용 가능합니다.</div>
           <div v-else>아이디</div>
-
           <el-form-item>
             <el-input v-model="data.id" placeholder="아이디" clearable>
               <template #append>
@@ -94,9 +92,11 @@
             <span>&nbsp;잔</span>
           </el-form-item>
 
-          <el-button type="info" size="large" @click="onSubmit" style="width: 300px;">
-            가입 완료
-          </el-button>
+          <el-form-item>
+            <el-button type="info" size="large" @click="onSubmit" style="width: 300px;">
+              가입 완료
+            </el-button>
+          </el-form-item>
 
         </el-form>
       </div>
@@ -215,7 +215,22 @@ const onSubmit = async () => {
       alcoholPoint: data.value.alcohol,
     });
     console.log("submit!");
-    router.push({ name: "home" });
+
+    await store.dispatch("userModule/userLogin", {
+      userId: data.value.id,
+      password: data.value.password,
+    });
+    await store.dispatch(
+      "userModule/getUserInfo",
+      sessionStorage.getItem("access-token")
+    );
+    if (store.getters['userModule/checkToken']) {
+      router.push({ name: "rooms" });
+    } else {
+      data.value.loginFail = true
+    }
+
+    router.push({ name: "rooms" });
   }
 
 };

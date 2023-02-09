@@ -217,19 +217,19 @@ export const userModule = {
           }
         })
         .catch((err) => {
-          if (err.response.status == 401) {
-            console.log("인증되지 않은 토큰");
-          }
+            console.log("토큰이 만료되어 사용 불가");
+            commit("SET_IS_VALID_TOKEN", false);
+            
         });
     },
 
     // token refresh
-    async tokenRegeneration(context, payload) {
+     tokenRegeneration(context, payload) {
       console.log(
         "토큰 재발급 >> 기존 토큰 정보 : {}",
         sessionStorage.getItem("access-token")
       );
-      await axios
+       axios
         .post(`/api/users/refresh`, payload)
         .then(({status, data}) => {
           console.log(status);
@@ -260,7 +260,7 @@ export const userModule = {
               (error) => {
                 console.log(error);
                 context.commit("SET_IS_LOGIN", false);
-                context.commit("SET_USER_INFO", null);
+                context.commit("SET_USER_INFO", {});
               }
             );
           }

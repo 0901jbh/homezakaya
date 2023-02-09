@@ -17,33 +17,22 @@
         <div class="box">
           <el-form margin-top="10vh">
             <el-form-item size="large">
-              <el-input
-                v-model="data.id"
-                placeholder="아이디를 입력해주세요"
-                clearable
-              />
+              <el-input v-model="data.id" placeholder="아이디" clearable />
             </el-form-item>
             <el-form-item size="large">
-              <el-input
-                v-model="data.password"
-                placeholder="비밀번호를 입력해주세요"
-                show-password
-              />
+              <el-input v-model="data.password" placeholder="비밀번호" show-password />
             </el-form-item>
             <el-form-item>
               <div class="btn">
-                <el-button type="info" size="large" @click="onSubmit"
-                  >로그인</el-button
-                >
+                <el-button type="info" size="large" @click="onSubmit">로그인</el-button>
               </div>
             </el-form-item>
+            <div v-if="data.loginFail" style="margin-bottom: 18px; color: red;">
+              아이디와 비밀번호를 확인하세요.
+            </div>
             <div>
               계정이 없으신가요?
-              <RouterLink
-                to="/signup"
-                style="text-decoration: none; color: #e27b66"
-                >회원가입</RouterLink
-              >
+              <RouterLink to="/signup" style="text-decoration: none; color: #e27b66">회원가입</RouterLink>
             </div>
           </el-form>
         </div>
@@ -70,6 +59,7 @@ const data = ref({
   id: "",
   password: "",
   isEnter: false,
+  loginFail: false,
 });
 
 const onSubmit = async () => {
@@ -82,7 +72,11 @@ const onSubmit = async () => {
     "userModule/getUserInfo",
     sessionStorage.getItem("access-token")
   );
-  router.push({ name: "rooms" });
+  if (store.getters['userModule/checkToken']) {
+    router.push({ name: "rooms" });
+  } else {
+    data.value.loginFail = true
+  }
 };
 
 const clickTitle = () => {
@@ -114,7 +108,7 @@ const clickTitle = () => {
 .wrapper {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  /* justify-content: center; */
   align-items: center;
   background: hsl(229.41, 18.68%, 17.84%, 80%);
   height: 80%;
@@ -142,7 +136,7 @@ const clickTitle = () => {
 }
 
 .box {
-  /* margin-top: 5vh; */
+  margin-top: 10%;
   /* padding-left: 5vw; */
   display: flex;
   justify-content: space-evenly;

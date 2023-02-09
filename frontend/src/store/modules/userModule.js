@@ -307,5 +307,24 @@ export const userModule = {
           }
         })
     },
+
+    
+		getUserPoint(context,payload) {
+			return axios
+        .get(`/api/users/${payload}`)
+        .then(({status, data}) => {
+          if (status == 200) {
+            return data;
+          } else {
+			console.log("status != 200");
+          }
+        })
+        .catch((err) => {
+          if (err.response == 401) {
+            console.log("유저 정보 획득 실패");
+          }
+        });
+		},
+
   },
 }

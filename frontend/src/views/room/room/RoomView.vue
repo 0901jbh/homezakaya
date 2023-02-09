@@ -301,16 +301,16 @@ export default {
 
       // --- 3) Specify the actions when events take place in the session ---
 
+      // 방에 입장했을때 게임이 진행중이라면
+      if (this.gameStart) {
+        this.startBtn(this.gameStatus)
+      }
+
       // On every new Stream received...
       this.session.on("streamCreated", ({ stream }) => {
         const subscriber = this.session.subscribe(stream);
         this.subscribers.push(subscriber);
-        this.headCount++;
-        if (this.gameStart) {
-          if (this.hostId == this.myUserId) {
-            this.startBtn(this.gameStatus)
-          }
-        }
+        this.headCount = this.subscribers.length + 1;
       });
 
       // On every Stream destroyed...
@@ -319,7 +319,7 @@ export default {
         if (index >= 0) {
           this.subscribers.splice(index, 1);
         }
-        this.headCount--;
+        this.headCount = this.subscribers.length + 1;
       });
 
       // On every asynchronous exception...
@@ -570,7 +570,6 @@ export default {
       this.title = room.title;
       this.category = room.category;
       this.headCount = room.personCount;
-      // this.headCount = 1;
       this.headCountMax = room.personLimit;
       this.hostId = room.hostId;
     },
@@ -633,7 +632,6 @@ export default {
 
           break;
       }
-      this.gameScreenOpen(idx)
     },
 
     infoOpen() {
@@ -715,13 +713,18 @@ export default {
       document.getElementById("chatting-container").id="chatting-container-small";
     },
 
-    gameScreenClose(){
+    gameScreenErase() {
       this.gameTitle = '',
       this.gameContent = '',
       this.gameIdx = 0;
+    },
+
+    async gameScreenClose(){
+      await this.gameScreenErase();
       this.gameStart = false;
       document.getElementById("chatting-container-small").id="chatting-container";
     },
+
 
     friendRequest(userId) {
       this.store.dispatch("friendModule/sendRequest",{

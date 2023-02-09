@@ -14,7 +14,7 @@
 		<div class="content">
 			<div>{{ props.room.category }}</div>
 			<div>{{ props.room.personCount }} / {{ props.room.personLimit }}</div>
-			<div v-if="props.room.isPrivate">
+			<div v-if="props.room.private">
 				<img src="@/assets/images/party.png" alt="party img" style="height: 80%;">
 			</div>
 			<div v-else>
@@ -83,7 +83,7 @@ const data = ref({
 
 const clickRoomIcon = () => {
 	console.log(props.room);
-	if(props.room.isPrivate){
+	if(props.room.private){
 		privatePopOpen()
 	}
 	else{

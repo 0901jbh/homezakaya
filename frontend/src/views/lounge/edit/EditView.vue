@@ -3,46 +3,53 @@
     <UserHeader />
   </header>
   <div class="container">
-    <div class="signup-title">회원 정보 수정</div>
-    <div class="signup-form">
-      <el-form :model="form" label-width="150px">
-        <el-form-item label="아이디">
-          <el-input v-model="data.id" disabled> </el-input>
-        </el-form-item>
-        <el-form-item label="비밀번호">
-          <el-input
-            v-model="data.password"
-            placeholder="비밀번호를 입력해주세요"
-            show-password
-          />
-        </el-form-item>
-        <el-form-item label="재입력">
-          <el-input
-            v-model="data.password2"
-            placeholder="비밀번호를 재입력해주세요"
-            show-password
-          >
-            <template #append>
-              <el-button @click="isCorrect">비밀번호확인</el-button>
-            </template>
-          </el-input>
-        </el-form-item>
-        <el-form-item label="닉네임">
-          <el-input
-            v-model="data.nickname"
-            placeholder="닉네임을 입력해주세요"
-            clearable
-          >
-            <template #append>
-              <el-button @click="nicknamecheck">중복확인</el-button>
-            </template>
-          </el-input>
-        </el-form-item>
-        <el-form-item label="이름">
+    <div class="wrapper">
+      <div class="signup-title">회원 정보 수정</div>
+      <div class="signup-form">
+        <el-form :model="form" label-width="0px">
+
+          <div>아이디</div>
+          <el-form-item>
+            <el-input v-model="data.id" disabled> </el-input>
+          </el-form-item>
+
+          <div v-if="data.passwordNull" style="color: red;">비밀번호를 입력해주세요.</div>
+          <div v-else>비밀번호</div>
+          <el-form-item>
+            <el-input v-model="data.password" placeholder="비밀번호" show-password />
+          </el-form-item>
+
+          <div v-if="data.password2Null" style="color: red;">비밀번호 확인을 입력해주세요.</div>
+          <div v-else-if="data.passwordErr" style="color: red;">비밀번호가 일치하지 않습니다.</div>
+          <div v-else-if="data.passwordUnchecked" style="color: red;">비밀번호 확인을 해주세요.</div>
+          <div v-else-if="data.passwordChecked">비밀번호 사용 가능합니다.</div>
+          <div v-else>비밀번호 확인</div>
+          <el-form-item>
+            <el-input v-model="data.password2" placeholder="비밀번호 확인" show-password>
+              <template #append>
+                <el-button @click="isCorrect">비번확인</el-button>
+              </template>
+            </el-input>
+          </el-form-item>
+
+          <div v-if="data.nicknameNull" style="color: red;">닉네임을 입력해주세요.</div>
+          <div v-else-if="data.nicknameErr" style="color: red;">닉네임이 중복됩니다.</div>
+          <div v-else-if="data.nicknameUnchecked" style="color: red;">닉네임 중복확인을 해주세요.</div>
+          <div v-else-if="data.nicknameChecked">닉네임 사용 가능합니다.</div>
+          <div v-else>닉네임</div>
+          <el-form-item>
+            <el-input v-model="data.nickname" placeholder="닉네임" clearable>
+              <template #append>
+                <el-button @click="nicknamecheck">중복확인</el-button>
+              </template>
+            </el-input>
+          </el-form-item>
+
+          <!-- <el-form-item label="이름">
           <el-input v-model="data.name" disabled />
         </el-form-item>
         <el-form-item label="성별">
-          <!-- <el-input v-model="form.gender" placeholder="성별선택으로 바꿀예정" clearable /> -->
+          <el-input v-model="form.gender" placeholder="성별선택으로 바꿀예정" clearable />
           <el-radio-group
             v-model="data.gender"
             fill="black"
@@ -54,58 +61,48 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="생년월일">
-          <!-- <el-input v-model="form.birth" placeholder="생년월일을 입력해주세요 ex)1996-05-18" clearable /> -->
+          <el-input v-model="form.birth" placeholder="생년월일을 입력해주세요 ex)1996-05-18" clearable />
           <el-date-picker
             v-model="data.birth"
             type="date"
             style="width: 100%"
             disabled
           />
-        </el-form-item>
-        <el-form-item label="이메일">
-          <el-input
-            v-model="data.email"
-            placeholder="이메일을 입력해주세요"
-            clearable
-          >
-            <template #append>
-              <el-button @click="emailsend">인증</el-button>
-            </template>
-          </el-input>
-        </el-form-item>
-        <!-- <el-form-item label="인증번호">
+        </el-form-item> -->
+
+          <div v-if="data.emailNull" style="color: red;">이메일을 입력해주세요.</div>
+          <div v-else-if="data.emailUnchecked" style="color: red;">이메일 인증을 해주세요.</div>
+          <div v-else>이메일</div> <el-form-item>
+            <el-input v-model="data.email" placeholder="이메일" clearable>
+              <template #append>
+                <el-button @click="emailsend">메일인증</el-button>
+              </template>
+            </el-input>
+          </el-form-item>
+
+          <!-- <el-form-item label="인증번호">
           <el-input v-model="form.emailcheck" placeholder="인증번호을 입력해주세요" clearable>
             <template #append>
               <el-button @click="emailconfirm">인증확인</el-button>
             </template>
           </el-input>
         </el-form-item> -->
-        <el-form-item label="주량">
-          <!-- <el-input v-model="form.alcohol" placeholder="주량을 입력해주세요 (소주 기준)" clearable /> -->
-          <el-input-number
-            v-model="data.alcohol"
-            size="large"
-            :precision="1"
-            :step="0.5"
-            :min="0"
-          />
-          <span class="el-form-item__label">&nbsp;잔 (소주)</span>
-        </el-form-item>
-        <el-form-item>
-          <div class="btn">
-            <RouterLink to="/rooms" style="text-decoration: none"
-              ><el-button type="info" size="large" @click="onSubmit"
-                >수정 완료</el-button
-              ></RouterLink
-            >
-          </div>
-          <div class="btn">
-            <RouterLink to="/rooms" style="text-decoration: none"
-              ><el-button type="info" size="large">돌아가기</el-button>
-            </RouterLink>
-          </div>
-        </el-form-item>
-      </el-form>
+
+          <div>주량 (소주 기준)</div>
+          <el-form-item>
+            <!-- <el-input v-model="form.alcohol" placeholder="주량을 입력해주세요 (소주 기준)" clearable /> -->
+            <el-input-number v-model="data.alcohol" size="large" :precision="1" :step="0.5" :min="0" />
+            <span>&nbsp;잔</span>
+          </el-form-item>
+
+          <el-form-item>
+            <el-button type="info" size="large" @click="onSubmit" style="width: 300px;">
+              수정 완료
+            </el-button>
+          </el-form-item>
+
+        </el-form>
+      </div>
     </div>
   </div>
   <footer>
@@ -114,7 +111,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import UserHeader from "../menu/UserHeader.vue";
 import FooterItem from "../menu/FooterItem.vue";
@@ -126,88 +123,232 @@ const store = useStore();
 
 const data = ref({
   id: store.state.userModule.user.userId,
+  passwordNow: store.state.userModule.user.password,
   password: store.state.userModule.user.password,
   password2: "",
+  nicknameNow: store.state.userModule.user.nickname,
   nickname: store.state.userModule.user.nickname,
+  emailNow: store.state.userModule.user.email,
   email: store.state.userModule.user.email,
   emailCode: "",
   alcohol: store.state.userModule.user.alcoholPoint,
+
+  // password 관련 data
+  passwordNull: false,
+  password2Null: false,
+  passwordErr: false,
+  passwordChecked: false,
+  passwordUnchecked: false,
+  passwordSame: true,
+  password2Same: false,
+
+  // nickname 관련 data
+  nicknameNull: false,
+  nicknameErr: false,
+  nicknameChecked: false,
+  nicknameUnchecked: false,
+  nicknameSame: true,
+
+  // email 관련 data
+  emailNull: false,
+  emailChecked: false,
+  emailUnchecked: false,
+  emailSame: true,
 });
 
-let flag = ref(false);
+watch(() => data.value.password, (newValue, oldValue) => {
+  console.log('password changed')
+  data.value.passwordNull = false
+  data.value.passwordErr = false
+  data.value.passwordChecked = false
+  if (newValue == data.value.passwordNow) {
+    data.value.passwordSame = true
+  } else {
+    data.value.passwordSame = false
+  }
+});
+
+watch(() => data.value.password2, (newValue, oldValue) => {
+  console.log('password2 changed')
+  data.value.password2Null = false
+  data.value.passwordErr = false
+  data.value.passwordChecked = false
+  if (newValue == data.value.passwordNow) {
+    data.value.password2Same = true
+  } else {
+    data.value.password2Same = false
+  }
+});
+
+watch(() => data.value.nickname, (newValue, oldValue) => {
+  console.log('nickname changed')
+  data.value.nicknameNull = false
+  data.value.nicknameErr = false
+  data.value.nicknameChecked = false
+  if (newValue == data.value.nicknameNow) {
+    data.value.nicknameSame = true
+  } else {
+    data.value.nicknameSame = false
+  }
+});
+
+watch(() => data.value.email, (newValue, oldValue) => {
+  console.log('email changed')
+  data.value.emailNull = false
+  data.value.emailChecked = false
+  if (newValue == data.value.emailNow) {
+    data.value.emailSame = true
+  } else {
+    data.value.emailSame = false
+  }
+});
 
 // 막힌 form 정보 빈값으로 들어옴 (update 가능 값, 유지될 값) getUserInfo로 한번 뿌려줘야 됨
 const onSubmit = async () => {
-  await store.dispatch("userModule/updateUser", {
-    userId: data.value.id,
-    password: data.value.password,
-    nickname: data.value.nickname,
-    email: data.value.email,
-    alcoholPoint: data.value.alcohol,
-  });
+  if (data.value.passwordChecked == false && !(data.value.passwordSame && data.value.password2Same)) {
+    data.value.passwordUnchecked = true
+  }
+  if (data.value.nicknameChecked == false && !data.value.nicknameSame) {
+    data.value.nicknameUnchecked = true
+  }
+  if (data.value.emailChecked == false && !data.value.emailSame) {
+    data.value.emailUnchecked = true
+  }
+  if ((data.value.passwordChecked || (data.value.passwordSame && data.value.password2Same))
+    && (data.value.nicknameChecked || data.value.nicknameSame)
+    && (data.value.emailChecked || data.value.emailSame)) {
+    await store.dispatch("userModule/updateUser", {
+      userId: data.value.id,
+      password: data.value.password,
+      nickname: data.value.nickname,
+      email: data.value.email,
+      alcoholPoint: data.value.alcohol,
+    });
 
-  console.log("submit!");
-  router.push({ name: "rooms" });
-};
+    console.log("submit!");
 
-const idcheck = async () => {
-  await store.dispatch("userModule/idcheck", data.value.id);
-  console.log("id check!");
+    await store.dispatch("userModule/userLogin", {
+      userId: data.value.id,
+      password: data.value.password,
+    });
+    await store.dispatch(
+      "userModule/getUserInfo",
+      sessionStorage.getItem("access-token")
+    );
+    if (store.getters['userModule/checkToken']) {
+      router.push({ name: "rooms" });
+    } else {
+      data.value.loginFail = true
+    }
+
+    router.push({ name: "rooms" });
+  }
 };
 
 const nicknamecheck = async () => {
-  await store.dispatch("userModule/nicknameCheck", data.value.nickname);
+  data.value.nicknameUnchecked = false
+  if (data.value.nickname == "") {
+    data.value.nicknameNull = true
+  } else {
+    data.value.nicknameNull = false
+    await store.dispatch("userModule/nicknameCheck", data.value.nickname);
+    data.value.nicknameErr = store.state.userModule.nicknameErr
+    if (data.value.nicknameErr == false) {
+      data.value.nicknameChecked = true
+    }
+  }
   console.log("nickname check!");
 };
 
 const emailsend = async () => {
-  const form = new FormData();
-  form.append("email", data.value.email);
-  await store.dispatch("userModule/sendEmail", form);
-  console.log("email send!");
-  ElMessageBox.prompt("인증번호를 입력해주세요.", "메일인증", {
-    confirmButtonText: "OK",
-    cancelButtonText: "Cancel",
-  })
-    .then(({ value }) => {
-      if (value == store.state.userModule.user.emailCode) {
-        console.log("email confirm!");
-        ElMessage({
-          type: "success",
-          message: `인증되었습니다.`,
-        });
-      } else {
-        ElMessage({
-          type: "error",
-          message: "인증이 실패했습니다.",
-        });
-      }
+  data.value.emailUnchecked = false
+  if (data.value.email == "") {
+    data.value.emailNull = true
+  } else {
+    data.value.emailNull = false
+    const form = new FormData();
+    form.append("email", data.value.email);
+    await store.dispatch("userModule/sendEmail", form);
+    console.log("email send!");
+    ElMessageBox.prompt("인증번호를 입력해주세요.", "메일인증", {
+      confirmButtonText: "OK",
+      cancelButtonText: "Cancel",
     })
-    .catch(() => {
-      ElMessage({
-        type: "info",
-        message: "입력이 취소되었습니다.",
+      .then(({ value }) => {
+        if (value == store.state.userModule.user.emailCode) {
+          console.log("email confirm!");
+          ElMessage({
+            type: "success",
+            message: `인증되었습니다.`,
+          });
+          data.value.emailChecked = true;
+        } else {
+          ElMessage({
+            type: "error",
+            message: "인증이 실패했습니다.",
+          });
+        }
+      })
+      .catch(() => {
+        ElMessage({
+          type: "info",
+          message: "입력이 취소되었습니다.",
+        });
       });
-    });
+  }
 };
 
 function isCorrect() {
-  if (data.value.password == data.value.password2) {
-    flag = true;
-    console.log("right password!");
+  data.value.passwordUnchecked = false
+  if (data.value.password == "") {
+    data.value.passwordNull = true
   } else {
-    flag = false;
-    console.log("wrong password!");
+    data.value.passwordNull = false
+  }
+  if (data.value.password2 == "") {
+    data.value.password2Null = true
+  } else {
+    data.value.password2Null = false
+  }
+  if (data.value.password != "" && data.value.password2 != "") {
+    if (data.value.password == data.value.password2) {
+      data.value.passwordChecked = true
+      data.value.passwordErr = false
+      console.log("right password!");
+    } else {
+      data.value.passwordChecked = false
+      data.value.passwordErr = true
+      console.log("wrong password!");
+    }
   }
 }
 </script>
 
 <style scoped>
-.container {
+/* .container {
   display: flex;
   height: 90vh;
   align-items: center;
   flex-direction: column;
+} */
+.container {
+  display: flex;
+  justify-content: center;
+  /* align-items: center; */
+  height: 92vh;
+  /* background-image: url("@/assets/images/main.png");
+  background-size: cover; */
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: hsl(229.41, 18.68%, 17.84%, 80%);
+  height: 80%;
+  width: 1000px;
+  color: #cbcbcb;
 }
 
 .signup-title {
@@ -215,7 +356,7 @@ function isCorrect() {
   font-style: normal;
   font-weight: 800;
   font-size: 8vh;
-  color: #9d0101;
+  color: #E27B66;
   margin-top: 5vh;
 }
 
@@ -225,8 +366,9 @@ function isCorrect() {
 }
 
 .el-button {
-  background-color: black !important;
-  color: white !important;
+  background-color: #E27B66 !important;
+  border: none;
+  color: white;
 }
 
 .el-button:hover {
@@ -238,9 +380,10 @@ function isCorrect() {
   color: black;
 }
 
-.el-form-item__label {
-  justify-content: right !important;
-  font-size: 3vh;
+
+.el-form {
+  width: 300px;
+  margin: 0 auto;
 }
 
 /* @media (min-width: 1024px) {

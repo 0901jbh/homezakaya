@@ -15,6 +15,9 @@ export const userModule = {
     isLoginError: false,
     user: {},
     isValidToken: false, // accessToken 정보
+
+    idErr: null, // id 중복 boolean
+    nicknameErr: null, // nickname 중복 boolean
   }),
   getters: {
     checkUserInfo: function (state) {
@@ -37,6 +40,12 @@ export const userModule = {
     SET_USER_INFO: (state, user) => {
       state.isLogin = true
       state.user = user
+    },
+    SET_ID_ERR: (state, idErr) => {
+      state.idErr = idErr
+    },
+    SET_NICKNAME_ERR: (state, nicknameErr) => {
+      state.nicknameErr = nicknameErr
     },
   },
 
@@ -63,6 +72,7 @@ export const userModule = {
         .then(({ status, data }) => {
           if (status == 200) {
             console.log("사용 가능한 id 입니다.")
+            context.commit("SET_ID_ERR", false)
             return true
           }
         })
@@ -71,6 +81,7 @@ export const userModule = {
           if (err.response.status == 409) {
             console.log("중복된 id 입니다.")
           }
+          context.commit("SET_ID_ERR", true)
           return false
         })
     },
@@ -82,6 +93,7 @@ export const userModule = {
         .then(({ status, data }) => {
           if (status == 200) {
             console.log("사용 가능한 nickname 입니다.")
+            context.commit("SET_NICKNAME_ERR", false)
             return true
           }
         })
@@ -89,6 +101,7 @@ export const userModule = {
           if (err.response.status == 409) {
             console.log("중복된 닉네임 입니다.")
           }
+          context.commit("SET_NICKNAME_ERR", true)
           return false
         })
     },

@@ -1,9 +1,9 @@
 <template>
   <div class="tabs">
     <input id="friend" type="radio" name="tab_item" checked>
-    <label class="tab_item" id="tab_first" for="friend">Friend</label>
+    <label class="tab_item" id="tab_first" for="friend">친구 목록</label>
     <input id="user" type="radio" name="tab_item">
-    <label class="tab_item" id="tab_second" for="user">User</label>
+    <label class="tab_item" id="tab_second" for="user">친구 찾기</label>
     <div class="tab_content" id="friend_content">
       <FriendRequestItem v-for="(request, idx) in data.requests" :key="idx" :idx="idx" :request="request" />
       <FriendItem v-for="(friend, idx) in data.friends" :key="idx" :idx="idx" :friend="friend"
@@ -41,7 +41,7 @@
   <div class="follow-private-modal-wrap">
     <div class="follow-private-popup">
       <!-- <div class="follow-private-popup-header">
-        <div class="follow-private-popup-header-title">Private Room</div>
+        <div class="follow-private-popup-header-title">비밀번호 입력</div>
       </div> -->
       <div class="follow-private-popup-content">
         <div style="margin-bottom:3%;">해당 방은 비공개방입니다.</div>
@@ -233,9 +233,7 @@ const followErrorClose = () => {
 <style scoped>
 /* 탭 전체 스타일 */
 .tabs {
-  /* margin-top: 3vh; */
-  margin-left: 6%;
-  width: 94%;
+  width: 100%;
   height: 85vh;
 }
 
@@ -258,8 +256,7 @@ const followErrorClose = () => {
   text-align: center;
   font-weight: bold;
   transition: all 0.2s ease;
-  margin: 1vw;
-  margin-bottom: 3.5vh;
+  margin: 5%;
 
   display: flex;
   justify-content: center;
@@ -343,6 +340,7 @@ input[name="tab_item"] {
   right: 0;
   z-index: 999;
   transition: 0.5s ease-out;
+  backdrop-filter: blur(4px) brightness(60%);
 }
 
 .user-not-in-modal-wrap {
@@ -360,28 +358,28 @@ input[name="tab_item"] {
 }
 
 .user-not-in-popup {
-  display: flex;
-  align-items: center;
+  display: grid;
   height: 100%;
   width: 100%;
-  grid-template-rows: 1fr 11fr;
+  /* grid-template-rows: 1fr 11fr; */
   transition: 0.5s ease-out;
   color: white;
 }
 
-.user-not-in-popup-header {
+/* .user-not-in-popup-header {
   background-color: black;
   height: 100%;
   width: 100%;
   border-bottom: solid 0.5rem #6E0000;
   border-radius: 1rem 1rem 0 0;
-}
+} */
 
 .user-not-in-popup-content {
-  display: grid;
-  text-align: center;
-  grid-template-rows: 2fr 1fr;
-  height: 30%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  height: 70%;
   width: 80%;
   margin: 10%;
 }
@@ -391,12 +389,12 @@ input[name="tab_item"] {
   justify-content: space-around;
 }
 
-.user-not-in-popup-header-title {
+/* .user-not-in-popup-header-title {
   color: white;
   font-size: 1.3rem;
   padding: 0 5%;
   padding-top: 1%;
-}
+} */
 
 .el-button {
   background-color: #e27b66 !important;
@@ -418,6 +416,8 @@ input[name="tab_item"] {
   left: 0;
   right: 0;
   z-index: 999;
+  transition: 0.5s ease-out;
+  backdrop-filter: blur(4px) brightness(60%);
 }
 
 .follow-private-modal-wrap {
@@ -435,22 +435,21 @@ input[name="tab_item"] {
 }
 
 .follow-private-popup {
-  display: flex;
-  align-items: center;
+  display: grid;
   height: 100%;
   width: 100%;
-  grid-template-rows: 1fr 11fr;
+  /* grid-template-rows: 1fr 11fr; */
   transition: 0.5s ease-out;
   color: white;
 }
 
-.follow-private-popup-header {
-  background-color: black;
+/* .follow-private-popup-header {
+  background-color: #E27B66;
   height: 100%;
   width: 100%;
   border-bottom: solid 0.5rem #6E0000;
-  border-radius: 1rem 1rem 0 0;
-}
+  border-radius: 1.6rem 1.6rem 0 0;
+} */
 
 .follow-private-popup-content {
   /* display: flex;
@@ -460,20 +459,22 @@ input[name="tab_item"] {
   height: 65%;
   width: 80%;
   margin: 10%; */
-  display: grid;
-  text-align: center;
-  grid-template-rows: 2fr 1fr;
-  height: 30%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  height: 80%;
   width: 80%;
   margin: 10%;
 }
 
-.follow-private-popup-header-title {
-  color: white;
-  font-size: 1.3rem;
+/* .follow-private-popup-header-title {
+  color: black;
+  font-size: 1.1rem;
+  font-weight: 1000;
   padding: 0 5%;
   padding-top: 1%;
-}
+} */
 
 
 /* 비밀번호 오류 팝업창 */
@@ -508,24 +509,25 @@ input[name="tab_item"] {
   align-items: center;
   height: 100%;
   width: 100%;
-  grid-template-rows: 1fr 11fr;
+  /* grid-template-rows: 1fr 11fr; */
   transition: 0.5s ease-out;
   color: white;
 }
 
-.follow-error-popup-header {
+/* .follow-error-popup-header {
   background-color: black;
   height: 100%;
   width: 100%;
   border-bottom: solid 0.5rem #6E0000;
   border-radius: 1rem 1rem 0 0;
-}
+} */
 
 .follow-error-popup-content {
-  display: grid;
-  text-align: center;
-  grid-template-rows: 2fr 1fr;
-  height: 30%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  height: 70%;
   width: 80%;
   margin: 10%;
 }
@@ -535,10 +537,10 @@ input[name="tab_item"] {
   justify-content: space-around;
 }
 
-.follow-error-popup-header-title {
+/* .follow-error-popup-header-title {
   color: white;
   font-size: 1.3rem;
   padding: 0 5%;
   padding-top: 1%;
-}
+} */
 </style>

@@ -3,7 +3,6 @@
     <RoomHeader :title="title" :category="category" :headCount="headCount" :headCountMax="headCountMax" />
   </header>
   <div id="main-container" class="container">
-
     <div id="session">
       <div id="container" style="display: flex;">
         <div id="video-container" :class="{
@@ -13,38 +12,46 @@
           'under-six': this.headCount == 5 || this.headCount == 6,
           'under-eight': this.headCount == 7 || this.headCount == 8,
         }">
-          <user-video class="video" :stream-manager="publisher" my-video="true" />
+          <user-video class="video" :streamManager="publisher" :myVideo="true" />
           <user-video class="video" v-for="sub in subscribers" :key="sub.stream.connection.connectionId"
-            :stream-manager="sub" my-video="false" @kickUser="kickUser" @changeHost="changeHost" />
+            :streamManager="sub" :myVideo="false" :isHostView="hostId == myUserId" @kickUser="kickUser" @changeHost="changeHost" @friendRequest="friendRequest" />
         </div>
-        <div id="chatting-container" class="col-md-4">
-          <div id="chats" ref="message_scroll">
-            <div v-for="message in messages" :key="message.id">
-              <!-- 내 채팅 -->
-              <div id="msg_mine" class="msg_box" v-if="message.username == myUserName">
-                <div class="username">
-                  {{ message.username }}
+        <div class="game-chatting-container">
+          <Transition>
+            <div class="game-container" v-if="this.gameStart">
+                <div class="game-title">{{ this.gameTitle }}</div>
+                <div class="game-content">{{ this.gameContent }}</div>
+            </div>
+          </Transition>
+          <div id="chatting-container">
+            <div id="chats" ref="message_scroll">
+              <div v-for="message in messages" :key="message.id">
+                <!-- 내 채팅 -->
+                <div id="msg_mine" class="msg_box" v-if="message.username == myUserName">
+                  <div class="username">
+                    {{ message.username }}
+                  </div>
+                  <div class="msg">
+                    {{ message.text }}
+                  </div>
                 </div>
-                <div class="msg">
-                  {{ message.text }}
-                </div>
-              </div>
-              <!-- 남의 채팅 -->
-              <div id="msg_not_mine" class="msg_box" v-else>
-                <div class="username">
-                  {{ message.username }}
-                </div>
-                <div class="msg">
-                  {{ message.text }}
+                <!-- 남의 채팅 -->
+                <div id="msg_not_mine" class="msg_box" v-else>
+                  <div class="username">
+                    {{ message.username }}
+                  </div>
+                  <div class="msg">
+                    {{ message.text }}
+                  </div>
                 </div>
               </div>
             </div>
+            <form id="send-form" @submit.prevent="sendMessage">
+              <input v-model="newMessage" placeholder="Type your message here" />
+              <img src="@/assets/images/message.png" alt="message img" @click="sendMessage"
+                style="width:30px; height:30px; cursor: pointer">
+            </form>
           </div>
-          <form id="send-form" @submit.prevent="sendMessage">
-            <input v-model="newMessage" placeholder="Type your message here" />
-            <img src="@/assets/images/message.png" alt="message img" @click="sendMessage"
-              style="width:30px; height:30px; cursor: pointer">
-          </form>
         </div>
       </div>
       <div id="option-footer">
@@ -101,7 +108,7 @@
               </div>
             </template>
           </el-popover>
-          <div class="content" @click="exitBtn">Exit</div>
+          <div class="content" @click="leaveSession">Exit</div>
         </div>
       </div>
     </div>
@@ -140,14 +147,13 @@
 
 <script>
 import RoomHeader from '../menu/RoomHeader.vue'
-import { OpenVidu } from "openvidu-browser";
-import axios from "axios";
 import UserVideo from "./components/UserVideo.vue";
+import { OpenVidu } from "openvidu-browser";
 import { useStore } from 'vuex';
+import axios from "axios";
 
-axios.defaults.headers.post["Content-Type"] = "application/json";
-
-const APPLICATION_SERVER_URL = "http://localhost:5000/";
+const APPLICATION_SERVER_URL = 'http://localhost:5000';
+const OPENVIDU_SERVER_URL = 'https://i8a606.p.ssafy.io:8443';
 const OPENVIDU_SERVER_SECRET = 'ssafy';
 
 export default {
@@ -172,10 +178,10 @@ export default {
       // Join form
       mySessionId: this.$route.params.roomId,
 
-      newMessage: null,
+      newMessage: "",
       messages: [],
-      messageData: null,
-      eventData: null,
+      messageData: "",
+      eventData: {},
 
       title: "",
       category: "",
@@ -187,15 +193,21 @@ export default {
       myUserName: "",
       friends: [],
 
-      // videoActive: JSON.parse(this.$route.query.video),
-      // audioActive: JSON.parse(this.$route.query.audio),
-      videoActive: true,
-      audioActive: true,
+      videoActive: JSON.parse(this.$route.query.video),
+      audioActive: JSON.parse(this.$route.query.audio),
+      // videoActive: true,
+      // audioActive: true,
 
       gameStatus: 0,
       games: ['일반', '할머니 게임', '나 안취했어', '랜덤 대화주제'],
 
+      // 도움말 팝업창 페이지
       infoPage: 1,
+
+      // 게임화면 띄우기
+      gameStart: false,
+      gameTitle: "",
+      gameContent: "",
     };
   },
 
@@ -209,7 +221,6 @@ export default {
   },
   watch: {
     isSmile(value) {
-      console.log("감지지지지지ㅣㅈ" + value);
       if (value) {
         this.session.signal({
           data: JSON.stringify(this.myUserName),
@@ -224,7 +235,6 @@ export default {
       }
     },
     isFinished(value) {
-      console.log("감감감감감감감감지" + value);
       if (value) {
         this.session.signal({
           //말할 문장, 말한 문장 담아서 보내기
@@ -232,7 +242,6 @@ export default {
           type: 'detect-audio'
         })
           .then(() => {
-            console.log('끝!!!!');
             this.store.dispatch("gameModule/getSentence");
           })
           .catch(error => {
@@ -264,7 +273,6 @@ export default {
       }
     },
     clickMuteVideo() {
-      console.log(this.videoActive);
       if (this.publisher.stream.videoActive) {
         this.publisher.publishVideo(false)
         this.videoActive = false
@@ -298,6 +306,11 @@ export default {
         const subscriber = this.session.subscribe(stream);
         this.subscribers.push(subscriber);
         this.headCount++;
+        if (this.gameStart) {
+          if (this.hostId == this.myUserId) {
+            this.startBtn(this.gameStatus)
+          }
+        }
       });
 
       // On every Stream destroyed...
@@ -332,15 +345,21 @@ export default {
       });
 
       this.session.on('signal:detect-smile', (event) => {
+        this.gameStatus = 1
+        this.gameScreenOpen(1);
         this.store.dispatch("gameModule/startSmileGame");
       })
 
       this.session.on('signal:smile', (event) => {
         this.store.dispatch("gameModule/stopDetect");
         console.log(event.data + "님이 웃으셨습니다!!");
+        this.gameContent = `${event.data}님이 웃으셨습니다 !`;
+        setTimeout(() => {this.gameScreenClose()}, 3000);
       })
 
       this.session.on('signal:not-drunk', (event) => {
+        this.gameStatus = 2
+        this.gameScreenOpen(2)
         this.eventData = JSON.parse(event.data);
         console.log(this.eventData.username + "님 말 할 준비 하세용");
         console.log(this.store.state.gameModule.sentence);
@@ -356,8 +375,11 @@ export default {
       })
 
       this.session.on('signal:random-topic', (event) => {
+        this.gameStatus = 3
+        this.gameScreenOpen(3)
         this.eventData = JSON.parse(event.data);
         console.log(this.eventData.topic);
+        this.gameContent = this.eventData.topic;
       })
 
       this.session.on('signal:kick', (event) => {
@@ -399,7 +421,7 @@ export default {
               resolution: "640x480", // The resolution of your video
               frameRate: 30, // The frame rate of your video
               insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
-              mirror: false, // Whether to mirror your local video or not
+              mirror: true, // Whether to mirror your local video or not
             });
 
             // Set the main video in the page to display our webcam and store our Publisher
@@ -419,6 +441,11 @@ export default {
     },
 
     leaveSession() {
+      if (this.hostId == this.myUserId && this.subscribers.length > 0) {
+        console.log(this.subscribers[0]);
+        this.changeHost(this.subscribers[0].stream.streamManager.stream.connection.data.userId);
+      }
+
       // --- 7) Leave the session by calling 'disconnect' method over the Session object ---
       if (this.session) this.session.disconnect();
 
@@ -432,13 +459,14 @@ export default {
       // Remove beforeunload listener
       window.removeEventListener("beforeunload", this.leaveSession);
 
-      this.$router.push({ name: 'rooms' });
       this.store.dispatch("roomModule/quitRoom", this.mySessionId)
         .then((result) => {
           if (result) {
             this.store.dispatch("roomModule/removeUserInRoom", this.store.state.userModule.user.userId)
           }
         })
+      
+      this.$router.push({ name: 'rooms' });
     },
 
     // updateMainVideoStreamManager(stream) {
@@ -466,15 +494,69 @@ export default {
       return await this.createToken(sessionId);
     },
 
-    async createSession(sessionId) {
-      const response = await axios.post(APPLICATION_SERVER_URL + 'api/sessions', { customSessionId: sessionId });
-      return response.data; // The sessionId
+    createSession(sessionId) {
+      return new Promise((resolve, reject) => {
+        let data = JSON.stringify({ customSessionId: sessionId });
+        axios
+          .post(`${OPENVIDU_SERVER_URL}/openvidu/api/sessions`, data, {
+            headers: {
+              Authorization: `Basic ${btoa(
+                `OPENVIDUAPP:${OPENVIDU_SERVER_SECRET}`
+              )}`,
+              'Content-Type': 'application/json',
+            },
+          })
+          .then((response) => {
+            resolve(response.data.id);
+          })
+          .catch((response) => {
+            let error = { ...response };
+            if (error?.response?.status === 409) {
+              resolve(sessionId);
+            } else if (
+              window.confirm(
+                `No connection to OpenVidu Server. This may be a certificate error at "${OPENVIDU_SERVER_URL}"\n\nClick OK to navigate and accept it. ` +
+                  `If no certificate warning is shown, then check that your OpenVidu Server is up and running at "${OPENVIDU_SERVER_URL}"`
+              )
+            ) {
+              window.location.assign(`${OPENVIDU_SERVER_URL}/accept-certificate`);
+            }
+          });
+      });
     },
 
-    async createToken(sessionId) {
-      const response = await axios.post(APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections');
-      return response.data; // The token
+    createToken(sessionId) {
+      return new Promise((resolve, reject) => {
+        let data = {};
+        axios
+          .post(
+            `${OPENVIDU_SERVER_URL}/openvidu/api/sessions/${sessionId}/connection`,
+            data,
+            {
+              headers: {
+                Authorization: `Basic ${btoa(
+                  `OPENVIDUAPP:${OPENVIDU_SERVER_SECRET}`
+                )}`,
+                'Content-Type': 'application/json',
+              },
+            }
+          )
+          .then((response) => {
+            resolve(response.data.token);
+          })
+          .catch((error) => reject(error));
+      });
     },
+
+    // async createSession(sessionId) {
+    //   const response = await axios.post(APPLICATION_SERVER_URL + '/api/sessions', { customSessionId: sessionId });
+    //   return response.data; // The sessionId
+    // },
+
+    // async createToken(sessionId) {
+    //   const response = await axios.post(APPLICATION_SERVER_URL + '/api/sessions/' + sessionId + '/connections');
+    //   return response.data; // The token
+    // },
 
     async getFriends() {
       const friends = await this.store.state.friendModule.friends;
@@ -487,8 +569,8 @@ export default {
       const room = JSON.parse(JSON.stringify(roomData));
       this.title = room.title;
       this.category = room.category;
-      // this.headCount = room.personCount;
-      this.headCount = 1;
+      this.headCount = room.personCount;
+      // this.headCount = 1;
       this.headCountMax = room.personLimit;
       this.hostId = room.hostId;
     },
@@ -497,13 +579,6 @@ export default {
       const user = this.store.state.userModule.user;
       this.myUserId = user.userId;
       this.myUserName = user.nickname;
-    },
-
-    exitBtn() {
-      if (this.hostId == this.myUserId && this.headCount > 1) {
-        this.changeHost();
-      }
-      this.leaveSession();
     },
 
     //게임 기능
@@ -544,15 +619,21 @@ export default {
           })
             .then(() => {
               console.log('랜덤주제');
-              this.store.dispatch("gameModule/getTopic");
+              if (!this.gameStart) {
+                this.store.dispatch("gameModule/getTopic").then(() => {
+                  this.gameContent = this.store.state.gameModule.topic
+                });
+              } else {
+                this.gameContent = this.store.state.gameModule.topic
+              }
             })
             .catch(error => {
               console.error(error);
             })
 
           break;
-
       }
+      this.gameScreenOpen(idx)
     },
 
     infoOpen() {
@@ -625,25 +706,53 @@ export default {
         .catch(error => {
           console.error(error);
         })
-    }
+    },
+
+    gameScreenOpen(idx){
+      this.gameIdx = idx;
+      this.gameTitle = this.games[idx];
+      this.gameStart = true;
+      document.getElementById("chatting-container").id="chatting-container-small";
+    },
+
+    gameScreenClose(){
+      this.gameTitle = '',
+      this.gameContent = '',
+      this.gameIdx = 0;
+      this.gameStart = false;
+      document.getElementById("chatting-container-small").id="chatting-container";
+    },
+
+    friendRequest(userId) {
+      this.store.dispatch("friendModule/sendRequest",{
+        userAId: this.myUserId,
+        userBId: userId
+      });
+    },
   },
 
   created() {
-    this.joinSession();
-    this.getFriends();
-    this.getRoom();
-    this.getUser();
-    console.log(this.$route.query.video);
-    this.store.dispatch("gameModule/getSentence");
-    this.store.dispatch("gameModule/getTopic");
   },
 
-  mounted() {
+  async mounted() {
+    await this.getFriends();
+    await this.getRoom();
+    this.getUser();
+
+    this.store.dispatch("gameModule/getSentence");
+    this.store.dispatch("gameModule/getTopic");
+    
+    console.log(this.$route.query.video);
+    this.joinSession();
+  },
+
+  beforeUpdate(){
+    console.log(this);
   },
 
   updated() {
 
-  }
+  },
 };
 
 </script>
@@ -667,7 +776,19 @@ export default {
   flex-direction: column;
   background: #e9e9e9;
   border-radius: 30px;
+  height: 100%;
   width: 20vw;
+  transition: all .5s ease;
+}
+
+#chatting-container-small {
+  display: flex;
+  flex-direction: column;
+  background: #e9e9e9;
+  border-radius: 30px;
+  height: 55%;
+  width: 20vw;
+  transition: all .5s ease;
 }
 
 #chats {
@@ -1199,5 +1320,57 @@ a:hover .demo-logo {
 .right-arrow:hover {
   transform: scale(1.2, 1.2);
   cursor: pointer;
+}
+.game-chatting-container{
+  width: 20vw;
+  height: 75vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: all 0.5s ease;
+  animation: open-game-screen .5s;
+  animation-delay: 0.7s;
+  margin-top: 0px;
+}
+
+.v-enter-from,
+.v-leave-to {
+  animation: open-game-screen 0.5s reverse;
+}
+
+@keyframes open-game-screen {
+  0% {
+    height: 0%;
+  }
+  50% {
+    height: 20%;
+  }
+  100% {
+    height: 40%;
+  }
+}
+.game-container{
+  border: solid white;
+  height: 40%;
+  background-color: #2E303F;
+  border: 2px solid #CBCBCB;
+  border-radius: 30px;
+  margin-bottom: 3vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+.game-title {
+  color: white;
+  font-size: 2rem;
+}
+.game-content {
+  color: white;
+  font-size: 1rem;
 }
 </style>

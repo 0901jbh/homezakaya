@@ -106,7 +106,7 @@ const createRoom = () => {
 			roomId: result.roomId,
 		}).then((result) => {
 			if (result) {
-				router.push({ name: 'room', params: { roomId: form.value.roomId } })
+				router.push({ name: 'wait', params: { roomId: form.value.roomId } })
 			}
 		})
 	});

@@ -1,10 +1,13 @@
 <template>
   <div class="head">
-    <RouterLink to="/rooms" style="text-decoration:none;">
+    <RouterLink to="/rooms" style="text-decoration: none">
       <div class="title">Homezakaya</div>
     </RouterLink>
-    <el-popover :width="300" popper-style="background: #252836; border: solid 2px #e27b66; padding: 20px;"
-      trigger="click">
+    <el-popover
+      :width="300"
+      popper-style="background: #252836; border: solid 2px #e27b66; padding: 20px;"
+      trigger="click"
+    >
       <template #reference>
         <!-- <img src="@/assets/images/profile.png" alt="profile img"
           style="width:60px; height:60px; padding-right: 1vw; cursor:pointer;"> -->
@@ -27,11 +30,19 @@
             <img src="@/assets/images/alcohol_w.png" alt="alcohol_w img" style="width:40px; height:40px;">
             <p style="margin: 0; font-size: 20px; color: white; align-self:center;">알콜 도수는 {{ data.alcoholPoint }}잔</p>
           </div>
-          <RouterLink class="MyInfo_edit content" to="/edit" style="text-decoration:none;">
+          <RouterLink
+            class="MyInfo_edit content"
+            to="/edit"
+            style="text-decoration: none"
+          >
             정보수정
           </RouterLink>
-          <RouterLink class="MyInfo_logout content" to="/" style="text-decoration:none;">
-            로그아웃
+          <RouterLink
+            class="MyInfo_logout content"
+            to="/"
+            style="text-decoration: none"
+          >
+            <el-button @click="logout">로그아웃</el-button>
           </RouterLink>
         </div>
       </template>
@@ -40,25 +51,25 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useStore } from 'vuex'
-const store = useStore()
+import { ref } from "vue";
+import { useStore } from "vuex";
+const store = useStore();
 const data = ref({
   nickname: store.state.userModule.user.nickname,
   mannerPoint: store.state.userModule.user.mannerPoint,
   alcoholPoint: store.state.userModule.user.alcoholPoint,
-})
+});
 </script>
 
 <style scoped>
 @font-face {
-  font-family: 'dokdo';
-  src: url('@/assets/fonts/Dokdo-Regular.ttf')
+  font-family: "dokdo";
+  src: url("@/assets/fonts/Dokdo-Regular.ttf");
 }
 
 @font-face {
-  font-family: 'eastsea';
-  src: url('@/assets/fonts/EastSeaDokdo-Regular.ttf')
+  font-family: "eastsea";
+  src: url("@/assets/fonts/EastSeaDokdo-Regular.ttf");
 }
 
 @font-face {
@@ -76,7 +87,7 @@ const data = ref({
 }
 
 .title {
-  font-family: 'dokdo';
+  font-family: "dokdo";
   color: white;
   font-size: 2.5rem;
   font-weight: 600;

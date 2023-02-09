@@ -218,7 +218,7 @@ export const userModule = {
         })
         .catch((err) => {
             console.log("토큰이 만료되어 사용 불가");
-            commit("SET_IS_VALID_TOKEN", false);
+            // commit("SET_IS_VALID_TOKEN", false);
             
         });
     },

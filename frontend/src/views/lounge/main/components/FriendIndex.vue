@@ -122,18 +122,6 @@ const searchUser = () => {
   console.log(data.value.renderKey)
 }
 
-const userInRoom = (userId) => {
-  store.dispatch("roomModule/getRoomId", userId)
-    .then((result) => {
-      if (result == -1) {
-        notInRoomOpen()
-      }
-      else {
-        followEnterRoom(result)
-      }
-    })
-}
-
 const notInRoomOpen = () => {
   document.getElementsByClassName("user-not-in-modal-wrap")[0].style.display = 'block';
   document.getElementsByClassName("user-not-in-modal-bg")[0].style.display = 'block';
@@ -144,19 +132,26 @@ const notInRoomClose = () => {
   document.getElementsByClassName("user-not-in-modal-bg")[0].style.display = 'none';
 }
 
-// 따라가기로 입장
-const followEnterRoom = (roomId) => {
-  store.dispatch("roomModule/checkPassword", {
-    roomId: roomId,
-    password: '',
-  }).then((result) => {
-    if (result) {
-      console.log(`${roomId}번에 입장시도`)
-      enterRoom(roomId)
+const userInRoom = (userId) => {
+  store.dispatch("roomModule/getRoomId", userId).then((result) => {
+    if (result == -1) {
+      notInRoomOpen()
     }
     else {
-      followPrivatePopOpen()
-      data.value.followRoomId = roomId
+      store.dispatch("roomModule/checkValidRoom", result).then((status) => {
+        if(status != 200){
+          errorOpen(status);
+        }
+        else{
+          const room = store.state.roomModule.room.find(r => r.roomId == result);
+          if(room.private){
+            followPrivatePopOpen();
+          }
+          else{
+            router.push({ name: 'wait', params: { roomId: result } });
+          }
+        }
+      });
     }
   })
 }
@@ -176,28 +171,28 @@ const followEnterPrivateRoom = () => {
   })
 }
 
-const enterRoom = (roomId) => {
-  store.dispatch('roomModule/createUserInRoom', {
-    userId: store.state.userModule.user.userId,
-    roomId: roomId,
-  })
-    .then((result) => {
-      if (result) {
-        store.dispatch('roomModule/enterRoom', roomId)
-          .then((result) => {
-            if (result) {
-              router.push({ name: 'wait', params: { roomId: roomId } })
-            }
-            else {
-              followErrorOpen(2)
-            }
-          })
-      }
-      else {
-        followErrorOpen(2)
-      }
-    })
-}
+// const enterRoom = (roomId) => {
+//   store.dispatch('roomModule/createUserInRoom', {
+//     userId: store.state.userModule.user.userId,
+//     roomId: roomId,
+//   })
+//     .then((result) => {
+//       if (result) {
+//         store.dispatch('roomModule/enterRoom', roomId)
+//           .then((result) => {
+//             if (result) {
+//               router.push({ name: 'wait', params: { roomId: roomId } })
+//             }
+//             else {
+//               followErrorOpen(2)
+//             }
+//           })
+//       }
+//       else {
+//         followErrorOpen(2)
+//       }
+//     })
+// }
 
 const followPrivatePopOpen = () => {
   document.getElementsByClassName("follow-private-modal-wrap")[0].style.display = 'block';

@@ -19,13 +19,11 @@ CREATE TABLE IF NOT EXISTS user (
     password VARCHAR(45) NOT NULL,
     nickname VARCHAR(45) NOT NULL,
     email VARCHAR(45) NOT NULL,
-    birthDate VARCHAR(45) NOT NULL,
-    gender VARCHAR(20) NOT NULL,
-    mannerPoint DOUBLE NULL,
-    evaluatedCount INT NULL,
+    mannerPoint DOUBLE NOT NULL DEFAULT 0,
+    evaluatedCount INT NOT NULL DEFAULT 0,
     alcoholPoint DOUBLE NOT NULL,
-    username VARCHAR(20) NOT NULL,
     refreshToken VARCHAR(255) NULL,
+    state VARCHAR(10) NOT NULL DEFAULT 'offline',
     PRIMARY KEY (userId)
     );
 

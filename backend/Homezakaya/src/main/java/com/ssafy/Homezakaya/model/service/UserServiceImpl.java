@@ -52,6 +52,7 @@ public class UserServiceImpl implements UserService {
 
         double avgMannerPoint = updateMannerPoint / (double) originUser.getEvaluatedCount();
         originUser.setMannerPoint(Math.round(avgMannerPoint * 10) / 10.0);   // 매너점수 update
+        originUser.setEvaluatedCount(1);
 
         return userDao.updateMannerPoint(originUser) == 1;
     }

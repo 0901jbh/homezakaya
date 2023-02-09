@@ -1,11 +1,13 @@
 <template>
   <div class="router-view">
+    <ErrorPopUp />
     <RouterView />
   </div>
 </template>
 
 <script setup>
 import { RouterLink, RouterView } from "vue-router";
+import ErrorPopUp from "@/views/ErrorPopUp.vue";
 import { useStore } from "vuex";
 
 const store = useStore();

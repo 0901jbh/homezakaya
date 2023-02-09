@@ -442,8 +442,8 @@ export default {
 
     leaveSession() {
       if (this.hostId == this.myUserId && this.subscribers.length > 0) {
-        console.log(this.subscribers[0]);
-        this.changeHost(this.subscribers[0].stream.streamManager.stream.connection.data.userId);
+        let data = JSON.parse(this.subscribers[0].stream.connection.data);
+        this.changeHost(data.userId);
       }
 
       // --- 7) Leave the session by calling 'disconnect' method over the Session object ---

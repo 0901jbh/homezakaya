@@ -37,7 +37,7 @@ export const roomModule = {
         return data
       }).catch(err => {
         if(err.response.status == 404){
-          console.log("노방");
+          console.log("방 만들기 실패");
         }
         return { roomId: -1 }
       });
@@ -191,6 +191,21 @@ export const roomModule = {
         }
         return -1;
       });
+    },
+
+    doEnterRoom(context, payload){
+      return context.dispatch('createUserInRoom', payload).then((result) => {
+        if (result) {
+          return context.dispatch('enterRoom', payload.roomId).then((result)=>{
+            if(result){
+              return true;
+            }
+            return false;
+          })
+        }
+        return false;
+      });
+      
     },
   }
 };

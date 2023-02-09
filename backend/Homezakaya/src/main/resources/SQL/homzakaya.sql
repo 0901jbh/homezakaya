@@ -47,12 +47,12 @@ CREATE TABLE IF NOT EXISTS friend (
 CREATE TABLE IF NOT EXISTS room (
     roomId INT AUTO_INCREMENT,
     title VARCHAR(45) NOT NULL,
-    password VARCHAR(45) NULL,
+    password VARCHAR(45) NOT NULL,
     category VARCHAR(45) NOT NULL,
     hostId VARCHAR(45) NOT NULL,
-    createdTime DATETIME NOT NULL,
     personLimit INT NOT NULL,
     personCount INT NOT NULL default 0,
+    isPrivate BOOLEAN NOT NULL,
     PRIMARY KEY (roomId),
     FOREIGN KEY (hostId) REFERENCES user (userId) on delete cascade
     );

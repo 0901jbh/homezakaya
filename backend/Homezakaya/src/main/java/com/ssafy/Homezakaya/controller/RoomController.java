@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +34,6 @@ public class RoomController {
                 return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NOT_FOUND);
             }
 
-            room.setCreatedTime(LocalDateTime.now());
             boolean res = roomService.createRoom(room);
             return new ResponseEntity<>(room, HttpStatus.CREATED);
 

@@ -5,6 +5,7 @@
     <input id="user" type="radio" name="tab_item">
     <label class="tab_item" id="tab_second" for="user">친구 찾기</label>
     <div class="tab_content" id="friend_content">
+      <FriendInviteItem v-for="(invite, idx) in data.invites " :key="idx" :invite="invite"/>
       <FriendRequestItem v-for="(request, idx) in data.requests" :key="idx" :idx="idx" :request="request" />
       <FriendItem v-for="(friend, idx) in data.friends" :key="idx" :idx="idx" :friend="friend"
         @followFriend="userInRoom" />
@@ -80,6 +81,7 @@
 
 <script setup>
 import { ref, onBeforeMount, computed } from 'vue'
+import FriendInviteItem from './FriendInviteItem.vue'
 import UserItem from './UserItem.vue'
 import FriendItem from './FriendItem.vue'
 import FriendRequestItem from './FriendRequestItem.vue'
@@ -90,6 +92,7 @@ const router = useRouter()
 
 const data = ref({
   userInput: '',
+  invites: [],
   requests: [],
   friends: [],
   searchUsers: [],
@@ -104,6 +107,7 @@ const emit = defineEmits(['followFriend'])
 data.value.requests = computed(() => store.getters["friendModule/getRequests"])
 data.value.friends = computed(() => store.getters["friendModule/getFriends"])
 data.value.searchUsers = computed(() => store.getters["friendModule/getSearchUsers"])
+data.value.invites = computed(() => store.getters["roomModule/getRequests"])
 
 const getRequests = onBeforeMount(() => {
   store.dispatch("friendModule/getRequests", store.state.userModule.user.userId)
@@ -111,6 +115,10 @@ const getRequests = onBeforeMount(() => {
 
 const getFriends = onBeforeMount(() => {
   store.dispatch("friendModule/getFriends", store.state.userModule.user.userId)
+})
+
+const getInvites = onBeforeMount(() => {
+  store.dispatch("roomModule/getInvitesList", store.state.userModule.user.userId)
 })
 
 const searchUser = () => {

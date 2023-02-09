@@ -253,7 +253,8 @@ export const roomModule = {
         if(status == 200){
           context.commit('SET_REQUESTS', data)
           // console.log(data[0].fromUserId);
-          console.log("getRequests Success");
+          console.log(data)
+          console.log("getInvites Success");
         }else if (status == 404){
           console.log("userId가 존재하지 않습니다.")
         }

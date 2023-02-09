@@ -14,28 +14,26 @@
         <div class="comment">좋은 사람들과 새로운 술자리</div>
       </div>
       <div>
-        <div class="box">
-          <el-form margin-top="10vh">
-            <el-form-item size="large">
-              <el-input v-model="data.id" placeholder="아이디" clearable />
-            </el-form-item>
-            <el-form-item size="large">
-              <el-input v-model="data.password" placeholder="비밀번호" show-password />
-            </el-form-item>
-            <el-form-item>
-              <div class="btn">
-                <el-button type="info" size="large" @click="onSubmit">로그인</el-button>
-              </div>
-            </el-form-item>
-            <div v-if="data.loginFail" style="margin-bottom: 18px; color: red;">
-              아이디와 비밀번호를 확인하세요.
+        <el-form margin-top="10vh">
+          <el-form-item size="large">
+            <el-input v-model="data.id" placeholder="아이디" clearable @keyup.enter="onSubmit" />
+          </el-form-item>
+          <el-form-item size="large">
+            <el-input v-model="data.password" placeholder="비밀번호" show-password @keyup.enter="onSubmit" />
+          </el-form-item>
+          <el-form-item>
+            <div class="btn">
+              <el-button type="info" size="large" @click="onSubmit">로그인</el-button>
             </div>
-            <div>
-              계정이 없으신가요?
-              <RouterLink to="/signup" style="text-decoration: none; color: #e27b66">회원가입</RouterLink>
-            </div>
-          </el-form>
-        </div>
+          </el-form-item>
+          <div v-if="data.loginFail" style="margin-bottom: 18px; color: red;">
+            아이디와 비밀번호를 확인하세요.
+          </div>
+          <div>
+            계정이 없으신가요?
+            <RouterLink to="/signup" style="text-decoration: none; color: #e27b66">회원가입</RouterLink>
+          </div>
+        </el-form>
       </div>
     </div>
   </div>
@@ -136,7 +134,7 @@ const clickTitle = () => {
 }
 
 .box {
-  margin-top: 10%;
+  margin-top: 15vh;
   /* padding-left: 5vw; */
   display: flex;
   justify-content: space-evenly;

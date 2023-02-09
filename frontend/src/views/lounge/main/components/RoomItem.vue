@@ -52,7 +52,7 @@
 				<div class="error-popup-header-title">Wrong Password</div>
 			</div> -->
 			<div class="error-popup-content">
-				<div class="error-sentence">비밀번호가 틀렸습니다.</div>
+				<div class="error-sentence"></div>
 				<div class="error-btn-wrapper">
 					<div class="btn">
 						<el-button type="info" size="large" @click="errorClose">확인</el-button>
@@ -82,13 +82,20 @@ const data = ref({
 })
 
 const clickRoomIcon = () => {
-	console.log(props.room);
-	if(props.room.private){
-		privatePopOpen()
+	store.dispatch("roomModule/checkValidRoom", props.room.roomId).then((status) => {
+	if(status != 200){
+		console.log(status);
+		errorOpen(status);
 	}
 	else{
-		enterRoom()
+		if(props.room.private){
+			privatePopOpen();
+		}
+		else{
+			router.push({ name: 'wait', params: { roomId: props.room.roomId } });
+		}
 	}
+	});
 }
 
 const clickEnterBtn = () => {
@@ -97,24 +104,12 @@ const clickEnterBtn = () => {
 		password: data.value.userInput,
 	}).then((result) => {
 		if (result) {
-			enterRoom()
+			router.push({ name: 'wait', params: { roomId: props.room.roomId } });
 		}
 		else {
-			errorOpen(1)
+			errorOpen(401);
 		}
 	})
-}
-
-const enterRoom = () => {
-	if(store.dispatch('roomModule/doEnterRoom',{
-		userId: store.state.userModule.user.userId,
-		roomId: props.room.roomId,
-	})){
-		router.push({ name: 'wait', params: { roomId: props.room.roomId } })
-	}
-	else{
-		errorOpen(2);
-	}
 }
 
 const privatePopOpen = () => {
@@ -128,15 +123,17 @@ const privatePopClose = () => {
 	data.value.userInput = '';
 }
 
-const errorOpen = (state) => {
+const errorOpen = (status) => {
 	// let titleTag = document.getElementsByClassName("error-popup-header-title")[props.idx];
 	let sentenceTag = document.getElementsByClassName("error-sentence")[props.idx];
-	if (state == 1) {
+	if (status == 401) {
 		// titleTag.innerHTML = "Wrong Password";
 		sentenceTag.innerHTML = "비밀번호가 틀렸습니다.";
-	} else {
+	} else if(status == 404) {
 		// titleTag.innerHTML = "Refuse Enter Room";
-		sentenceTag.innerHTML = "입장에 실패했습니다.";
+		sentenceTag.innerHTML = "해당 방을 찾을 수 없습니다.";
+	} else if(status == 409){
+		sentenceTag.innerHTML = "방 인원이 가득 찼습니다.";
 	}
 	document.getElementsByClassName("error-modal-wrap")[props.idx].style.display = 'block';
 	document.getElementsByClassName("error-modal-bg")[props.idx].style.display = 'block';
@@ -147,18 +144,6 @@ const errorClose = () => {
 	document.getElementsByClassName("error-modal-bg")[props.idx].style.display = 'none';
 	data.value.userInput = '';
 }
-
-// const secret = ref()
-
-// onMounted(() => {
-// 	store.dispatch("roomModule/checkPassword", {
-// 		roomId: props.room.roomId,
-// 		password: "",
-// 	}).then((result) => {
-// 		secret.value = result
-// 	});
-// });
-
 </script>
 
 <style scoped>

@@ -519,6 +519,7 @@ export default {
                   `If no certificate warning is shown, then check that your OpenVidu Server is up and running at "${OPENVIDU_SERVER_URL}"`
               )
             ) {
+              
               window.location.assign(`${OPENVIDU_SERVER_URL}/accept-certificate`);
             }
           });
@@ -742,7 +743,6 @@ export default {
     this.store.dispatch("gameModule/getSentence");
     this.store.dispatch("gameModule/getTopic");
     
-    console.log(this.$route.query.video);
     this.joinSession();
   },
 

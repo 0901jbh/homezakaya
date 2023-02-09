@@ -31,8 +31,7 @@ export const roomModule = {
     createRoom(context, payload){
       return axios.post(`/api/rooms`, payload).then(({ status, data }) => {
         if(status == 201){
-          context.dispatch("getRooms");
-          // context.commit("SET_ROOM", data);
+          context.commit("SET_ROOM", data);
         }
         return data
       }).catch(err => {
@@ -59,15 +58,14 @@ export const roomModule = {
     getRoom(context, payload){
       return axios.get(`/api/rooms/${payload}`).then(({ status, data }) => {
         if(status == 200){
-          console.log(data);
           context.commit("SET_ROOM", data);
         }
-        return data
+        return data;
       }).catch(err => {
         if(err.response.status == 404){
           console.log("노방");
         }
-        return { message: "없는방입니다." }
+        return null;
       });
     },
     // 비공개방 비밀번호 확인
@@ -90,12 +88,10 @@ export const roomModule = {
     // 방 입장
     enterRoom(context, payload){
       return axios.put(`api/rooms/${payload}/enter`).then(({ status, data }) => {
-        console.log(payload)
         if(status == 200){
           console.log("입장 성공");
-          context.dispatch("getRooms");
         }
-        return true
+        return status;
       }).catch(err => {
         if(err.response.status == 404){
           console.log("노방");
@@ -103,7 +99,7 @@ export const roomModule = {
         else if(err.response.status == 409){
           console.log("풀방");
         }
-        return false
+        return err.response.status;
       });
     },
     // 방 퇴장
@@ -122,7 +118,6 @@ export const roomModule = {
       }).catch(err => {
         if(err.response.status == 404){
           console.log("노방");
-          console.log(payload)
         }
         return false
       });
@@ -155,17 +150,16 @@ export const roomModule = {
       return axios.post(`api/userinroom`, payload).then(({ status, data }) => {
         if(status == 201){
           console.log("createUserInRoom Success");
+          return status;
         }
-        return true
       }).catch(err => {
         if(err.response.status == 404){
-          console.log(err.response.data);
           console.log("노방");
         }
         else if(err.response.status == 409){
           console.log("이미 참여중인 유저입니다.");
         }
-        return false
+        return err.response.status;
       });
     },
     removeUserInRoom(context, payload){
@@ -193,19 +187,39 @@ export const roomModule = {
       });
     },
 
-    doEnterRoom(context, payload){
-      return context.dispatch('createUserInRoom', payload).then((result) => {
-        if (result) {
-          return context.dispatch('enterRoom', payload.roomId).then((result)=>{
-            if(result){
-              return true;
-            }
-            return false;
-          })
+    checkValidRoom(context, payload){
+      const room = context.dispatch("getRoom", payload);
+      if(room){
+        if(room.personCount >= room.personLimit){
+          return 409;
         }
-        return false;
+        return 200;
+      }
+      return 404;
+    },
+
+    doEnterRoom(context, payload){
+      return context.dispatch("checkValidRoom", payload.roomId).then((status) => {
+        if(status != 200){
+          return status;
+        }
+        else{
+          return context.dispatch('createUserInRoom', payload).then((result) => {
+            if (result == 201) {
+              return context.dispatch('enterRoom', payload.roomId).then((result)=>{
+                if(result != 200){
+                  context.dispatch('deleteUserInRoom', payload.userId);
+                }
+                return result;
+              });
+            }
+            else if(result == 409){
+              return 401;
+            }
+            return 404;
+          });
+        }
       });
-      
     },
   }
 };

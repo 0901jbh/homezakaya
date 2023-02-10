@@ -23,7 +23,7 @@ const startBtn = () => {
   //     store.dispatch("roomModule/removeUserInRoom", store.state.userModule.user.userId)
   //   }
   // })
-   store.dispatch("userModule/findPassword", form);
+   store.dispatch("roomModule/getInvitesList", "dubi");
 };
 </script>
 

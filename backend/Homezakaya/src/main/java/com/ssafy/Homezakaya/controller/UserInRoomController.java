@@ -128,10 +128,13 @@ public class UserInRoomController {
         Map<String, Object> resultMap = new HashMap<>();
         List<String> invitesFromUser = inviteFriendService.getInvites(toUserId);
 
+        System.out.println(invitesFromUser.toString());
+        System.out.println(invitesFromUser);
+
         try {
-            if (invitesFromUser.isEmpty()) {
+            if (invitesFromUser.size() == 0) {
                 resultMap.put("message", "받은 초대가 없습니다.");
-                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NOT_FOUND);   // 404
+                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NO_CONTENT);   // 204
             } else {
                 return new ResponseEntity<List<String>>(invitesFromUser, HttpStatus.OK);
             }

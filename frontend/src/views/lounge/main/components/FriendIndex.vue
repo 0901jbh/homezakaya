@@ -106,7 +106,7 @@ const userInRoom = (userId) => {
           store.commit("errorModule/SET_STATUS", status);
         }
         else{
-          const room = store.state.roomModule.room.find(r => r.roomId == data.value.followRoomId);
+          const room = store.state.roomModule.rooms.find(r => r.roomId == data.value.followRoomId);
           if(room.private){
             followPrivatePopOpen();
           }

@@ -123,41 +123,36 @@ export const roomModule = {
         })
     },
     // 방 퇴장
-    quitRoom(context, payload) {
-      return axios
-        .put(`api/rooms/${payload}/quit`)
-        .then(({ status, data }) => {
-          if (status == 200) {
-            console.log("quitRoom Success")
-            if (data.personCount == 0) {
-              context.dispatch("removeRoom", payload)
-            }
-            // else {
-            //   context.dispatch("getRooms");
-            // }
-            return true
+    quitRoom(context, payload){
+      return axios.put(`api/rooms/${payload}/quit`).then(({ status, data }) => {
+        if(status == 200){
+          console.log("방 나가기 성공");
+          if(data.personCount <= 0){
+            context.dispatch("removeRoom", payload)
           }
-        })
-        .catch((err) => {
-          if (err.response.status == 404) {
-            console.log("노방")
-          }
-          return false
-        })
+          // else {
+          //   context.dispatch("getRooms");
+          // }
+          return true
+        }
+      }).catch(err => {
+        if(err.response.status == 404){
+          console.log("노방");
+        }
+        console.log("방 나가기 실패");
+        return false
+      });
     },
-    changeHost(context, payload) {
-      axios
-        .put(`api/rooms/${payload.roomId}/host`, payload.hostId)
-        .then(({ status }) => {
-          if (status == 200) {
-            console.log("방장 변경 성공!")
-          }
-        })
-        .catch((err) => {
-          if (err.response.status == 404) {
-            console.log("방이 없거나 유저가 없다.")
-          }
-        })
+    changeHost(context, payload){
+      axios.put(`api/rooms/${payload.roomId}/host`, payload).then(({ status }) => {
+        if(status == 200){
+          console.log("방장 변경 성공!");
+        }
+      }).catch(err => {
+        if(err.response.status == 404){
+          console.log("방이 없거나 유저가 없다.");
+        }
+      });
     },
     // 방 삭제
     removeRoom(context, payload) {
@@ -193,19 +188,17 @@ export const roomModule = {
           return err.response.status
         })
     },
-    removeUserInRoom(context, payload) {
-      axios
-        .delete(`api/userinroom/${payload}`)
-        .then(({ status, data }) => {
-          if (status == 204) {
-            console.log("유저인룸 삭제 성공")
-          }
-        })
-        .catch((err) => {
-          if (err.response.status == 404) {
-            console.log("이 유저는 현재 참여중인 방이 없습니다.")
-          }
-        })
+    removeUserInRoom(context, payload){
+      axios.delete(`api/userinroom/${payload}`).then(({ status, data }) => {
+        if(status == 204){
+          console.log("유저인룸 삭제 성공");
+        }
+      }).catch(err => {
+        if(err.response.status == 404){
+          console.log("이 유저는 현재 참여중인 방이 없습니다.");
+        }
+        console.log("유저인룸 삭제 실패");
+      });
     },
     getRoomId(context, payload) {
       return axios
@@ -286,26 +279,24 @@ export const roomModule = {
     },
 
     // 초대한 유저 id만 조회 (fromUser) "xx님이 초대 요청을 보냈습니다." - ok
-    getInvitesList(context, payload) {
-      axios
-        .get(`api/userinroom/invite/${payload}`)
-        .then(({ status, data }) => {
-          if (status == 200) {
-            context.commit("SET_REQUESTS", data)
-            // console.log(data[0].fromUserId);
-            console.log(data)
-            console.log("getInvites Success")
-          }
-        })
-        .catch((err) => {
+    getInvitesList(context, payload){
+      axios.get(`api/userinroom/invite/${payload}`).then(({ status, data }) => {
+        console.log(status)
+        if(status == 200){
+          context.commit('SET_REQUESTS', data)
+          // console.log(data[0].fromUserId);
+          console.log("getRequests Success");
+        }else if (status == 204){
+          context.commit('SET_REQUESTS', [])
+          // console.log(data)
+          console.log("userId가 존재하지 않습니다.")
+        }
+        else if (status == 500){
+          console.log("그 외 서버 관련 에러")
+        }
+      }).catch((err) => {
           console.log(err)
-          if (err.response.status == 404) {
-            console.log("userId가 존재하지 않습니다.")
-            context.commit("SET_REQUESTS", [])
-          } else if (err.response.status == 500) {
-            console.log("그 외 서버 관련 에러")
-          }
-        })
+      });
     },
 
     // 방으로 친구 초대 거절(초대 정보 삭제) - ok

@@ -224,8 +224,8 @@ export const userModule = {
         .get(`/api/users/logout/${payload}`)
         .then(({ status, data }) => {
           if (status == 200) {
-            context.commit("SET_IS_LOGIN", false)
             context.commit("SET_USER_INFO", {})
+            context.commit("SET_IS_LOGIN", false)
             context.commit("SET_IS_VALID_TOKEN", false)
 
             sessionStorage.clear()

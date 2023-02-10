@@ -67,6 +67,8 @@ export default {
 		streamManager: Object,
 		myVideo: Boolean,
 		isHostView: Boolean,
+		hostId: String,
+		friends: Array,
 	},
 
 	data() {
@@ -91,12 +93,12 @@ export default {
 		},
 		isHost() {
 			const clientData = this.getConnectionData();
-			return clientData.hostId == clientData.userId;
+			return this.hostId == clientData.userId;
 		},
 		isFriend() {
 			const clientData = this.getConnectionData();
-			if(clientData.friends != undefined)
-				return clientData.friends.includes(clientData.userId);
+			if(this.friends != undefined)
+				return this.friends.includes(clientData.userId);
 			else
 				return false;
 		},

@@ -6,7 +6,7 @@
     <div class="wrapper">
       <div class="signup-title">회원 정보 수정</div>
       <div class="signup-form">
-        <el-form :model="form" label-width="0px">
+        <el-form label-width="0px">
 
           <div>아이디</div>
           <el-form-item>
@@ -349,13 +349,13 @@ const onDelete = async () => {
           confirmButtonText: "OK",
           cancelButtonText: "Cancel",
         })
-          .then(({ value }) => {
+          .then(async () => {
             ElMessage({
               type: "success",
               message: `탈퇴 완료되었습니다..`,
             });
-            store.dispatch("userModule/userLogout", data.value.id);
-            store.dispatch("userModule/removeUser", data.value.id);
+            // store.dispatch("userModule/userLogout", data.value.id);
+            await store.dispatch("userModule/removeUser", data.value.id)
             router.push({ name: "home" });
           })
           .catch(() => {

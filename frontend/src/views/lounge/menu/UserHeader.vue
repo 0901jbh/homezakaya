@@ -8,7 +8,7 @@
       <template #reference>
         <!-- <img src="@/assets/images/profile.png" alt="profile img"
           style="width:60px; height:60px; padding-right: 1vw; cursor:pointer;"> -->
-        <div style="color: white; padding-right: 2vw; font-size: 30px; font-family: hansans; cursor: pointer;">
+        <div style="color: white; padding-right: 2vw; font-size: 30px; font-family: hansans; cursor: pointer;" @click="refreshData">
           오늘도 즐거운 술자리, {{ data.nickname }}님!
         </div>
       </template>
@@ -48,6 +48,7 @@ const store = useStore();
 const router = useRouter();
 
 const data = ref({
+  userId: store.state.userModule.user.userId,
   nickname: store.state.userModule.user.nickname,
   alcoholPoint: store.state.userModule.user.alcoholPoint,
   mannerPoint : parseFloat(store.state.userModule.user.mannerPoint.toFixed(2)),
@@ -62,7 +63,15 @@ const logout = async () => {
     "userModule/userLogout",
     store.state.userModule.user.userId
   );
+  console.log(store.state.userModule.isLogin)
   router.push({ name: "home" });
+};
+const refreshData = () =>{
+  console.log("갱신 시작");
+  store.dispatch("userModule/getUserPoint",data.value.userId).then((response) =>{
+				data.value.mannerPoint = parseFloat(response.mannerPoint.toFixed(2));
+				data.value.alcoholPoint = response.alcoholPoint;
+			});
 };
 </script>
 

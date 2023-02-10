@@ -12,9 +12,10 @@
           'under-six': this.headCount == 5 || this.headCount == 6,
           'under-eight': this.headCount == 7 || this.headCount == 8,
         }">
-          <user-video class="video" :streamManager="publisher" :myVideo="true" />
+          <user-video class="video" :streamManager="publisher" :myVideo="true" :isHostView="hostId == myUserId" :hostId="hostId" @checkDrunk="checkDrunk"/>
           <user-video class="video" v-for="sub in subscribers" :key="sub.stream.connection.connectionId"
-            :streamManager="sub" :myVideo="false" :isHostView="hostId == myUserId" @kickUser="kickUser" @changeHost="changeHost" @friendRequest="friendRequest" />
+            :streamManager="sub" :myVideo="false" :isHostView="hostId == myUserId" :hostId="hostId" :friends="friends"
+            @kickUser="kickUser" @changeHost="changeHost" @friendRequest="friendRequest" @checkDrunk="checkDrunk"/>
         </div>
         <div class="game-chatting-container">
           <Transition>
@@ -262,7 +263,7 @@ export default {
       if (value) {
         this.session.signal({
           //말할 문장, 말한 문장 담아서 보내기
-          data: JSON.stringify({ sentence: this.store.state.gameModule.sentence, speech: this.store.state.gameModule.texts }),
+          data: JSON.stringify({ content: this.store.state.gameModule.sentence, strPerson: this.store.state.gameModule.texts }),
           type: 'detect-audio'
         })
           .then(() => {
@@ -389,12 +390,13 @@ export default {
         setTimeout(() => {this.gameScreenClose()}, 3000);
       })
 
-      this.session.on('signal:not-drunk', (event) => {
+      this.session.on('signal:check-drunk', (event) => {
         this.gameStatus = 2
         this.gameScreenOpen(2)
         this.eventData = JSON.parse(event.data);
-        console.log(this.eventData.username + "님 말 할 준비 하세용");
-        console.log(this.store.state.gameModule.sentence);
+        this.gameContent = `${this.eventData.username}님 말 할 준비!`;
+        setTimeout(() => {},3000);
+        this.gameContent = this.store.state.gameModule.sentence;
         if (this.eventData.username == this.myUserName) {
           this.store.dispatch("gameModule/getSpeech");
         }
@@ -402,8 +404,12 @@ export default {
 
       this.session.on('signal:detect-audio', (event) => {
         this.eventData = JSON.parse(event.data);
-        console.log(this.eventData.sentence + "이 문장을 발음한 결과");
-        console.log(this.eventData.speech + "이것입니다.");
+        this.gameContent = `기준 문장 : ${this.eventData.content}\n발음 문장 : ${this.eventData.strPerson}`;
+        setTimeout(() => {},3000);
+        this.store.dispatch("gameModule/getAccuracy", this.eventData).then((response) => {
+          this.gameContent = `정확도 : ${response}`;
+        });
+        setTimeout(() => {this.gameScreenClose()}, 3000);
       })
 
       this.session.on('signal:random-topic', (event) => {
@@ -416,8 +422,7 @@ export default {
 
       this.session.on('signal:kick', (event) => {
         this.eventData = JSON.parse(event.data);
-        console.log(this.eventData.username);
-        if (this.eventData.username == this.myUserName) {
+        if (this.eventData.userId == this.myUserId) {
           this.exitBtn();
           this.store.commit("errorModule/SET_STATUS", 405);
         }
@@ -438,7 +443,7 @@ export default {
       this.getToken(this.mySessionId).then((token) => {
         // First param is the token. Second param can be retrieved by every user on event
         // 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
-        this.session.connect(token, { userId: this.myUserId, username: this.myUserName, hostId: this.hostId, friends: this.friends })
+        this.session.connect(token, { userId: this.myUserId, username: this.myUserName})
           .then(() => {
 
             // --- 5) Get your own camera stream with the desired properties ---
@@ -461,7 +466,6 @@ export default {
             this.publisher = publisher;
 
             // --- 6) Publish your stream ---
-
             this.session.publish(this.publisher);
           })
           .catch((error) => {
@@ -483,7 +487,6 @@ export default {
           }
         })
 
-      console.log("!!!!!!!!!!!!!!!!!");
       // --- 7) Leave the session by calling 'disconnect' method over the Session object ---
       if (this.session) this.session.disconnect();
 
@@ -647,19 +650,6 @@ export default {
               console.error(error);
             })
           break;
-        case 2:
-          this.session.signal({
-            //체크할 닉네임 보내기
-            data: JSON.stringify({ username: this.myUserName }),
-            type: 'not-drunk'
-          })
-            .then(() => {
-              console.log('나안취했어 시작');
-            })
-            .catch(error => {
-              console.error(error);
-            })
-          break;
         case 3:
           this.session.signal({
             data: JSON.stringify({ topic: this.store.state.gameModule.topic }),
@@ -743,6 +733,19 @@ export default {
       }
     },
 
+    checkDrunk(username){
+      this.session.signal({
+        data: JSON.stringify({ username: username }),
+        type: 'check-drunk'
+      })
+        .then(() => {
+          console.log('안취했어 시작!');
+        })
+        .catch(error => {
+          console.error(error);
+        })
+    },
+
     kickUser(username) {
       this.session.signal({
         data: JSON.stringify({ username: username }),
@@ -771,9 +774,11 @@ export default {
 
     gameScreenOpen(idx){
       this.gameIdx = idx;
+      if(!this.gameStart){
+        this.gameStart = true;
+        document.getElementById("chatting-container").id="chatting-container-small";
+      }
       this.gameTitle = this.games[idx];
-      this.gameStart = true;
-      document.getElementById("chatting-container").id="chatting-container-small";
     },
 
     gameScreenErase() {
@@ -784,8 +789,10 @@ export default {
 
     async gameScreenClose(){
       await this.gameScreenErase();
-      this.gameStart = false;
-      document.getElementById("chatting-container-small").id="chatting-container";
+      if(this.gameStart){
+        this.gameStart = false;
+        document.getElementById("chatting-container-small").id="chatting-container";
+      }
     },
 
 

@@ -31,6 +31,9 @@
 					<div v-if="!myVideo && !isFriend" @click="friend" class="content" style="width: 60%; text-decoration:none;">
 						친구 추가
 					</div>
+					<div v-if="isHostView" @click="drunk" class="content" style="width: 60%; text-decoration:none;">
+						나 안 취했어
+					</div>
 					<div v-if="!myVideo && isHostView" @click="host" class="content" style="width: 60%; text-decoration:none;">
 						방장 변경
 					</div>
@@ -67,6 +70,8 @@ export default {
 		streamManager: Object,
 		myVideo: Boolean,
 		isHostView: Boolean,
+		hostId: String,
+		friends: Array,
 	},
 
 	data() {
@@ -91,12 +96,12 @@ export default {
 		},
 		isHost() {
 			const clientData = this.getConnectionData();
-			return clientData.hostId == clientData.userId;
+			return this.hostId == clientData.userId;
 		},
 		isFriend() {
 			const clientData = this.getConnectionData();
-			if(clientData.friends != undefined)
-				return clientData.friends.includes(clientData.userId);
+			if(this.friends != undefined)
+				return this.friends.includes(clientData.userId);
 			else
 				return false;
 		},
@@ -117,18 +122,22 @@ export default {
 				this.alcoholPoint = response.alcoholPoint;
 			});
 		},
+		friend(){
+			this.$emit('friendRequest', this.userId);
+		},
+		drunk(){
+			this.$emit('checkDrunk', this.username);
+		},
 		kick() {
 			this.$emit('kickUser', this.username);
 		},
 		host() {
 			this.$emit('changeHost', this.userId);
 		},
-		friend(){
-			this.$emit('friendRequest', this.userId);
-		},
 		evalMannerPoint(){
 			console.log("manner rate :" + this.manner_rate);
 			this.store.dispatch("userModule/updateMannerPoint",{userId : this.userId, mannerPoint : this.manner_rate});
+			this.store.commit("errorModule/SET_STATUS", 405);
 		}
 
 

@@ -6,21 +6,26 @@
     <div class="wrapper">
       <div class="id-title">아이디 찾기</div>
       <div class="id-form">
-        <el-form :model="form" label-width="0px">
+        <el-form label-width="0px">
+
           <div v-if="data.emailNull" style="color: red;">이메일을 입력해주세요.</div>
-          <div v-else-if="data.emailUnchecked" style="color: red;">이메일 인증을 해주세요.</div>
+          <div v-else-if="data.emailErr" style="color: red;">이메일이 존재하지 않습니다.</div>
           <div v-else>이메일</div>
           <el-form-item>
             <el-input v-model="data.email" placeholder="이메일" clearable>
-              <template #append>
-                <el-button @click="emailsend" style="color:white;">메일인증</el-button>
-              </template>
             </el-input>
           </el-form-item>
+
+          <el-form-item>
+            <el-button type="info" size="large" @click="emailsend" style="width: 300px;">
+              아이디 찾기
+            </el-button>
+          </el-form-item>
+
         </el-form>
       </div>
-      <div class="id-result">
-        당신의 아이디는 뭐시기 입니다.
+      <div v-if="data.emailChecked" class="id-result">
+        당신의 아이디는 {{ data.id }} 입니다.
       </div>
     </div>
   </div>
@@ -44,11 +49,14 @@ const data = ref({
 
   // email 관련 data
   emailNull: false,
+  emailErr: false,
   emailChecked: false,
   emailUnchecked: false,
 
   email: "",
   emailCode: "",
+
+  id: "",
 });
 
 watch(() => data.value.email, (newValue, oldValue) => {
@@ -65,33 +73,37 @@ const emailsend = async () => {
     data.value.emailNull = false
     const form = new FormData();
     form.append("email", data.value.email);
-    await store.dispatch("userModule/sendEmail", form);
-    console.log("email send!");
-    ElMessageBox.prompt("인증번호를 입력해주세요.", "메일인증", {
-      confirmButtonText: "OK",
-      cancelButtonText: "Cancel",
-    })
-      .then(({ value }) => {
-        if (value == store.state.userModule.user.emailCode) {
-          console.log("email confirm!");
-          ElMessage({
-            type: "success",
-            message: `인증되었습니다.`,
-          });
-          data.value.emailChecked = true;
-        } else {
-          ElMessage({
-            type: "error",
-            message: "인증이 실패했습니다.",
-          });
-        }
+    await store.dispatch("userModule/findId", form);
+    data.value.emailErr = store.state.userModule.emailErr
+    if (data.value.emailErr == false) {
+      ElMessageBox.prompt("인증번호를 입력해주세요.", "메일인증", {
+        confirmButtonText: "OK",
+        cancelButtonText: "Cancel",
       })
-      .catch(() => {
-        ElMessage({
-          type: "info",
-          message: "입력이 취소되었습니다.",
+        .then(({ value }) => {
+          if (value == store.state.userModule.user.emailCode) {
+            console.log("email confirm!");
+            ElMessage({
+              type: "success",
+              message: `인증되었습니다.`,
+            });
+            data.value.id = store.state.userModule.user.userId
+            data.value.emailChecked = true;
+          } else {
+            ElMessage({
+              type: "error",
+              message: "인증이 실패했습니다.",
+            });
+          }
+        })
+        .catch(() => {
+          ElMessage({
+            type: "info",
+            message: "입력이 취소되었습니다.",
+          });
         });
-      });
+    }
+    console.log("email send!");
   }
 };
 

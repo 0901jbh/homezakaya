@@ -138,17 +138,19 @@ export const gameModule = {
     },
     // 정확도 검사
     getAccuracy(context, payload) {
-      axios
+      return axios
       .post(`api/games/accuracy`, payload)
       .then(({ status, data }) => {
         if (status == 200) {
           console.log("정확도:",data.accuracy,"%");
+          return data.accuracy + "%";
         }
       })
       .catch((err) => {
         if (err.status == 500) {
           console.log("500 에러");
         }
+        return "X";
       });
     },
   }

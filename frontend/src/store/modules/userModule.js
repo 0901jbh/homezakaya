@@ -39,7 +39,6 @@ export const userModule = {
       state.isValidToken = isValidToken
     },
     SET_USER_INFO: (state, user) => {
-      state.isLogin = true
       state.user = user
     },
     SET_ID_ERR: (state, idErr) => {
@@ -111,8 +110,8 @@ export const userModule = {
     },
 
     // email 인증
-    sendEmail(context, payload) {
-      axios
+    async sendEmail(context, payload) {
+      await axios
         .post(`/api/users/login/mailConfirm`, payload)
         .then(({ status, data }) => {
           if (status == 200) {
@@ -135,30 +134,39 @@ export const userModule = {
     },
 
     // id 찾기 (email 입력 - id 찾기용 email 인증 같이 써줘야 함) ok
-    findId(context, payload){
-      axios.post(`/api/users/login/findId`, payload).then(({status,data}) =>{
-        if (status == 200) {
-          console.log(data) // userId, emailCode
-          context.commit("SET_USER_INFO", data) //user에 저장(찾아온 id만)
-        } else if(status == 500){
-          console.log("이메일 정보가 일치하지 않습니다")
-        }
-      }).catch((err) => {
+    findId(context, payload) {
+      axios
+        .post(`/api/users/login/findId`, payload)
+        .then(({ status, data }) => {
+          if (status == 200) {
+            console.log(data) // userId, emailCode
+            context.commit("SET_USER_INFO", data) //user에 저장(찾아온 id만)
+            context.commit("SET_EMAIL_ERR", false)
+          } else if (status == 500) {
+            console.log("이메일 정보가 일치하지 않습니다")
+            context.commit("SET_EMAIL_ERR", true)
+          }
+        })
+        .catch((err) => {
           console.log(err)
-      })
+          context.commit("SET_EMAIL_ERR", true)
+        })
     },
 
     // pw 찾기 (userId, email 입력) - ok
-    findPassword(context, payload){
-      axios.post(`/api/users/login/findPassword`, payload).then(({status,data}) =>{
-        if (status == 200) {
-          console.log(data)
-          console.log("임시 비밀번호 발급 완료!! 비밀번호를 변경해 주세요")
-        }
-      }).catch((err) => {
-        console.log("아이디 or 이메일 정보가 일치하지 않습니다")
-        console.log(err)
-      })
+    findPassword(context, payload) {
+      axios
+        .post(`/api/users/login/findPassword`, payload)
+        .then(({ status, data }) => {
+          if (status == 200) {
+            console.log(data)
+            console.log("임시 비밀번호 발급 완료!! 비밀번호를 변경해 주세요")
+          }
+        })
+        .catch((err) => {
+          console.log("아이디 or 이메일 정보가 일치하지 않습니다")
+          console.log(err)
+        })
     },
 
     // 회원 가입 - ok
@@ -229,8 +237,20 @@ export const userModule = {
     async userLogout(context, payload) {
       await axios
         .get(`/api/users/logout/${payload}`)
-        .then(({ status, data }) => {
+        .then(async ({ status, data }) => {
           if (status == 200) {
+            await axios
+              .delete(`api/userinroom/${payload}`)
+              .then(({ status, data }) => {
+                if (status == 204) {
+                  console.log("유저인룸 삭제 성공")
+                }
+              })
+              .catch((err) => {
+                if (err.response.status == 404) {
+                  console.log("이 유저는 현재 참여중인 방이 없습니다.")
+                }
+              })
             context.commit("SET_USER_INFO", {})
             context.commit("SET_IS_LOGIN", false)
             context.commit("SET_IS_VALID_TOKEN", false)
@@ -245,7 +265,6 @@ export const userModule = {
         .catch((err) => {
           if (err.response.status == 401) {
             console.log("로그아웃 실패")
-       
           }
         })
     },
@@ -265,14 +284,16 @@ export const userModule = {
               console.error("Failed to retrieve user information")
             }
           })
-          async(err) => {
-            console.log("토큰이 만료되어 사용 불가")
-            commit("SET_IS_VALID_TOKEN", false);
-            await context.dispatch("tokenRegeneration", sessionStorage.getItem("access-token"))
-          }
-        ;
-    }
-  },
+        ;async (err) => {
+          console.log("토큰이 만료되어 사용 불가")
+          commit("SET_IS_VALID_TOKEN", false)
+          await context.dispatch(
+            "tokenRegeneration",
+            sessionStorage.getItem("access-token")
+          )
+        }
+      }
+    },
 
     // token refresh
     async tokenRegeneration(context, payload) {
@@ -304,15 +325,15 @@ export const userModule = {
                   console.log("리프레시 토큰 제거 실패")
                 }
                 alert("RefreshToken 기간 만료!!! 다시 로그인해 주세요.")
-                context.commit("SET_IS_LOGIN", false)
                 context.commit("SET_USER_INFO", {})
+                context.commit("SET_IS_LOGIN", false)
                 context.commit("SET_IS_VALID_TOKEN", false)
                 router.push({ name: "login" })
               },
               (error) => {
                 console.log(error)
-                context.commit("SET_IS_LOGIN", false)
                 context.commit("SET_USER_INFO", {})
+                context.commit("SET_IS_LOGIN", false)
               }
             )
           }
@@ -335,13 +356,25 @@ export const userModule = {
     },
 
     // 회원 탈퇴 (db에서 삭제) - ok
-    removeUser(context, payload) {
-      axios
+    async removeUser(context, payload) {
+      await axios
         .delete(`/api/users/${payload}`)
-        .then(({ status, data }) => {
+        .then(async ({ status, data }) => {
           if (status == 200) {
-            context.commit("SET_IS_LOGIN", false)
+            await axios
+              .delete(`api/userinroom/${payload}`)
+              .then(({ status, data }) => {
+                if (status == 204) {
+                  console.log("유저인룸 삭제 성공")
+                }
+              })
+              .catch((err) => {
+                if (err.response.status == 404) {
+                  console.log("이 유저는 현재 참여중인 방이 없습니다.")
+                }
+              })
             context.commit("SET_USER_INFO", {})
+            context.commit("SET_IS_LOGIN", false)
             context.commit("SET_IS_VALID_TOKEN", false)
 
             sessionStorage.clear()

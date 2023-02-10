@@ -63,6 +63,7 @@ const logout = async () => {
     "userModule/userLogout",
     store.state.userModule.user.userId
   );
+  console.log(store.state.userModule.isLogin)
   router.push({ name: "home" });
 };
 const refreshData = () =>{

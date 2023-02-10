@@ -90,7 +90,7 @@ const form = ref({
 
 const createRoom = () => {
 	let isPrivate = true;
-	if(form.value.private == "공개"){
+	if (form.value.private == "공개") {
 		isPrivate = false;
 		form.value.password = '';
 	}
@@ -106,9 +106,13 @@ const createRoom = () => {
 		store.dispatch('roomModule/doEnterRoom', {
 			userId: store.state.userModule.user.userId,
 			roomId: result.roomId,
-		}).then((result) => {
-			if (result) {
-				router.push({ name: 'room', params: { roomId: form.value.roomId }, query: {video: false, audio: false} });
+		}).then((status) => {
+			if(status == 200){
+				router.push({ name: 'room', params: { roomId: form.value.roomId }, query: { video: false, audio: false } })
+			}
+			else{
+				popClose();
+				store.commit("errorModule/SET_STATUS", status);
 			}
 		})
 	});
@@ -145,6 +149,11 @@ const passwordClose = () => {
 @font-face {
 	font-family: 'hansans';
 	src: url('@/assets/fonts/BlackHanSans-Regular.ttf')
+}
+
+@font-face {
+	font-family: "dodum";
+	src: url("@/assets/fonts/GowunDodum-Regular.ttf");
 }
 
 .rooms-container {
@@ -262,10 +271,9 @@ const passwordClose = () => {
 
 .popup-header-title {
 	color: black;
-	font-size: 2rem;
-	font-family: 'hansans';
-	padding: 0 5%;
-	padding-top: 1%;
+	font-size: 1.5rem;
+	font-family: 'dodum';
+	padding: 1% 5%;
 }
 
 .passwordInput {

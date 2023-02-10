@@ -3,11 +3,8 @@
     <RouterLink to="/rooms" style="text-decoration: none">
       <div class="title">Homezakaya</div>
     </RouterLink>
-    <el-popover
-      :width="300"
-      popper-style="background: #252836; border: solid 2px #e27b66; padding: 20px;"
-      trigger="click"
-    >
+    <el-popover :width="300" popper-style="background: #252836; border: solid 2px #e27b66; padding: 20px;"
+      trigger="click">
       <template #reference>
         <!-- <img src="@/assets/images/profile.png" alt="profile img"
           style="width:60px; height:60px; padding-right: 1vw; cursor:pointer;"> -->
@@ -30,20 +27,12 @@
             <img src="@/assets/images/alcohol_w.png" alt="alcohol_w img" style="width:40px; height:40px;">
             <p style="margin: 0; font-size: 20px; color: white; align-self:center;">알콜 도수는 {{ data.alcoholPoint }}잔</p>
           </div>
-          <RouterLink
-            class="MyInfo_edit content"
-            to="/edit"
-            style="text-decoration: none"
-          >
+          <div class="MyInfo_edit content" @click="edit">
             정보수정
-          </RouterLink>
-          <RouterLink
-            class="MyInfo_logout content"
-            to="/"
-            style="text-decoration: none"
-          >
-            <el-button @click="logout">로그아웃</el-button>
-          </RouterLink>
+          </div>
+          <div class="MyInfo_logout content" @click="logout">
+            로그아웃
+          </div>
         </div>
       </template>
     </el-popover>
@@ -53,18 +42,27 @@
 <script setup>
 import { ref } from "vue";
 import { useStore } from "vuex";
+import { useRouter } from "vue-router";
+
 const store = useStore();
+const router = useRouter();
+
 const data = ref({
   nickname: store.state.userModule.user.nickname,
-  mannerPoint: store.state.userModule.user.mannerPoint,
   alcoholPoint: store.state.userModule.user.alcoholPoint,
+  mannerPoint : parseFloat(store.state.userModule.user.mannerPoint.toFixed(2)),
 });
+
+const edit = async () => {
+  router.push({ name: "edit" });
+};
 
 const logout = async () => {
   await store.dispatch(
     "userModule/userLogout",
     store.state.userModule.user.userId
   );
+  router.push({ name: "home" });
 };
 </script>
 
@@ -121,5 +119,7 @@ const logout = async () => {
   background: #e27b66;
   box-shadow: 0px -0x 15px #e27b66;
   border-radius: 53px;
+
+  cursor: pointer;
 }
 </style>

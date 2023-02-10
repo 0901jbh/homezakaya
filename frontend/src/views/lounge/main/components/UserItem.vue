@@ -57,21 +57,27 @@ function userState() {
   }
 }
 
+const isFriend = ref(false)
+
+const setFriend = () => {
+  props.friends.some(function (element) {
+    if (props.user.userId == element.userId) {
+      isFriend.value = true
+      return true
+    }
+  });
+}
+
 onMounted(() => {
   userState()
+  setFriend()
 })
 
 onUpdated(() => {
   userState()
+  setFriend()
 })
 
-const isFriend = ref(false)
-props.friends.some(function (element) {
-  if (props.user.userId == element.userId) {
-    isFriend.value = true
-    return true
-  }
-});
 
 const sendRequest = () => {
   console.log('send the Request!')

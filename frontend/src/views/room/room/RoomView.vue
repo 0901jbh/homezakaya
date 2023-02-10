@@ -108,7 +108,7 @@
               </div>
             </template>
           </el-popover>
-          <div class="content" @click="leaveSession">Exit</div>
+          <div class="content" @click="exitBtn">Exit</div>
         </div>
       </div>
     </div>
@@ -368,9 +368,17 @@ export default {
         });
       });
 
-      this.session.on('signal:detect-smile', (event) => {
+      this.session.on('signal:random-keyword', (event) => {
         this.gameStatus = 1
         this.gameScreenOpen(1);
+        // 주제 띄우기
+        this.eventData = JSON.parse(event.data);
+        console.log(this.eventData.keyword);
+        this.gameContent = this.eventData.keyword;
+      })
+
+      this.session.on('signal:detect-smile', (event) => {
+        // 웃참 인식 시작
         this.store.dispatch("gameModule/startSmileGame");
       })
 
@@ -410,8 +418,8 @@ export default {
         this.eventData = JSON.parse(event.data);
         console.log(this.eventData.username);
         if (this.eventData.username == this.myUserName) {
-          alert("강퇴당함");
-          this.leaveSession();
+          this.exitBtn();
+          this.store.commit("errorModule/SET_STATUS", 405);
         }
       })
 
@@ -460,8 +468,6 @@ export default {
             console.log("There was an error connecting to the session:", error.code, error.message);
           });
       });
-
-      window.addEventListener("beforeunload", this.leaveSession);
     },
 
     leaveSession() {
@@ -470,6 +476,14 @@ export default {
         this.changeHost(data.userId);
       }
 
+      this.store.dispatch("roomModule/quitRoom", this.mySessionId)
+        .then((result) => {
+          if (result) {
+            this.store.dispatch("roomModule/removeUserInRoom", this.store.state.userModule.user.userId)
+          }
+        })
+
+      console.log("!!!!!!!!!!!!!!!!!");
       // --- 7) Leave the session by calling 'disconnect' method over the Session object ---
       if (this.session) this.session.disconnect();
 
@@ -480,17 +494,6 @@ export default {
       this.subscribers = [];
       this.OV = undefined;
 
-      // Remove beforeunload listener
-      window.removeEventListener("beforeunload", this.leaveSession);
-
-      this.store.dispatch("roomModule/quitRoom", this.mySessionId)
-        .then((result) => {
-          if (result) {
-            this.store.dispatch("roomModule/removeUserInRoom", this.store.state.userModule.user.userId)
-          }
-        })
-      
-      this.$router.push({ name: 'rooms' });
     },
 
     // updateMainVideoStreamManager(stream) {
@@ -620,6 +623,24 @@ export default {
       switch (this.gameStatus) {
         case 1:
           //게임화면 켜지고 게임 룰 설명하고
+          this.session.signal({
+            data: JSON.stringify({ keyword: this.store.state.gameModule.keyword }),
+            type: 'random-keyword'
+          })
+            .then(() => {
+              console.log('랜덤 주제 제시어');
+              if (!this.gameStart) {
+                this.store.dispatch("gameModule/getKeyword").then(() => {
+                  this.gameContent = this.store.state.gameModule.keyword
+                });
+              } else {
+                this.gameContent = this.store.state.gameModule.keyword
+              }
+            })
+            .catch(error => {
+              console.error(error);
+            })
+
           //웃음탐지 시그널 보내고
           this.session.signal({
             type: 'detect-smile'
@@ -666,6 +687,10 @@ export default {
 
           break;
       }
+    },
+
+    exitBtn(){
+      this.$router.push({ name: 'rooms' });
     },
 
     infoOpen() {
@@ -789,9 +814,9 @@ export default {
   created() {
   },
 
- 
 
   // check point
+
   async mounted() {
     await this.getFriends();  // invite할때마다 친구목록 갱신
     await this.getRoom();
@@ -799,16 +824,14 @@ export default {
 
     this.store.dispatch("gameModule/getSentence");
     this.store.dispatch("gameModule/getTopic");
+    this.store.dispatch("gameModule/getKeyword");
     
     this.joinSession();
   },
 
-  beforeUpdate(){
-    console.log(this);
-  },
-
-  updated() {
-
+  beforeRouteLeave (to, from, next) {
+    this.leaveSession();
+    next();
   },
 };
 
@@ -1049,11 +1072,6 @@ a:hover .demo-logo {
 
 #session-title {
   display: inline-block;
-}
-
-#buttonLeaveSession {
-  float: right;
-  margin-top: 20px;
 }
 
 #video-container {

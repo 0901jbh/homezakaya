@@ -113,8 +113,8 @@ export const roomModule = {
     quitRoom(context, payload){
       return axios.put(`api/rooms/${payload}/quit`).then(({ status, data }) => {
         if(status == 200){
-          console.log("quitRoom Success");
-          if(data.personCount == 0){
+          console.log("방 나가기 성공");
+          if(data.personCount <= 0){
             context.dispatch("removeRoom", payload)
           }
           // else {
@@ -126,6 +126,7 @@ export const roomModule = {
         if(err.response.status == 404){
           console.log("노방");
         }
+        console.log("방 나가기 실패");
         return false
       });
     },
@@ -178,6 +179,7 @@ export const roomModule = {
         if(err.response.status == 404){
           console.log("이 유저는 현재 참여중인 방이 없습니다.");
         }
+        console.log("유저인룸 삭제 실패");
       });
     },
     getRoomId(context, payload){
@@ -237,14 +239,15 @@ export const roomModule = {
           context.dispatch("getInvitesList", payload.toUserId)
           console.log(data);
           console.log("초대 요청을 보냈습니다.");
-        } else if (status == 404){
-          console.log("userId가 존재하지 않습니다.")
-        }
-        else if (status == 500){
-          console.log("그 외 서버 관련 에러")
         }
       }).catch(err => {
-        console.log(err);
+          console.log(err);
+          if (err.response.status == 404){
+            console.log("userId가 존재하지 않습니다.");
+          }
+          else if (err.response.status == 500){
+            console.log("그 외 서버 관련 에러");
+          }
       });
     },
 
@@ -275,11 +278,12 @@ export const roomModule = {
         if(status == 200){
           console.log(data);
           console.log("방초대 거절 완료");
-        }else if (status == 404) {
-          console.log("방 초대가 없습니다.")
         }
       }).catch(err => {
         console.log(err);
+        if (err.response.status == 404) {
+          console.log("방 초대가 없습니다.")
+        }
       });
     },
   }

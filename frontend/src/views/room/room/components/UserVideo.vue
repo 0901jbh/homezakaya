@@ -8,12 +8,12 @@
 					<ov-video :streamManager="streamManager" @click="userInfo" />
 				</div>
 			</template>
-			<template #default>
-				<div id="user_setting" style="display: flex; gap: 16px; flex-direction: column;">
+			<template #default >
+				<div id="user_setting" style="display: flex; gap: 16px; flex-direction: column;"  >
 					<p class="user_nickname" style="margin: 0; font-size: 20px; color: white; align-self:center;">
 						{{ username }}
 					</p>
-					<div class="user_manner_alcohol"
+					<div class="user_manner_alcohol" 
 						style="margin: 0; display: flex; gap: 16px; flex-direction: row; justify-content: center;">
 						<img src="@/assets/images/manner_w.png" alt="manner_w img" style="width:28px; height:28px;">
 						<p style="margin: 0; font-size: 20px; color: white; align-self:center;">{{ mannerPoint }}</p>
@@ -25,6 +25,9 @@
 					</div> -->
 					<el-rate v-if="!myVideo" v-model="manner_rate" size="large" allow-half
 						style="justify-content: center;" />
+					
+					<button v-if="!myVideo" type="button" @click="evalMannerPoint"     style=" text-decoration:none;">평가</button>
+					
 					<div v-if="!myVideo && !isFriend" @click="friend" class="content" style="width: 60%; text-decoration:none;">
 						친구 추가
 					</div>
@@ -69,10 +72,11 @@ export default {
 	data() {
 		return {
 			store: useStore(),
-			manner_rate:null,
+			manner_rate:0,
 			mannerPoint: 0,
 			alcoholPoint : 0,
-			
+			isDetailOn : false,
+			count : 0,
 		}
 	},
 
@@ -95,9 +99,9 @@ export default {
 				return clientData.friends.includes(clientData.userId);
 			else
 				return false;
-		}
+		},
 		// isHost 값을 주는 것 보다는 hostId와 clientId가 일치하는지 직접 비교하는게 나을듯
-	
+		
 	},
 
 	methods: {
@@ -109,7 +113,7 @@ export default {
 		userInfo() {
 			console.log("userInfo");
 			this.store.dispatch("userModule/getUserPoint",this.userId).then((response) =>{
-				this.mannerPoint = response.mannerPoint;
+				this.mannerPoint = parseFloat(response.mannerPoint.toFixed(2));
 				this.alcoholPoint = response.alcoholPoint;
 			});
 		},
@@ -122,11 +126,15 @@ export default {
 		friend(){
 			this.$emit('friendRequest', this.userId);
 		},
-		
+		evalMannerPoint(){
+			console.log("manner rate :" + this.manner_rate);
+			this.store.dispatch("userModule/updateMannerPoint",{userId : this.userId, mannerPoint : this.manner_rate});
+		}
+
+
 	},
-	beforeDestroy(){
-		console.log("before destory");
-	}
+
+
 };
 </script>
 

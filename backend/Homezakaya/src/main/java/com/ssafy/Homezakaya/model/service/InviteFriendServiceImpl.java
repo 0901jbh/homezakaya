@@ -2,6 +2,7 @@ package com.ssafy.Homezakaya.model.service;
 
 import com.ssafy.Homezakaya.model.dao.InviteFriendDao;
 import com.ssafy.Homezakaya.model.dto.InviteFriendDto;
+import com.ssafy.Homezakaya.model.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +16,7 @@ public class InviteFriendServiceImpl implements InviteFriendService {
 
     @Override
     public boolean createInvite(InviteFriendDto inviteFriendDto) {
-        return inviteFriendDao.inviteFriend(inviteFriendDto)>0;
+        return inviteFriendDao.inviteFriend(inviteFriendDto) > 0;
     }
 
     @Override
@@ -26,5 +27,10 @@ public class InviteFriendServiceImpl implements InviteFriendService {
     @Override
     public boolean removeInvite(InviteFriendDto inviteFriendDto) {
         return inviteFriendDao.deleteInvite(inviteFriendDto) > 0;
+    }
+
+    @Override
+    public List<UserDto> getInviteValidFriends(String fromUserId) {
+        return inviteFriendDao.selectInviteValidFriends(fromUserId);
     }
 }

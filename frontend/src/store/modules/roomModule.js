@@ -254,7 +254,7 @@ export const roomModule = {
     // 초대한 유저 id만 조회 (fromUser) "xx님이 초대 요청을 보냈습니다." - ok
     getInvitesList(context, payload){
       axios.get(`api/userinroom/invite/${payload}`).then(({ status, data }) => {
-        console.log(status)
+        // console.log(status)
         if(status == 200){
           context.commit('SET_REQUESTS', data)
           // console.log(data[0].fromUserId);
@@ -264,11 +264,12 @@ export const roomModule = {
           // console.log(data)
           console.log("userId가 존재하지 않습니다.")
         }
-        else if (status == 500){
+        
+      }).catch((err) => {
+        console.log(err)
+        if (err.response.status == 500){
           console.log("그 외 서버 관련 에러")
         }
-      }).catch((err) => {
-          console.log(err)
       });
     },
 

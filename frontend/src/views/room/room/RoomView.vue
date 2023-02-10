@@ -325,11 +325,6 @@ export default {
 
       // --- 3) Specify the actions when events take place in the session ---
 
-      // 방에 입장했을때 게임이 진행중이라면
-      if (this.gameStart) {
-        this.startBtn(this.gameStatus)
-      }
-
       // On every new Stream received...
       this.session.on("streamCreated", ({ stream }) => {
         const subscriber = this.session.subscribe(stream);
@@ -384,7 +379,7 @@ export default {
 
       this.session.on('signal:smile', (event) => {
         this.store.dispatch("gameModule/stopDetect");
-        console.log(event.data + "님이 웃으셨습니다!!");
+        // console.log(event.data + "님이 웃으셨습니다!!");
         this.gameContent = `${event.data}님이 웃으셨습니다 !`;
         setTimeout(() => {this.gameScreenClose()}, 3000);
       })
@@ -410,7 +405,7 @@ export default {
         this.gameStatus = 3
         this.gameScreenOpen(3)
         this.eventData = JSON.parse(event.data);
-        console.log(this.eventData.topic);
+        // console.log(this.eventData.topic);
         this.gameContent = this.eventData.topic;
       })
 
@@ -666,24 +661,19 @@ export default {
               console.error(error);
             })
           break;
+
         case 3:
-          this.session.signal({
-            data: JSON.stringify({ topic: this.store.state.gameModule.topic }),
-            type: 'random-topic'
+          console.log('랜덤주제 실행');
+          this.store.dispatch("gameModule/getTopic")
+          .then(async () => {
+            this.gameContent = await this.store.state.gameModule.topic
+            this.session.signal({
+              data: JSON.stringify({
+                topic: this.store.state.gameModule.topic
+              }),
+              type: 'random-topic'
+            })
           })
-            .then(() => {
-              console.log('랜덤주제');
-              if (!this.gameStart) {
-                this.store.dispatch("gameModule/getTopic").then(() => {
-                  this.gameContent = this.store.state.gameModule.topic
-                });
-              } else {
-                this.gameContent = this.store.state.gameModule.topic
-              }
-            })
-            .catch(error => {
-              console.error(error);
-            })
 
           break;
       }
@@ -778,13 +768,15 @@ export default {
     gameScreenOpen(idx){
       this.gameIdx = idx;
       this.gameTitle = this.games[idx];
-      this.gameStart = true;
-      document.getElementById("chatting-container").id="chatting-container-small";
+      if (!this.gameStart) {
+        this.gameStart = true;
+        document.getElementById("chatting-container").id="chatting-container-small";
+      }
     },
 
     gameScreenErase() {
-      this.gameTitle = '',
-      this.gameContent = '',
+      this.gameTitle = '';
+      this.gameContent = '';
       this.gameIdx = 0;
     },
 
@@ -823,7 +815,6 @@ export default {
     this.getUser();
 
     this.store.dispatch("gameModule/getSentence");
-    this.store.dispatch("gameModule/getTopic");
     this.store.dispatch("gameModule/getKeyword");
     
     this.joinSession();

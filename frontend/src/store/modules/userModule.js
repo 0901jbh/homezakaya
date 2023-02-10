@@ -15,6 +15,9 @@ export const userModule = {
     isLoginError: false,
     user: {},
     isValidToken: false, // accessToken 정보
+
+    idErr: null, // id 중복 boolean
+    nicknameErr: null, // nickname 중복 boolean
   }),
   getters: {
     checkUserInfo: function (state) {
@@ -37,6 +40,12 @@ export const userModule = {
     SET_USER_INFO: (state, user) => {
       state.isLogin = true
       state.user = user
+    },
+    SET_ID_ERR: (state, idErr) => {
+      state.idErr = idErr
+    },
+    SET_NICKNAME_ERR: (state, nicknameErr) => {
+      state.nicknameErr = nicknameErr
     },
   },
 
@@ -63,6 +72,7 @@ export const userModule = {
         .then(({ status, data }) => {
           if (status == 200) {
             console.log("사용 가능한 id 입니다.")
+            context.commit("SET_ID_ERR", false)
             return true
           }
         })
@@ -71,6 +81,7 @@ export const userModule = {
           if (err.response.status == 409) {
             console.log("중복된 id 입니다.")
           }
+          context.commit("SET_ID_ERR", true)
           return false
         })
     },
@@ -82,6 +93,7 @@ export const userModule = {
         .then(({ status, data }) => {
           if (status == 200) {
             console.log("사용 가능한 nickname 입니다.")
+            context.commit("SET_NICKNAME_ERR", false)
             return true
           }
         })
@@ -89,11 +101,12 @@ export const userModule = {
           if (err.response.status == 409) {
             console.log("중복된 닉네임 입니다.")
           }
+          context.commit("SET_NICKNAME_ERR", true)
           return false
         })
     },
 
-    // email 인증, id 찾기, pw 찾기
+    // email 인증
     sendEmail(context, payload) {
       axios
         .post(`/api/users/login/mailConfirm`, payload)
@@ -112,6 +125,33 @@ export const userModule = {
             console.log("발송 실패")
           }
         })
+    },
+
+    // id 찾기 (email 입력 - id 찾기용 email 인증 같이 써줘야 함) ok
+    findId(context, payload){
+      axios.post(`/api/users/login/findId`, payload).then(({status,data}) =>{
+        if (status == 200) {
+          console.log(data) // userId, emailCode
+          context.commit("SET_USER_INFO", data) //user에 저장(찾아온 id만)
+        } else if(status == 500){
+          console.log("이메일 정보가 일치하지 않습니다")
+        }
+      }).catch((err) => {
+          console.log(err)
+      })
+    },
+
+    // pw 찾기 (userId, email 입력) - ok
+    findPassword(context, payload){
+      axios.post(`/api/users/login/findPassword`, payload).then(({status,data}) =>{
+        if (status == 200) {
+          console.log(data)
+          console.log("임시 비밀번호 발급 완료!! 비밀번호를 변경해 주세요")
+        }
+      }).catch((err) => {
+        console.log("아이디 or 이메일 정보가 일치하지 않습니다")
+        console.log(err)
+      })
     },
 
     // 회원 가입 - ok
@@ -198,6 +238,7 @@ export const userModule = {
         .catch((err) => {
           if (err.response.status == 401) {
             console.log("로그아웃 실패")
+       
           }
         })
     },
@@ -217,22 +258,23 @@ export const userModule = {
               console.error("Failed to retrieve user information")
             }
           })
-          .catch((err) => {
+          async(err) => {
             console.log("토큰이 만료되어 사용 불가")
-            // commit("SET_IS_VALID_TOKEN", false);
-          })
-      } else {
-        console.log("토큰 null")
-      }
-    },
+            commit("SET_IS_VALID_TOKEN", false);
+            await context.dispatch("tokenRegeneration", sessionStorage.getItem("access-token"))
+          }
+        ;
+    }
+  },
 
     // token refresh
-    tokenRegeneration(context, payload) {
+    async tokenRegeneration(context, payload) {
       console.log(
         "토큰 재발급 >> 기존 토큰 정보 : {}",
         sessionStorage.getItem("access-token")
       )
-      axios
+      console.log(payload)
+      await axios
         .post(`/api/users/refresh`, payload)
         .then(({ status, data }) => {
           console.log(status)
@@ -244,7 +286,7 @@ export const userModule = {
           }
         })
         .catch((err) => {
-          if (err.status == 401) {
+          if (err.response.status == 401) {
             console.log("토큰 갱신 실패")
             userLogout(
               state.user.userId,
@@ -307,5 +349,24 @@ export const userModule = {
           }
         })
     },
+
+    
+		getUserPoint(context,payload) {
+			return axios
+        .get(`/api/users/${payload}`)
+        .then(({status, data}) => {
+          if (status == 200) {
+            return data;
+          } else {
+			console.log("status != 200");
+          }
+        })
+        .catch((err) => {
+          if (err.response == 401) {
+            console.log("유저 정보 획득 실패");
+          }
+        });
+		},
+
   },
 }

@@ -114,7 +114,7 @@ public class UserController {
     public ResponseEntity<?> mailConfirm(@RequestParam String email) throws MessagingException, UnsupportedEncodingException {
         Map<String, Object> resultMap = new HashMap<>();
         try {
-            if (userService.findByEmail(email) == null) {
+            if (userService.findByEmail(email) == null) {   // 가입되지 않은 이메일일 때
                 String code = emailService.sendSimpleMessage(email);
                 log.info("인증코드 : " + code);
                 resultMap.put("emailCode", code);
@@ -128,14 +128,20 @@ public class UserController {
     }
 
     // id 찾기
-    @GetMapping("/login/findId")
+    @PostMapping("/login/findId")
     public ResponseEntity<?> findId(@RequestParam String email) throws MessagingException, UnsupportedEncodingException {
         Map<String, Object> resultMap = new HashMap<>();
 
         try {
-            if (userService.findByEmail(email).getUserId() != null) { // 이메일로 userId 검색
+            if (userService.findByEmail(email) != null) { // 이메일로 userId 검색 (email이 가입되어 있어야 보낼 수 있음)
                 String userId = userService.findByEmail(email).getUserId();
                 resultMap.put("userId", userId);
+                
+                // email 인증 보내기
+                String code = emailService.sendSimpleMessage(email);
+                log.info("인증코드 : " + code);
+                resultMap.put("emailCode", code);
+
                 return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
             }
         } catch (Exception e) {
@@ -146,12 +152,9 @@ public class UserController {
     }
 
     // pw 찾기 (email로 임시 password 전송)
-    @GetMapping("/login/findPassword")
-    public ResponseEntity<?> findPassword(@RequestBody UserDto user) throws MessagingException, UnsupportedEncodingException {
+    @PostMapping("/login/findPassword")
+    public ResponseEntity<?> findPassword(@RequestParam("userId") String userId, @RequestParam("email") String email) throws MessagingException, UnsupportedEncodingException {
         Map<String, Object> resultMap = new HashMap<>();
-
-        String email = user.getEmail();
-        String userId = user.getUserId();
 
         if (userService.getUser(userId) != null && userService.findByEmail(email) != null && userId.equals(userService.findByEmail(email).getUserId())) {
             String temPw = emailService.sendSimpleMessageForPassword(email);    // 임시 비밀번호 발송

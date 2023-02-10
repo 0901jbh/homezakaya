@@ -195,14 +195,15 @@ export const roomModule = {
     },
 
     checkValidRoom(context, payload){
-      const room = context.dispatch("getRoom", payload);
-      if(room){
-        if(room.personCount >= room.personLimit){
-          return 409;
+      return context.dispatch("getRoom", payload).then((room) => {
+        if(room){
+          if(room.personCount >= room.personLimit){
+            return 409;
+          }
+          return 200;
         }
-        return 200;
-      }
-      return 404;
+        return 404;
+      })
     },
 
     doEnterRoom(context, payload){
@@ -221,7 +222,7 @@ export const roomModule = {
               });
             }
             else if(result == 409){
-              return 401;
+              return 402;
             }
             return 404;
           });

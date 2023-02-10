@@ -31,6 +31,9 @@
 					<div v-if="!myVideo && !isFriend" @click="friend" class="content" style="width: 60%; text-decoration:none;">
 						친구 추가
 					</div>
+					<div v-if="isHostView" @click="drunk" class="content" style="width: 60%; text-decoration:none;">
+						나 안 취했어
+					</div>
 					<div v-if="!myVideo && isHostView" @click="host" class="content" style="width: 60%; text-decoration:none;">
 						방장 변경
 					</div>
@@ -119,14 +122,17 @@ export default {
 				this.alcoholPoint = response.alcoholPoint;
 			});
 		},
+		friend(){
+			this.$emit('friendRequest', this.userId);
+		},
+		drunk(){
+			this.$emit('checkDrunk', this.username);
+		},
 		kick() {
 			this.$emit('kickUser', this.username);
 		},
 		host() {
 			this.$emit('changeHost', this.userId);
-		},
-		friend(){
-			this.$emit('friendRequest', this.userId);
 		},
 		evalMannerPoint(){
 			console.log("manner rate :" + this.manner_rate);

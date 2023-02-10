@@ -49,6 +49,9 @@ export default {
                 case 404:
                     sentenceTag.innerHTML = "해당 방을 찾을 수 없습니다.";
                     break;
+				case 405:
+                    sentenceTag.innerHTML = "강퇴당했습니다.";
+                    break;
                 case 409:
                     sentenceTag.innerHTML = "방 인원이 가득 찼습니다.";
                     break;

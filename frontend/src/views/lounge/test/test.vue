@@ -11,7 +11,8 @@ import { useStore } from "vuex";
 const store = useStore();
 
 const form = new FormData();
-form.append("email", "bestsjj@naver.com");
+form.append("userId", "ddd");
+form.append("email", "dd@naver.com");
 
 const startBtn = () => {
   // store.dispatch("gameModule/updateUser", "video");
@@ -22,10 +23,7 @@ const startBtn = () => {
   //     store.dispatch("roomModule/removeUserInRoom", store.state.userModule.user.userId)
   //   }
   // })
-   store.dispatch("roomModule/removeInvite", {
-    fromUserId: "ssafy",
-    toUserId : "sss"
-   });
+   store.dispatch("userModule/findPassword", form);
 };
 </script>
 

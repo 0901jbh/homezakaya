@@ -237,14 +237,15 @@ export const roomModule = {
           context.dispatch("getInvitesList", payload.toUserId)
           console.log(data);
           console.log("초대 요청을 보냈습니다.");
-        } else if (status == 404){
-          console.log("userId가 존재하지 않습니다.")
-        }
-        else if (status == 500){
-          console.log("그 외 서버 관련 에러")
         }
       }).catch(err => {
-        console.log(err);
+          console.log(err);
+          if (err.response.status == 404){
+            console.log("userId가 존재하지 않습니다.");
+          }
+          else if (err.response.status == 500){
+            console.log("그 외 서버 관련 에러");
+          }
       });
     },
 
@@ -254,15 +255,18 @@ export const roomModule = {
         if(status == 200){
           context.commit('SET_REQUESTS', data)
           // console.log(data[0].fromUserId);
-          console.log("getRequests Success");
-        }else if (status == 404){
-          console.log("userId가 존재하지 않습니다.")
-        }
-        else if (status == 500){
-          console.log("그 외 서버 관련 에러")
+          console.log(data)
+          console.log("getInvites Success");
         }
       }).catch(err => {
         console.log(err);
+        if (err.response.status == 404){
+          console.log("userId가 존재하지 않습니다.");
+          context.commit('SET_REQUESTS', [])
+        }
+        else if (err.response.status == 500){
+          console.log("그 외 서버 관련 에러");
+        }
       });
 
     },
@@ -273,11 +277,12 @@ export const roomModule = {
         if(status == 200){
           console.log(data);
           console.log("방초대 거절 완료");
-        }else if (status == 404) {
-          console.log("방 초대가 없습니다.")
         }
       }).catch(err => {
         console.log(err);
+        if (err.response.status == 404) {
+          console.log("방 초대가 없습니다.")
+        }
       });
     },
   }

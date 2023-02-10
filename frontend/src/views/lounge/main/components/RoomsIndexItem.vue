@@ -106,9 +106,13 @@ const createRoom = () => {
 		store.dispatch('roomModule/doEnterRoom', {
 			userId: store.state.userModule.user.userId,
 			roomId: result.roomId,
-		}).then((result) => {
-			if (result) {
-				router.push({ name: 'room', params: { roomId: form.value.roomId }, query: { video: false, audio: false } });
+		}).then((status) => {
+			if(status == 200){
+				router.push({ name: 'room', params: { roomId: form.value.roomId }, query: { video: false, audio: false } })
+			}
+			else{
+				popClose();
+				store.commit("errorModule/SET_STATUS", status);
 			}
 		})
 	});

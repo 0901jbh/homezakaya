@@ -108,7 +108,7 @@
               </div>
             </template>
           </el-popover>
-          <div class="content" @click="leaveSession">Exit</div>
+          <div class="content" @click="exitBtn">Exit</div>
         </div>
       </div>
     </div>
@@ -418,8 +418,8 @@ export default {
         this.eventData = JSON.parse(event.data);
         console.log(this.eventData.username);
         if (this.eventData.username == this.myUserName) {
-          alert("강퇴당함");
-          this.leaveSession();
+          this.exitBtn();
+          this.store.commit("errorModule/SET_STATUS", 405);
         }
       })
 
@@ -468,8 +468,6 @@ export default {
             console.log("There was an error connecting to the session:", error.code, error.message);
           });
       });
-
-      window.addEventListener("beforeunload", this.leaveSession);
     },
 
     leaveSession() {
@@ -478,6 +476,14 @@ export default {
         this.changeHost(data.userId);
       }
 
+      this.store.dispatch("roomModule/quitRoom", this.mySessionId)
+        .then((result) => {
+          if (result) {
+            this.store.dispatch("roomModule/removeUserInRoom", this.store.state.userModule.user.userId)
+          }
+        })
+
+      console.log("!!!!!!!!!!!!!!!!!");
       // --- 7) Leave the session by calling 'disconnect' method over the Session object ---
       if (this.session) this.session.disconnect();
 
@@ -488,17 +494,6 @@ export default {
       this.subscribers = [];
       this.OV = undefined;
 
-      // Remove beforeunload listener
-      window.removeEventListener("beforeunload", this.leaveSession);
-
-      this.store.dispatch("roomModule/quitRoom", this.mySessionId)
-        .then((result) => {
-          if (result) {
-            this.store.dispatch("roomModule/removeUserInRoom", this.store.state.userModule.user.userId)
-          }
-        })
-      
-      this.$router.push({ name: 'rooms' });
     },
 
     // updateMainVideoStreamManager(stream) {
@@ -685,6 +680,10 @@ export default {
       }
     },
 
+    exitBtn(){
+      this.$router.push({ name: 'rooms' });
+    },
+
     infoOpen() {
       document.getElementsByClassName("game-info-modal-wrap")[0].style.display = "block";
       document.getElementsByClassName("game-info-modal-bg")[0].style.display = "block";
@@ -806,8 +805,6 @@ export default {
   created() {
   },
 
- 
-
   async mounted() {
     await this.getFriends();
     await this.getRoom();
@@ -820,12 +817,9 @@ export default {
     this.joinSession();
   },
 
-  beforeUpdate(){
-    console.log(this);
-  },
-
-  updated() {
-
+  beforeRouteLeave (to, from, next) {
+    this.leaveSession();
+    next();
   },
 };
 
@@ -1066,11 +1060,6 @@ a:hover .demo-logo {
 
 #session-title {
   display: inline-block;
-}
-
-#buttonLeaveSession {
-  float: right;
-  margin-top: 20px;
 }
 
 #video-container {

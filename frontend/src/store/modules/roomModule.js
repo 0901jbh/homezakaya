@@ -113,8 +113,8 @@ export const roomModule = {
     quitRoom(context, payload){
       return axios.put(`api/rooms/${payload}/quit`).then(({ status, data }) => {
         if(status == 200){
-          console.log("quitRoom Success");
-          if(data.personCount == 0){
+          console.log("방 나가기 성공");
+          if(data.personCount <= 0){
             context.dispatch("removeRoom", payload)
           }
           // else {
@@ -126,6 +126,7 @@ export const roomModule = {
         if(err.response.status == 404){
           console.log("노방");
         }
+        console.log("방 나가기 실패");
         return false
       });
     },
@@ -178,6 +179,7 @@ export const roomModule = {
         if(err.response.status == 404){
           console.log("이 유저는 현재 참여중인 방이 없습니다.");
         }
+        console.log("유저인룸 삭제 실패");
       });
     },
     getRoomId(context, payload){

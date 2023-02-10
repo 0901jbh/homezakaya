@@ -368,9 +368,17 @@ export default {
         });
       });
 
-      this.session.on('signal:detect-smile', (event) => {
+      this.session.on('signal:random-keyword', (event) => {
         this.gameStatus = 1
         this.gameScreenOpen(1);
+        // 주제 띄우기
+        this.eventData = JSON.parse(event.data);
+        console.log(this.eventData.keyword);
+        this.gameContent = this.eventData.keyword;
+      })
+
+      this.session.on('signal:detect-smile', (event) => {
+        // 웃참 인식 시작
         this.store.dispatch("gameModule/startSmileGame");
       })
 
@@ -611,6 +619,24 @@ export default {
       switch (this.gameStatus) {
         case 1:
           //게임화면 켜지고 게임 룰 설명하고
+          this.session.signal({
+            data: JSON.stringify({ keyword: this.store.state.gameModule.keyword }),
+            type: 'random-keyword'
+          })
+            .then(() => {
+              console.log('랜덤 주제 제시어');
+              if (!this.gameStart) {
+                this.store.dispatch("gameModule/getKeyword").then(() => {
+                  this.gameContent = this.store.state.gameModule.keyword
+                });
+              } else {
+                this.gameContent = this.store.state.gameModule.keyword
+              }
+            })
+            .catch(error => {
+              console.error(error);
+            })
+
           //웃음탐지 시그널 보내고
           this.session.signal({
             type: 'detect-smile'
@@ -789,6 +815,7 @@ export default {
 
     this.store.dispatch("gameModule/getSentence");
     this.store.dispatch("gameModule/getTopic");
+    this.store.dispatch("gameModule/getKeyword");
     
     this.joinSession();
   },

@@ -10,6 +10,7 @@ export const gameModule = {
     topic: String,
     texts: '',
     isFinished: false,
+    keyword : String,
   }),
   mutations: {
     SET_INTERVAL(state, payload){
@@ -20,6 +21,9 @@ export const gameModule = {
     },
     SET_TOPIC(state, payload){
       state.topic = payload;
+    },
+    SET_KEYWORD(state, payload){
+      state.keyword = payload;
     },
     SET_ISSMILE(state, payload){
       state.isSmile = payload;
@@ -60,6 +64,23 @@ export const gameModule = {
         }
       });
     },
+
+    // 웃참용 주제 가져오기
+    getKeyword(context, payload){
+      axios.get(`api/games/keyword`).then(({ status, data }) => {
+        if(status == 200){
+          console.log(data);
+          context.commit("SET_KEYWORD", data.content);
+        }
+      }).catch(err => {
+        if(err.response.status == 404){
+          console.log("노주제");
+        }
+      });
+    },
+
+
+
     //웃참
     startSmileGame(context, payload) {
       console.log("탐지 시작");

@@ -7,6 +7,7 @@ export const roomModule = {
     room: {},
     checkPasswordResult: false,
     requests: [], // 방초대 리스트
+    inviteValidFriends:[],  // 초대 가능 친구 리스트
   }),
   mutations: {
     SET_ROOMS(state, payload) {
@@ -21,6 +22,9 @@ export const roomModule = {
     SET_REQUESTS(state, payload) {
       state.requests = payload;
     },
+    SET_INVITEVALID_FRIENDS(state, payload){
+      state.inviteValidFriends = payload;
+    }
   },
   getters: {
     getCheckPasswordResult(state){
@@ -230,6 +234,22 @@ export const roomModule = {
           });
         }
       });
+    },
+
+    // 초대 가능 친구 조회 - ok
+    inviteValidFriend(context, payload){
+      axios.get(`/api/userinroom/invite/valid/${payload}`).then(({status, data})=>{
+        if(status == 200){
+          context.commit("SET_INVITEVALID_FRIENDS", data)
+          console.log("초대 가능한 친구 목록 : ", data)
+        }else if(status == 204){
+          console.log("초대 가능한 친구가 없습니다.")
+        }else if(status == 500){
+          console.log("INTERVAL_SERVER_ERROR")
+        }
+      }).catch((err)=>{
+        console.log(err)
+      })
     },
 
     // 방으로 친구 초대 -ok

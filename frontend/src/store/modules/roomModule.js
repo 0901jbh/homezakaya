@@ -131,7 +131,7 @@ export const roomModule = {
       });
     },
     changeHost(context, payload){
-      axios.put(`api/rooms/${payload.roomId}/host`, payload.hostId).then(({ status }) => {
+      axios.put(`api/rooms/${payload.roomId}/host`, payload).then(({ status }) => {
         if(status == 200){
           console.log("방장 변경 성공!");
         }

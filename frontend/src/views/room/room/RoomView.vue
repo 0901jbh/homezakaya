@@ -12,9 +12,9 @@
           'under-six': this.headCount == 5 || this.headCount == 6,
           'under-eight': this.headCount == 7 || this.headCount == 8,
         }">
-          <user-video class="video" :streamManager="publisher" :myVideo="true" />
+          <user-video class="video" :streamManager="publisher" :myVideo="true" :hostId="hostId" />
           <user-video class="video" v-for="sub in subscribers" :key="sub.stream.connection.connectionId"
-            :streamManager="sub" :myVideo="false" :isHostView="hostId == myUserId" @kickUser="kickUser" @changeHost="changeHost" @friendRequest="friendRequest" />
+            :streamManager="sub" :myVideo="false" :isHostView="hostId == myUserId" :hostId="hostId" :friends="friends" @kickUser="kickUser" @changeHost="changeHost" @friendRequest="friendRequest" />
         </div>
         <div class="game-chatting-container">
           <Transition>
@@ -438,7 +438,7 @@ export default {
       this.getToken(this.mySessionId).then((token) => {
         // First param is the token. Second param can be retrieved by every user on event
         // 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
-        this.session.connect(token, { userId: this.myUserId, username: this.myUserName, hostId: this.hostId, friends: this.friends })
+        this.session.connect(token, { userId: this.myUserId, username: this.myUserName})
           .then(() => {
 
             // --- 5) Get your own camera stream with the desired properties ---

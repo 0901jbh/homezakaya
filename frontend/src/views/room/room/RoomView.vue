@@ -596,12 +596,8 @@ export default {
       this.friends = parseFriends.filter(friend => friend.state === "online");
       console.log("+++++++",this.friends, "+++++++++++"); // online 친구 넘어옴
 
-      // const inviteValidfriends = await this.store.state.friendModule.inviteValidFriends;  // 안넘어옴
-      // console.log("+++++++",inviteValidfriends, "inviteValidfriends++++++");
-      // const parseFriendsInvite = JSON.parse(JSON.stringify(inviteValidfriends));
-      // console.log("+++++++",parseFriendsInvite, "parseFriendsInvite+++++++");
-      // const finalfriend = this.friends.filter(friend => parseFriendsInvite.keys(userId).includes(friend.userId));
-      // console.log("========" ,finalfriend , "finalfriend======")
+      // await store.dispatch("roomModule/inviteValidFriend", myUserId);
+      // console.log("초대 가능 친구 목록 완")
     },
 
     async getRoom() {

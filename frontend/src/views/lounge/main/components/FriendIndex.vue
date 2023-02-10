@@ -16,25 +16,6 @@
         :renderKey="data.renderKey" />
     </div>
   </div>
-  <!-- 따라가기 거부됨 팝업창 -->
-  <div class="user-not-in-modal-bg" @click="notInRoomClose"></div>
-  <div class="user-not-in-modal-wrap">
-    <div class="user-not-in-popup">
-      <!-- <div class="user-not-in-popup-header">
-        <div class="user-not-in-popup-header-title">Refuse Follow Friend</div>
-      </div> -->
-      <div class="user-not-in-popup-content">
-        <div>해당 친구는 참여중인 방이 없습니다.</div>
-        <div class="btn-wrapper">
-          <div class="btn">
-            <RouterLink to="/rooms" style="text-decoration:none;">
-              <el-button type="info" size="large" @click="notInRoomClose">확인</el-button>
-            </RouterLink>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- 비공개방 비밀번호 입력창 -->
   <div class="follow-private-modal-bg" @click="followPrivatePopClose"></div>
@@ -54,23 +35,6 @@
         <div>
           <el-button type="info" size="large" @click="followEnterPrivateRoom">Enter</el-button>
           <el-button type="info" size="large" @click="followPrivatePopClose">Cancel</el-button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- 비밀번호 입력 실패 팝업창 -->
-  <div class="follow-error-modal-bg" @click="followErrorClose"></div>
-  <div class="follow-error-modal-wrap">
-    <div class="follow-error-popup">
-      <!-- <div class="follow-error-popup-header">
-        <div class="follow-error-popup-header-title">Wrong Password</div>
-      </div> -->
-      <div class="follow-error-popup-content">
-        <div class="sentence">비밀번호가 틀렸습니다.</div>
-        <div class="follow-error-btn-wrapper">
-          <div class="btn">
-            <el-button type="info" size="large" @click="followErrorClose">확인</el-button>
-          </div>
         </div>
       </div>
     </div>
@@ -122,33 +86,24 @@ const searchUser = () => {
   console.log(data.value.renderKey)
 }
 
-const notInRoomOpen = () => {
-  document.getElementsByClassName("user-not-in-modal-wrap")[0].style.display = 'block';
-  document.getElementsByClassName("user-not-in-modal-bg")[0].style.display = 'block';
-}
-
-const notInRoomClose = () => {
-  document.getElementsByClassName("user-not-in-modal-wrap")[0].style.display = 'none';
-  document.getElementsByClassName("user-not-in-modal-bg")[0].style.display = 'none';
-}
-
 const userInRoom = (userId) => {
   store.dispatch("roomModule/getRoomId", userId).then((result) => {
+    data.value.followRoomId = result
     if (result == -1) {
-      notInRoomOpen()
+      store.commit("errorModule/SET_STATUS", 403);
     }
     else {
       store.dispatch("roomModule/checkValidRoom", result).then((status) => {
         if(status != 200){
-          errorOpen(status);
+          store.commit("errorModule/SET_STATUS", status);
         }
         else{
-          const room = store.state.roomModule.room.find(r => r.roomId == result);
+          const room = store.state.roomModule.room.find(r => r.roomId == data.value.followRoomId);
           if(room.private){
             followPrivatePopOpen();
           }
           else{
-            router.push({ name: 'wait', params: { roomId: result } });
+            router.push({ name: 'wait', params: { roomId: data.value.followRoomId } });
           }
         }
       });
@@ -162,37 +117,13 @@ const followEnterPrivateRoom = () => {
     password: data.value.passwordInput,
   }).then((result) => {
     if (result) {
-      console.log(`${data.value.followRoomId}번에 입장시도`)
-      enterRoom(data.value.followRoomId)
+      router.push({ name: 'wait', params: { roomId: data.value.followRoomId } });
     }
     else {
-      followErrorOpen(1)
+      store.commit("errorModule/SET_STATUS", 401);
     }
   })
 }
-
-// const enterRoom = (roomId) => {
-//   store.dispatch('roomModule/createUserInRoom', {
-//     userId: store.state.userModule.user.userId,
-//     roomId: roomId,
-//   })
-//     .then((result) => {
-//       if (result) {
-//         store.dispatch('roomModule/enterRoom', roomId)
-//           .then((result) => {
-//             if (result) {
-//               router.push({ name: 'wait', params: { roomId: roomId } })
-//             }
-//             else {
-//               followErrorOpen(2)
-//             }
-//           })
-//       }
-//       else {
-//         followErrorOpen(2)
-//       }
-//     })
-// }
 
 const followPrivatePopOpen = () => {
   document.getElementsByClassName("follow-private-modal-wrap")[0].style.display = 'block';
@@ -202,25 +133,6 @@ const followPrivatePopOpen = () => {
 const followPrivatePopClose = () => {
   document.getElementsByClassName("follow-private-modal-wrap")[0].style.display = 'none';
   document.getElementsByClassName("follow-private-modal-bg")[0].style.display = 'none';
-  data.value.passwordInput = '';
-}
-
-const followErrorOpen = (state) => {
-  // let titleTag = document.querySelector(".follow-error-popup-header-title");
-  let sentenceTag = document.querySelector(".sentence");
-  if (state == 1) {
-    // titleTag.innerHTML = "Wrong Password";
-    sentenceTag.innerHTML = "비밀번호가 틀렸습니다.";
-  } else {
-    // titleTag.innerHTML = "Refuse Enter Room";
-    sentenceTag.innerHTML = "입장에 실패했습니다.";
-  }
-  document.getElementsByClassName("follow-error-modal-wrap")[0].style.display = 'block';
-  document.getElementsByClassName("follow-error-modal-bg")[0].style.display = 'block';
-}
-const followErrorClose = () => {
-  document.getElementsByClassName("follow-error-modal-wrap")[0].style.display = 'none';
-  document.getElementsByClassName("follow-error-modal-bg")[0].style.display = 'none';
   data.value.passwordInput = '';
 }
 </script>
@@ -324,73 +236,6 @@ input[name="tab_item"] {
   color: #cbcbcb;
 } */
 
-/* 친구가 방안에 없음 팝업창 */
-.user-not-in-modal-bg {
-  display: none;
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 999;
-  transition: 0.5s ease-out;
-  backdrop-filter: blur(4px) brightness(60%);
-}
-
-.user-not-in-modal-wrap {
-  display: none;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 30%;
-  height: 30%;
-  background: #252836;
-  border: solid 2px #e27b66;
-  border-radius: 2rem;
-  z-index: 1000;
-}
-
-.user-not-in-popup {
-  display: grid;
-  height: 100%;
-  width: 100%;
-  /* grid-template-rows: 1fr 11fr; */
-  transition: 0.5s ease-out;
-  color: white;
-}
-
-/* .user-not-in-popup-header {
-  background-color: black;
-  height: 100%;
-  width: 100%;
-  border-bottom: solid 0.5rem #6E0000;
-  border-radius: 1rem 1rem 0 0;
-} */
-
-.user-not-in-popup-content {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
-  height: 70%;
-  width: 80%;
-  margin: 10%;
-}
-
-.btn-wrapper {
-  display: flex;
-  justify-content: space-around;
-}
-
-/* .user-not-in-popup-header-title {
-  color: white;
-  font-size: 1.3rem;
-  padding: 0 5%;
-  padding-top: 1%;
-} */
-
 .el-button {
   background-color: #e27b66 !important;
   color: black !important;
@@ -471,71 +316,4 @@ input[name="tab_item"] {
   padding-top: 1%;
 } */
 
-
-/* 비밀번호 오류 팝업창 */
-.follow-error-modal-bg {
-  display: none;
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 999;
-  transition: 0.5s ease-out;
-}
-
-.follow-error-modal-wrap {
-  display: none;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 30%;
-  height: 30%;
-  background: #252836;
-  border: solid 2px #e27b66;
-  border-radius: 2rem;
-  z-index: 1000;
-}
-
-.follow-error-popup {
-  display: flex;
-  align-items: center;
-  height: 100%;
-  width: 100%;
-  /* grid-template-rows: 1fr 11fr; */
-  transition: 0.5s ease-out;
-  color: white;
-}
-
-/* .follow-error-popup-header {
-  background-color: black;
-  height: 100%;
-  width: 100%;
-  border-bottom: solid 0.5rem #6E0000;
-  border-radius: 1rem 1rem 0 0;
-} */
-
-.follow-error-popup-content {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
-  height: 70%;
-  width: 80%;
-  margin: 10%;
-}
-
-.follow-error-btn-wrapper {
-  display: flex;
-  justify-content: space-around;
-}
-
-/* .follow-error-popup-header-title {
-  color: white;
-  font-size: 1.3rem;
-  padding: 0 5%;
-  padding-top: 1%;
-} */
 </style>

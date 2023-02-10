@@ -16,9 +16,9 @@
 					<div class="user_manner_alcohol"
 						style="margin: 0; display: flex; gap: 16px; flex-direction: row; justify-content: center;">
 						<img src="@/assets/images/manner_w.png" alt="manner_w img" style="width:28px; height:28px;">
-						<p style="margin: 0; font-size: 20px; color: white; align-self:center;">3.5</p>
+						<p style="margin: 0; font-size: 20px; color: white; align-self:center;">{{ mannerPoint }}</p>
 						<img src="@/assets/images/alcohol_w.png" alt="alcohol_w img" style="width:28px; height:28px;">
-						<p style="margin: 0; font-size: 20px; color: white; align-self:center;">14잔</p>
+						<p style="margin: 0; font-size: 20px; color: white; align-self:center;">{{alcoholPoint}}잔</p>
 					</div>
 					<!-- <div class="content" style="width: 60%; text-decoration:none;">
 						별점
@@ -52,7 +52,7 @@
 <script>
 import OvVideo from './OvVideo.vue';
 import { useStore } from 'vuex';
-
+import axios from "axios";
 export default {
 	name: 'UserVideo',
 
@@ -69,7 +69,10 @@ export default {
 	data() {
 		return {
 			store: useStore(),
-			manner_rate: null,
+			manner_rate:null,
+			mannerPoint: 0,
+			alcoholPoint : 0,
+			
 		}
 	},
 
@@ -94,6 +97,7 @@ export default {
 				return false;
 		}
 		// isHost 값을 주는 것 보다는 hostId와 clientId가 일치하는지 직접 비교하는게 나을듯
+	
 	},
 
 	methods: {
@@ -103,7 +107,11 @@ export default {
 			return JSON.parse(connection.data);
 		},
 		userInfo() {
-			console.log("클릭")
+			console.log("userInfo");
+			this.store.dispatch("userModule/getUserPoint",this.userId).then((response) =>{
+				this.mannerPoint = response.mannerPoint;
+				this.alcoholPoint = response.alcoholPoint;
+			});
 		},
 		kick() {
 			this.$emit('kickUser', this.username);
@@ -113,8 +121,12 @@ export default {
 		},
 		friend(){
 			this.$emit('friendRequest', this.userId);
-		}
+		},
+		
 	},
+	beforeDestroy(){
+		console.log("before destory");
+	}
 };
 </script>
 

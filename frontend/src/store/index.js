@@ -3,6 +3,7 @@ import { userModule } from "@/store/modules/userModule.js";
 import { friendModule } from "@/store/modules/friendModule.js";
 import { roomModule } from "@/store/modules/roomModule.js";
 import { gameModule } from "@/store/modules/gameModule.js";
+import { errorModule } from "@/store/modules/errorModule.js";
 import createPersistedState from 'vuex-persistedstate';
 
 export default createStore({
@@ -19,6 +20,7 @@ export default createStore({
     friendModule,
     roomModule,
     gameModule,
+    errorModule,
   },
   plugins: [
     createPersistedState({

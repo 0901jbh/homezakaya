@@ -18,4 +18,6 @@ public interface InviteFriendDao {
     List<String> inviteList(String toUserId);
 
     int deleteInvite(InviteFriendDto inviteFriendDto);
+
+    List<UserDto> selectInviteValidFriends(String fromUserId);
 }

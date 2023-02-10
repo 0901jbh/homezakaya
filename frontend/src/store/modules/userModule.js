@@ -4,12 +4,12 @@ import jwtDecode from "jwt-decode"
 export const userModule = {
   namespaced: true,
   state: () => ({
-    user: {
-      userId: "korealdw",
-      nickname: "동우",
-      mannerPoint: 3,
-      alcoholPoint: 7,
-    }, // user 전체 정보
+    // user: {
+    //   userId: "korealdw",
+    //   nickname: "동우",
+    //   mannerPoint: 3,
+    //   alcoholPoint: 7,
+    // }, // user 전체 정보
 
     isLogin: false, // 로그인상태
     isLoginError: false,
@@ -18,6 +18,7 @@ export const userModule = {
 
     idErr: null, // id 중복 boolean
     nicknameErr: null, // nickname 중복 boolean
+    emailErr: null, // nickname 중복 boolean
   }),
   getters: {
     checkUserInfo: function (state) {
@@ -46,6 +47,9 @@ export const userModule = {
     },
     SET_NICKNAME_ERR: (state, nicknameErr) => {
       state.nicknameErr = nicknameErr
+    },
+    SET_EMAIL_ERR: (state, emailErr) => {
+      state.emailErr = emailErr
     },
   },
 
@@ -115,8 +119,10 @@ export const userModule = {
             console.log(data)
             context.commit("SET_USER_INFO", data) // 인증번호 확인용
             console.log("인증메일 발송 완료")
+            context.commit("SET_EMAIL_ERR", false)
           } else {
             console.log("이미 가입된 이메일 입니다.")
+            context.commit("SET_EMAIL_ERR", true)
           }
         })
         .catch((err) => {
@@ -124,6 +130,7 @@ export const userModule = {
           if (err.response.status == 404) {
             console.log("발송 실패")
           }
+          context.commit("SET_EMAIL_ERR", true)
         })
     },
 
@@ -321,23 +328,21 @@ export const userModule = {
         })
     },
 
-    
-		getUserPoint(context,payload) {
-			return axios
+    getUserPoint(context, payload) {
+      return axios
         .get(`/api/users/${payload}`)
-        .then(({status, data}) => {
+        .then(({ status, data }) => {
           if (status == 200) {
-            return data;
+            return data
           } else {
-			console.log("status != 200");
+            console.log("status != 200")
           }
         })
         .catch((err) => {
           if (err.response == 401) {
-            console.log("유저 정보 획득 실패");
+            console.log("유저 정보 획득 실패")
           }
-        });
-		},
-
+        })
+    },
   },
 }

@@ -95,7 +95,7 @@
             <template #default>
               <div v-if="friends.length == 0">
                 초대 가능한 친구가 없어요
-              </div>
+              </div>  
               <div class="online_friend" v-for="friend in friends" :key="friend"
                 style="display: flex; justify-content: space-evenly; align-items: center; margin: 10px;">
                 <p class="friend_nickname" align="right"
@@ -583,10 +583,19 @@ export default {
     //   return response.data; // The token
     // },
 
+    // online 이면서 다른방에 참여중이 아닌 친구만 넣어줘야 함 + 친구 상황이 바뀔때마다 갱신
     async getFriends() {
       const friends = await this.store.state.friendModule.friends;
       const parseFriends = JSON.parse(JSON.stringify(friends));
       this.friends = parseFriends.filter(friend => friend.state === "online");
+      console.log("+++++++",this.friends, "+++++++++++"); // online 친구 넘어옴
+
+      const inviteValidfriends = await this.store.state.friendModule.inviteValidFriends;  // 안넘어옴
+      console.log("+++++++",inviteValidfriends, "inviteValidfriends++++++");
+      const parseFriendsInvite = JSON.parse(JSON.stringify(inviteValidfriends));
+      console.log("+++++++",parseFriendsInvite, "parseFriendsInvite+++++++");
+      const finalfriend = this.friends.filter(friend => parseFriendsInvite.keys(userId).includes(friend.userId));
+      console.log("========" ,finalfriend , "finalfriend======")
     },
 
     async getRoom() {
@@ -782,8 +791,9 @@ export default {
 
  
 
+  // check point
   async mounted() {
-    await this.getFriends();
+    await this.getFriends();  // invite할때마다 친구목록 갱신
     await this.getRoom();
     this.getUser();
 

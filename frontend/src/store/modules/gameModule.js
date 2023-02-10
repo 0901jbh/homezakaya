@@ -52,11 +52,11 @@ export const gameModule = {
       });
     },
     //주제 가져오기
-    getTopic(context, payload){
-      axios.get(`api/games/topic`).then(({ status, data }) => {
+    async getTopic(context, payload){
+      await axios.get(`api/games/topic`).then(async ({ status, data }) => {
         if(status == 200){
           console.log(data);
-          context.commit("SET_TOPIC", data.content);
+          await context.commit("SET_TOPIC", data.content);
         }
       }).catch(err => {
         if(err.response.status == 404){

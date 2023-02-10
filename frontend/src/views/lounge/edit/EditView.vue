@@ -6,7 +6,7 @@
     <div class="wrapper">
       <div class="signup-title">회원 정보 수정</div>
       <div class="signup-form">
-        <el-form :model="form" label-width="0px">
+        <el-form label-width="0px">
 
           <div>아이디</div>
           <el-form-item>

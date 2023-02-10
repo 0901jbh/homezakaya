@@ -37,6 +37,9 @@ export default {
             }
             let sentenceTag = document.getElementById("error-sentence");
             switch(value){
+				case 204:
+                    sentenceTag.innerHTML = "평가가 반영되었습니다.";
+                    break;
                 case 401:
                     sentenceTag.innerHTML = "비밀번호가 틀렸습니다.";
                     break;

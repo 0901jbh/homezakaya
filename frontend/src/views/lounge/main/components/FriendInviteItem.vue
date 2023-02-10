@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <div class="first-line">
-      <div>{{ props.invite.nickname }} 님께서</div>
+      <div>{{ data.nickname }} 님께서</div>
       <button class="cancel" type="button" @click="deleteInvite">X</button>
     </div>
     <div class="second-line">초대 요청을 보내셨습니다.</div>
@@ -13,6 +13,9 @@
 </template>
 
 <script setup>
+import { onMounted } from '@vue/runtime-core';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
 const props = defineProps({
@@ -20,6 +23,20 @@ const props = defineProps({
 })
 
 const store = useStore()
+const router = useRouter()
+
+const data = ref({
+  nickname: '',
+})
+
+const setNickName = onMounted(async () => {
+  const friends = await store.getters["friendModule/getFriends"]
+  friends.forEach(friend => {
+    if (friend.userId == props.invite.fromUserId) {
+      data.value.nickname = friend.nickname;
+    }
+  });
+})
 
 const deleteInvite = () => {
   store.dispatch('roomModule/removeInvite', {
@@ -29,14 +46,24 @@ const deleteInvite = () => {
 }
 
 const approveInvite = async () => {
-    const fromUserId = props.invite.fromUserId;
-    const roomId = await store.dispatch('roomModule/getRoomId', fromUserId)
-    if (typeof roomId === "number") {
-      // 공개방이든 비공개방이든 바로 입장
-    } else {
-      // 나를 초대한 친구가 접속한 방이 없음
-      deleteInvite()
+  const fromUserId = props.invite.fromUserId;
+  const roomId = await store.dispatch('roomModule/getRoomId', fromUserId)
+  .then((result) => {
+    if (result == -1) {
+      store.commit("errorModule/SET_STATUS", 403);
     }
+    else {
+      store.dispatch("roomModule/checkValidRoom", result).then((status) => {
+        if(status != 200){
+          store.commit("errorModule/SET_STATUS", status);
+        }
+        else{
+          router.push({ name: 'wait', params: { roomId: result } });
+        }
+      })
+    }
+    deleteInvite()
+  })
 }
 
 </script>

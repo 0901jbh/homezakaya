@@ -69,6 +69,7 @@
           </el-form-item> -->
 
           <div v-if="data.emailNull" style="color: red;">이메일을 입력해주세요.</div>
+          <div v-else-if="data.emailErr" style="color: red;">이메일이 중복됩니다.</div>
           <div v-else-if="data.emailUnchecked" style="color: red;">이메일 인증을 해주세요.</div>
           <div v-else>이메일</div>
           <el-form-item>
@@ -141,6 +142,7 @@ const data = ref({
 
   // email 관련 data
   emailNull: false,
+  emailErr: false,
   emailChecked: false,
   emailUnchecked: false,
 
@@ -187,6 +189,7 @@ watch(() => data.value.nickname, (newValue, oldValue) => {
 watch(() => data.value.email, (newValue, oldValue) => {
   console.log('email changed')
   data.value.emailNull = false
+  data.value.emailErr = false
   data.value.emailChecked = false
 });
 
@@ -224,7 +227,7 @@ const onSubmit = async () => {
       "userModule/getUserInfo",
       sessionStorage.getItem("access-token")
     );
-    if (store.getters['userModule/checkToken']) {
+    if (store.state.userModule.isLogin) {
       router.push({ name: "rooms" });
     } else {
       data.value.loginFail = true
@@ -299,38 +302,46 @@ const emailsend = async () => {
     const form = new FormData();
     form.append("email", data.value.email);
     await store.dispatch("userModule/sendEmail", form);
-    console.log("email send!");
-    ElMessageBox.prompt("인증번호를 입력해주세요.", "메일인증", {
-      confirmButtonText: "OK",
-      cancelButtonText: "Cancel",
-    })
-      .then(({ value }) => {
-        if (value == store.state.userModule.user.emailCode) {
-          console.log("email confirm!");
-          ElMessage({
-            type: "success",
-            message: `인증되었습니다.`,
-          });
-          data.value.emailChecked = true;
-        } else {
-          ElMessage({
-            type: "error",
-            message: "인증이 실패했습니다.",
-          });
-        }
+    data.value.emailErr = store.state.userModule.emailErr
+    if (data.value.emailErr == false) {
+      ElMessageBox.prompt("인증번호를 입력해주세요.", "메일인증", {
+        confirmButtonText: "OK",
+        cancelButtonText: "Cancel",
       })
-      .catch(() => {
-        ElMessage({
-          type: "info",
-          message: "입력이 취소되었습니다.",
+        .then(({ value }) => {
+          if (value == store.state.userModule.user.emailCode) {
+            console.log("email confirm!");
+            ElMessage({
+              type: "success",
+              message: `인증되었습니다.`,
+            });
+            data.value.emailChecked = true;
+          } else {
+            ElMessage({
+              type: "error",
+              message: "인증이 실패했습니다.",
+            });
+          }
+        })
+        .catch(() => {
+          ElMessage({
+            type: "info",
+            message: "입력이 취소되었습니다.",
+          });
         });
-      });
+    }
+    console.log("email send!");
   }
 };
 
 </script>
 
 <style scoped>
+@font-face {
+  font-family: "dodum";
+  src: url("@/assets/fonts/GowunDodum-Regular.ttf");
+}
+
 .container {
   display: flex;
   justify-content: center;
@@ -352,11 +363,12 @@ const emailsend = async () => {
 }
 
 .signup-title {
-  font-family: 'eastsea';
+  font-family: 'dodum';
   font-style: normal;
   font-weight: 800;
-  font-size: 10vh;
+  font-size: 8vh;
   color: #E27B66;
+  margin-bottom: 2vh;
 }
 
 .signup-form {

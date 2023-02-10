@@ -7,6 +7,7 @@ export const friendModule = {
     friends: [],
     requests: [],
     searchUsers: [],
+    inviteValidFriends:[],
   }),
   mutations: {
     SET_FRIENDS(state, payload) {
@@ -17,7 +18,10 @@ export const friendModule = {
     },
     SET_SEARCH_USERS(state, payload) {
       state.searchUsers = payload;
-    }
+    },
+    SET_INVITE_VALID_FRIENDS(state, payload) {  // 여기 포함되어 있으면 초대목록에 표시X
+      state.inviteValidFriends = payload;
+    },
   },
   getters: {
     getFriends(state){
@@ -49,6 +53,31 @@ export const friendModule = {
         console.log(err);
       })
     },
+
+    // 친구가 userInRoom에 들어있는지 확인 -> inviteValid 추가 (data = 참여한 유저 id)
+    checkInviteFriendValid(context, payload){// payload = userId
+      axios.get(`/api/userinroom/${payload}`)
+      .then(({status, data}) => {
+        if(status == 200){
+          console.log("이미 방에 참여중인 친구입니다")
+        } else if(status == 404){
+          // console.log(payload)
+          // context.commit("SET_INVITE_VALID_FRIENDS", payload) // 방에 참여중이 아닌 유저
+          console.log("userId가 없습니다.")
+        }
+        else if(status == 500){
+          console.log("그 외 서버 관련 에러")
+        }
+      }).catch(err => {
+        if(err.response.status == 404){
+          // console.log(payload)
+          context.commit("SET_INVITE_VALID_FRIENDS", payload) // 방에 참여중이 아닌 유저
+          console.log(payload);
+        }
+      })
+    },
+
+
     // 친구 삭제
     deleteFriend(context, payload){
       axios.delete(`/api/friends/${payload.userAId}/${payload.userBId}`)

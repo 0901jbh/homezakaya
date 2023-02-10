@@ -49,8 +49,8 @@ const router = useRouter();
 
 const data = ref({
   nickname: store.state.userModule.user.nickname,
-  mannerPoint: store.state.userModule.user.mannerPoint,
   alcoholPoint: store.state.userModule.user.alcoholPoint,
+  mannerPoint : parseFloat(store.state.userModule.user.mannerPoint.toFixed(2)),
 });
 
 const edit = async () => {

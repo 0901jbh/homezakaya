@@ -47,12 +47,15 @@ public class UserServiceImpl implements UserService {
     public boolean averageOfMannerPoint(String userId, double mannerPoint) {
         UserDto originUser = userDao.getUser(userId);
 
-        double updateMannerPoint = (originUser.getMannerPoint() * originUser.getEvaluatedCount()) + mannerPoint; // 누적점수
-        originUser.setEvaluatedCount(originUser.getEvaluatedCount() + 1);   // 평가수 + 1
+        double mp = originUser.getMannerPoint();
+        int ep = originUser.getEvaluatedCount();
 
-        double avgMannerPoint = updateMannerPoint / (double) originUser.getEvaluatedCount();
-        originUser.setMannerPoint(Math.round(avgMannerPoint * 10) / 10.0);   // 매너점수 update
-        originUser.setEvaluatedCount(1);
+        double sum = mp * (double) ep + mannerPoint;
+
+        int nep = ep+1;
+        double nmp = sum / (double) nep;
+        originUser.setMannerPoint(nmp);
+        originUser.setEvaluatedCount(nep);
 
         return userDao.updateMannerPoint(originUser) == 1;
     }

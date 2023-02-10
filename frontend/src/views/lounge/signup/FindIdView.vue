@@ -8,6 +8,7 @@
       <div class="id-form">
         <el-form :model="form" label-width="0px">
           <div v-if="data.emailNull" style="color: red;">이메일을 입력해주세요.</div>
+          <div v-else-if="data.emailErr" style="color: red;">이메일이 중복됩니다.</div>
           <div v-else-if="data.emailUnchecked" style="color: red;">이메일 인증을 해주세요.</div>
           <div v-else>이메일</div>
           <el-form-item>
@@ -19,7 +20,7 @@
           </el-form-item>
         </el-form>
       </div>
-      <div class="id-result">
+      <div v-if="data.emailChecked" class="id-result">
         당신의 아이디는 뭐시기 입니다.
       </div>
     </div>
@@ -49,6 +50,8 @@ const data = ref({
 
   email: "",
   emailCode: "",
+
+  id: "",
 });
 
 watch(() => data.value.email, (newValue, oldValue) => {
@@ -65,7 +68,7 @@ const emailsend = async () => {
     data.value.emailNull = false
     const form = new FormData();
     form.append("email", data.value.email);
-    await store.dispatch("userModule/sendEmail", form);
+    await store.dispatch("userModule/findId", form);
     console.log("email send!");
     ElMessageBox.prompt("인증번호를 입력해주세요.", "메일인증", {
       confirmButtonText: "OK",

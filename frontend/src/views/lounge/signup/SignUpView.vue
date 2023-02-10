@@ -206,7 +206,8 @@ const onSubmit = async () => {
   if (data.value.emailChecked == false) {
     data.value.emailUnchecked = true
   }
-  if (data.value.idChecked && data.value.passwordChecked && data.value.nicknameChecked && data.value.emailChecked) {
+  // && data.value.emailChecked
+  if (data.value.idChecked && data.value.passwordChecked && data.value.nicknameChecked) {
     await store.dispatch("userModule/createUser", {
       userId: data.value.id,
       password: data.value.password,

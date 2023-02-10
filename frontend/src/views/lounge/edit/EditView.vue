@@ -349,13 +349,13 @@ const onDelete = async () => {
           confirmButtonText: "OK",
           cancelButtonText: "Cancel",
         })
-          .then(({ value }) => {
+          .then(async () => {
             ElMessage({
               type: "success",
               message: `탈퇴 완료되었습니다..`,
             });
-            store.dispatch("userModule/userLogout", data.value.id);
-            store.dispatch("userModule/removeUser", data.value.id);
+            // store.dispatch("userModule/userLogout", data.value.id);
+            await store.dispatch("userModule/removeUser", data.value.id)
             router.push({ name: "home" });
           })
           .catch(() => {

@@ -4,23 +4,37 @@
   </header> -->
   <div class="container">
     <div class="wrapper">
-      <div class="password-title">비밀번호 찾기</div>
-      <div class="password-form">
-        <el-form :model="form" label-width="0px">
+      <div class="id-title">비밀번호 찾기</div>
+      <div class="id-form">
+        <el-form label-width="0px">
+
+          <div v-if="data.idNull" style="color: red;">아이디를 입력해주세요.</div>
+          <div v-else>아이디</div>
+          <el-form-item>
+            <el-input v-model="data.id" placeholder="아이디" clearable>
+            </el-input>
+          </el-form-item>
+
           <div v-if="data.emailNull" style="color: red;">이메일을 입력해주세요.</div>
-          <div v-else-if="data.emailUnchecked" style="color: red;">이메일 인증을 해주세요.</div>
           <div v-else>이메일</div>
           <el-form-item>
             <el-input v-model="data.email" placeholder="이메일" clearable>
-              <template #append>
-                <el-button @click="emailsend" style="color:white;">메일인증</el-button>
-              </template>
             </el-input>
           </el-form-item>
+
+          <el-form-item>
+            <el-button type="info" size="large" @click="emailsend" style="width: 300px;">
+              비밀번호 찾기
+            </el-button>
+          </el-form-item>
+
         </el-form>
       </div>
-      <div class="password-result">
-        당신의 아이디는 뭐시기 입니다.
+      <div v-if="data.emailErr" class="id-result" style="color: red;">
+        아이디와 이메일 정보가 일치하지 않습니다.
+      </div>
+      <div v-if="data.newPass" class="id-result">
+        새로운 비밀번호가 당신의 메일로 전송되었습니다.
       </div>
     </div>
   </div>
@@ -42,13 +56,26 @@ const store = useStore();
 
 const data = ref({
 
+  // id 관련 data
+  idNull: false,
+
   // email 관련 data
   emailNull: false,
+  emailErr: false,
   emailChecked: false,
-  emailUnchecked: false,
 
+  newPass: false,
+
+  id: "",
   email: "",
   emailCode: "",
+});
+
+watch(() => data.value.id, (newValue, oldValue) => {
+  console.log('id changed')
+  data.value.idNull = false
+  data.value.idErr = false
+  data.value.idChecked = false
 });
 
 watch(() => data.value.email, (newValue, oldValue) => {
@@ -61,38 +88,17 @@ const emailsend = async () => {
   data.value.emailUnchecked = false
   if (data.value.email == "") {
     data.value.emailNull = true
-  } else {
-    data.value.emailNull = false
-    const form = new FormData();
-    form.append("email", data.value.email);
-    await store.dispatch("userModule/sendEmail", form);
-    console.log("email send!");
-    ElMessageBox.prompt("인증번호를 입력해주세요.", "메일인증", {
-      confirmButtonText: "OK",
-      cancelButtonText: "Cancel",
-    })
-      .then(({ value }) => {
-        if (value == store.state.userModule.user.emailCode) {
-          console.log("email confirm!");
-          ElMessage({
-            type: "success",
-            message: `인증되었습니다.`,
-          });
-          data.value.emailChecked = true;
-        } else {
-          ElMessage({
-            type: "error",
-            message: "인증이 실패했습니다.",
-          });
-        }
-      })
-      .catch(() => {
-        ElMessage({
-          type: "info",
-          message: "입력이 취소되었습니다.",
-        });
-      });
   }
+  if (data.value.id == "") {
+    data.value.idNull = true
+  }
+  const form = new FormData();
+  form.append("email", data.value.email);
+  form.append("userId", data.value.id);
+  await store.dispatch("userModule/findPassword", form);
+  data.value.emailErr = store.state.userModule.emailErr
+  data.value.newPass = store.state.userModule.newPass
+  console.log("email send!");
 };
 
 </script>
@@ -123,7 +129,7 @@ const emailsend = async () => {
   color: #cbcbcb;
 }
 
-.password-title {
+.id-title {
   font-family: 'dodum';
   font-style: normal;
   font-weight: 800;
@@ -132,7 +138,7 @@ const emailsend = async () => {
   margin-bottom: 2vh;
 }
 
-.password-form {
+.id-form {
   width: 40vw;
   /* padding-top: 50px; */
 }

@@ -30,6 +30,12 @@
             아이디와 비밀번호를 확인하세요.
           </div>
           <div>
+            계정을 잊으셨나요?
+            <RouterLink to="/findid" style="text-decoration: none; color: #e27b66">아이디찾기</RouterLink>
+            /
+            <RouterLink to="/findpassword" style="text-decoration: none; color: #e27b66">비밀번호찾기</RouterLink>
+          </div>
+          <div>
             계정이 없으신가요?
             <RouterLink to="/signup" style="text-decoration: none; color: #e27b66">회원가입</RouterLink>
           </div>
@@ -70,7 +76,7 @@ const onSubmit = async () => {
     "userModule/getUserInfo",
     sessionStorage.getItem("access-token")
   );
-  if (store.getters['userModule/checkToken']) {
+  if (store.state.userModule.isLogin) {
     router.push({ name: "rooms" });
   } else {
     data.value.loginFail = true

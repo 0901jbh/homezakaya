@@ -71,6 +71,7 @@
         </el-form-item> -->
 
           <div v-if="data.emailNull" style="color: red;">이메일을 입력해주세요.</div>
+          <div v-else-if="data.emailErr" style="color: red;">이메일이 중복됩니다.</div>
           <div v-else-if="data.emailUnchecked" style="color: red;">이메일 인증을 해주세요.</div>
           <div v-else>이메일</div> <el-form-item>
             <el-input v-model="data.email" placeholder="이메일" clearable>
@@ -96,8 +97,12 @@
           </el-form-item>
 
           <el-form-item>
-            <el-button type="info" size="large" @click="onSubmit" style="width: 300px;">
+            <el-button type="info" size="large" @click="onSubmit" style="width: 192px;">
               수정 완료
+            </el-button>
+            <el-button type="info" size="large" @click="onDelete"
+              style="width: 96px; color: #1F1D2B !important; background-color: red !important;">
+              회원 탈퇴
             </el-button>
           </el-form-item>
 
@@ -151,6 +156,7 @@ const data = ref({
 
   // email 관련 data
   emailNull: false,
+  emailErr: false,
   emailChecked: false,
   emailUnchecked: false,
   emailSame: true,
@@ -195,6 +201,7 @@ watch(() => data.value.nickname, (newValue, oldValue) => {
 watch(() => data.value.email, (newValue, oldValue) => {
   console.log('email changed')
   data.value.emailNull = false
+  data.value.emailErr = false
   data.value.emailChecked = false
   if (newValue == data.value.emailNow) {
     data.value.emailSame = true
@@ -208,8 +215,16 @@ const onSubmit = async () => {
   if (data.value.passwordChecked == false && !(data.value.passwordSame && data.value.password2Same)) {
     data.value.passwordUnchecked = true
   }
+  if (data.value.nickname == "") {
+    data.value.nickname = data.value.nicknameNow
+    data.value.nicknameSame = true
+  }
   if (data.value.nicknameChecked == false && !data.value.nicknameSame) {
     data.value.nicknameUnchecked = true
+  }
+  if (data.value.email == "") {
+    data.value.email = data.value.emailNow
+    data.value.emailSame = true
   }
   if (data.value.emailChecked == false && !data.value.emailSame) {
     data.value.emailUnchecked = true
@@ -235,13 +250,9 @@ const onSubmit = async () => {
       "userModule/getUserInfo",
       sessionStorage.getItem("access-token")
     );
-    if (store.getters['userModule/checkToken']) {
+    if (store.state.userModule.isLogin) {
       router.push({ name: "rooms" });
-    } else {
-      data.value.loginFail = true
     }
-
-    router.push({ name: "rooms" });
   }
 };
 
@@ -269,32 +280,35 @@ const emailsend = async () => {
     const form = new FormData();
     form.append("email", data.value.email);
     await store.dispatch("userModule/sendEmail", form);
-    console.log("email send!");
-    ElMessageBox.prompt("인증번호를 입력해주세요.", "메일인증", {
-      confirmButtonText: "OK",
-      cancelButtonText: "Cancel",
-    })
-      .then(({ value }) => {
-        if (value == store.state.userModule.user.emailCode) {
-          console.log("email confirm!");
-          ElMessage({
-            type: "success",
-            message: `인증되었습니다.`,
-          });
-          data.value.emailChecked = true;
-        } else {
-          ElMessage({
-            type: "error",
-            message: "인증이 실패했습니다.",
-          });
-        }
+    data.value.emailErr = store.state.userModule.emailErr
+    if (data.value.emailErr == false) {
+      ElMessageBox.prompt("인증번호를 입력해주세요.", "메일인증", {
+        confirmButtonText: "OK",
+        cancelButtonText: "Cancel",
       })
-      .catch(() => {
-        ElMessage({
-          type: "info",
-          message: "입력이 취소되었습니다.",
+        .then(({ value }) => {
+          if (value == store.state.userModule.user.emailCode) {
+            console.log("email confirm!");
+            ElMessage({
+              type: "success",
+              message: `인증되었습니다.`,
+            });
+            data.value.emailChecked = true;
+          } else {
+            ElMessage({
+              type: "error",
+              message: "인증이 실패했습니다.",
+            });
+          }
+        })
+        .catch(() => {
+          ElMessage({
+            type: "info",
+            message: "입력이 취소되었습니다.",
+          });
         });
-      });
+    }
+    console.log("email send!");
   }
 };
 
@@ -321,10 +335,58 @@ function isCorrect() {
       console.log("wrong password!");
     }
   }
-}
+};
+
+const onDelete = async () => {
+  ElMessageBox.prompt("비밀번호를 입력해주세요.", "비밀번호확인", {
+    confirmButtonText: "OK",
+    cancelButtonText: "Cancel",
+  })
+    .then(({ value }) => {
+      if (value == data.value.passwordNow) {
+        console.log("password confirm!");
+        ElMessageBox.confirm("정말로 탈퇴하시겠습니까?", "탈퇴확인", {
+          confirmButtonText: "OK",
+          cancelButtonText: "Cancel",
+        })
+          .then(({ value }) => {
+            ElMessage({
+              type: "success",
+              message: `탈퇴 완료되었습니다..`,
+            });
+            store.dispatch("userModule/userLogout", data.value.id);
+            store.dispatch("userModule/removeUser", data.value.id);
+            router.push({ name: "home" });
+          })
+          .catch(() => {
+            ElMessage({
+              type: "info",
+              message: "탈퇴 취소되었습니다.",
+            });
+          });
+
+      } else {
+        ElMessage({
+          type: "error",
+          message: "비밀번호가 틀렸습니다.",
+        });
+      }
+    })
+    .catch(() => {
+      ElMessage({
+        type: "info",
+        message: "입력이 취소되었습니다.",
+      });
+    });
+};
 </script>
 
 <style scoped>
+@font-face {
+  font-family: "dodum";
+  src: url("@/assets/fonts/GowunDodum-Regular.ttf");
+}
+
 /* .container {
   display: flex;
   height: 90vh;
@@ -352,7 +414,7 @@ function isCorrect() {
 }
 
 .signup-title {
-  font-family: "Inter";
+  font-family: "dodum";
   font-style: normal;
   font-weight: 800;
   font-size: 8vh;

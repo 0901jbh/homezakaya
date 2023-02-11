@@ -305,7 +305,7 @@ export const roomModule = {
         if(status == 200){
           context.commit('SET_REQUESTS', data)
           // console.log(data[0].fromUserId);
-          console.log("getRequests Success");
+          console.log("getInvites Success");
         }else if (status == 204){
           context.commit('SET_REQUESTS', [])
           // console.log(data)

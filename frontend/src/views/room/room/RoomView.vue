@@ -224,7 +224,7 @@ export default {
       // audioActive: true,
 
       gameStatus: 0,
-      games: ['일반', '할머니 게임', '나 안취했어', '랜덤 대화주제'],
+      games: ['일반', '할머니 게임', '나 안취했어', '랜덤 대화주제'],  // 이거 건들지 마세여
 
       // 도움말 팝업창 페이지
       infoPage: 1,
@@ -263,15 +263,12 @@ export default {
       if (value) {
         this.session.signal({
           //말할 문장, 말한 문장 담아서 보내기
-          data: JSON.stringify({ content: this.store.state.gameModule.sentence, strPerson: this.store.state.gameModule.texts }),
+          data: JSON.stringify({ 
+            content: this.gameContent, 
+            strPerson: this.store.state.gameModule.texts 
+          }),
           type: 'detect-audio'
         })
-          .then(() => {
-            this.store.dispatch("gameModule/getSentence");
-          })
-          .catch(error => {
-            console.error(error);
-          })
       }
     },
   },
@@ -367,9 +364,7 @@ export default {
       this.session.on('signal:random-keyword', (event) => {
         this.gameStatus = 1
         this.gameScreenOpen(1);
-        // 주제 띄우기
         this.eventData = JSON.parse(event.data);
-        console.log(this.eventData.keyword);
         this.gameContent = this.eventData.keyword;
       })
 
@@ -385,33 +380,36 @@ export default {
         setTimeout(() => {this.gameScreenClose()}, 3000);
       })
 
-      this.session.on('signal:check-drunk', (event) => {
+      this.session.on('signal:check-drunk', async (event) => {
         this.gameStatus = 2
         this.gameScreenOpen(2)
-        this.eventData = JSON.parse(event.data);
+        this.eventData = await JSON.parse(event.data);
         this.gameContent = `${this.eventData.username}님 말 할 준비!`;
-        setTimeout(() => {},3000);
-        this.gameContent = this.store.state.gameModule.sentence;
-        if (this.eventData.username == this.myUserName) {
-          this.store.dispatch("gameModule/getSpeech");
-        }
+        setTimeout(() => {
+          this.gameContent = this.eventData.sentence
+          if (this.eventData.username == this.myUserName) {
+            this.store.dispatch("gameModule/getSpeech");
+          }
+        }, 3000)     
       })
 
-      this.session.on('signal:detect-audio', (event) => {
-        this.eventData = JSON.parse(event.data);
-        this.gameContent = `기준 문장 : ${this.eventData.content}\n발음 문장 : ${this.eventData.strPerson}`;
-        setTimeout(() => {},3000);
-        this.store.dispatch("gameModule/getAccuracy", this.eventData).then((response) => {
-          this.gameContent = `정확도 : ${response}`;
-        });
-        setTimeout(() => {this.gameScreenClose()}, 3000);
+      this.session.on('signal:detect-audio',async (event) => {
+        this.eventData = await JSON.parse(event.data);
+        this.gameContent = `기준 문장 : ${this.eventData.content}
+
+        발음 문장 : ${this.eventData.strPerson}`;
+        setTimeout(() => {
+          this.store.dispatch("gameModule/getAccuracy", this.eventData).then((response) => {
+            this.gameContent = `정확도 : ${response}`;
+          });
+        }, 6000)
+        setTimeout(() => {this.gameScreenClose()}, 9000);
       })
 
       this.session.on('signal:random-topic', (event) => {
         this.gameStatus = 3
         this.gameScreenOpen(3)
         this.eventData = JSON.parse(event.data);
-        // console.log(this.eventData.topic);
         this.gameContent = this.eventData.topic;
       })
 
@@ -616,53 +614,36 @@ export default {
       this.gameStatus = idx;
       switch (this.gameStatus) {
         case 1:
-          //게임화면 켜지고 게임 룰 설명하고
-          this.session.signal({
-            data: JSON.stringify({ keyword: this.store.state.gameModule.keyword }),
-            type: 'random-keyword'
+          console.log('웃음참기 버튼 클릭');
+          this.store.dispatch("gameModule/getKeyword")
+          .then(async () => {
+            this.gameContent = await this.store.state.gameModule.keyword;
+            this.session.signal({
+              type: 'detect-smile'
+            })
+              .then(() => {
+                this.session.signal({
+                  data: JSON.stringify({ keyword: this.store.state.gameModule.keyword }),
+                  type: 'random-keyword'
+                })           
+              })
           })
-            .then(() => {
-              console.log('랜덤 주제 제시어');
-              if (!this.gameStart) {
-                this.store.dispatch("gameModule/getKeyword").then(() => {
-                  this.gameContent = this.store.state.gameModule.keyword
-                });
-              } else {
-                this.gameContent = this.store.state.gameModule.keyword
-              }
-            })
-            .catch(error => {
-              console.error(error);
-            })
-
-          //웃음탐지 시그널 보내고
-          this.session.signal({
-            type: 'detect-smile'
-          })
-            .then(() => {
-              console.log('웃탐시작');
-              // 각 게임에 맞는 화면 시작
-            })
-            .catch(error => {
-              console.error(error);
-            })
           break;
-        case 2:
-          this.session.signal({
-            //체크할 닉네임 보내기
-            data: JSON.stringify({ username: this.myUserName }),
-            type: 'not-drunk'
-          })
-            .then(() => {
-              console.log('나안취했어 시작');
-            })
-            .catch(error => {
-              console.error(error);
-            })
-          break;
-
+        // case 2:
+        //   this.session.signal({
+        //     //체크할 닉네임 보내기
+        //     data: JSON.stringify({ username: this.myUserName }),
+        //     type: 'not-drunk'
+        //   })
+        //     .then(() => {
+        //       console.log('나안취했어 시작');
+        //     })
+        //     .catch(error => {
+        //       console.error(error);
+        //     })
+        //   break;
         case 3:
-          console.log('랜덤주제 실행');
+          console.log('랜덤주제 버튼 클릭');
           this.store.dispatch("gameModule/getTopic")
           .then(async () => {
             this.gameContent = await this.store.state.gameModule.topic
@@ -673,7 +654,6 @@ export default {
               type: 'random-topic'
             })
           })
-
           break;
       }
     },
@@ -739,16 +719,18 @@ export default {
     },
 
     checkDrunk(username){
-      this.session.signal({
-        data: JSON.stringify({ username: username }),
-        type: 'check-drunk'
-      })
-        .then(() => {
-          console.log('안취했어 시작!');
+      if (hostId == myUserId) {
+        console.log("나안취했어 버튼 클릭")
+        this.store.dispatch("gameModule/getSentence").then(() => {
+          this.session.signal({
+          data: JSON.stringify({
+            username: username,
+            sentence: this.store.state.gameModule.sentence
+            }),
+          type: 'check-drunk'
+          })
         })
-        .catch(error => {
-          console.error(error);
-        })
+      }
     },
 
     kickUser(username) {
@@ -828,9 +810,6 @@ export default {
     await this.getRoom();
     this.getUser();
 
-    this.store.dispatch("gameModule/getSentence");
-    this.store.dispatch("gameModule/getKeyword");
-    
     this.joinSession();
   },
 

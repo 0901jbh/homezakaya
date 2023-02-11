@@ -119,7 +119,7 @@ public class UserInRoomController {
             List<UserDto> inviteValidFriends = inviteFriendService.getInviteValidFriends(fromUserId);
             return new ResponseEntity<>(inviteValidFriends, HttpStatus.OK);
         }catch (Exception e){
-            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -142,7 +142,7 @@ public class UserInRoomController {
                 return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
             }
         } catch (Exception e) {
-            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -150,9 +150,9 @@ public class UserInRoomController {
     @GetMapping("/invite/{toUserId}")
     public ResponseEntity<?> getInvitesList(@PathVariable String toUserId) {
         Map<String, Object> resultMap = new HashMap<>();
-        List<String> invitesFromUser = inviteFriendService.getInvites(toUserId);
 
         try {
+            List<String> invitesFromUser = inviteFriendService.getInvites(toUserId);
             if (invitesFromUser.size() == 0) {
                 resultMap.put("message", "받은 초대가 없습니다.");
                 return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NO_CONTENT);   // 204
@@ -161,18 +161,19 @@ public class UserInRoomController {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<List<String>>(invitesFromUser, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @DeleteMapping("/invite")
-    public ResponseEntity<?> removeInvite(@RequestBody InviteFriendDto inviteFriendDto) {
+    @DeleteMapping("/invite/{fromUserId}/{toUserId}")
+    public ResponseEntity<?> removeInvite(@PathVariable String fromUserId, @PathVariable String toUserId) {
         Map<String, Object> resultMap = new HashMap<>();
         try {
+            InviteFriendDto inviteFriendDto = new InviteFriendDto(fromUserId, toUserId);
             boolean res = inviteFriendService.removeInvite(inviteFriendDto);
             if(res) {
                 resultMap.put("message", "방 초대 요청 삭제 완료");
-                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NO_CONTENT);
             } else {
                 resultMap.put("message", "방 초대가 없습니다.");
                 return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NOT_FOUND);

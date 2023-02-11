@@ -5,7 +5,7 @@
     <input id="user" type="radio" name="tab_item">
     <label class="tab_item" id="tab_second" for="user">친구 찾기</label>
     <div class="tab_content" id="friend_content">
-      <FriendInviteItem v-for="(invite, idx) in data.invites " :key="idx" :invite="invite"/>
+      <FriendInviteItem v-for="(fromUserId, idx) in data.invites " :key="idx" :fromUserId="fromUserId"/>
       <FriendRequestItem v-for="(request, idx) in data.requests" :key="idx" :idx="idx" :request="request" />
       <FriendItem v-for="(friend, idx) in data.friends" :key="idx" :idx="idx" :friend="friend"
         @followFriend="userInRoom" />
@@ -82,7 +82,7 @@ const getFriends = onBeforeMount(() => {
 })
 
 const getInvites = onBeforeMount(() => {
-  store.dispatch("roomModule/getInvitesList", store.state.userModule.user.userId)
+  store.dispatch("roomModule/getInvitesList", store.state.userModule.user.userId);
 })
 
 const searchUser = () => {

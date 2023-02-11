@@ -328,7 +328,29 @@ export default {
         const subscriber = this.session.subscribe(stream);
         this.subscribers.push(subscriber);
         this.headCount = this.subscribers.length + 1;
+
+        // 게임 중 유저 입장 시 처리 signal
+        if (this.hostId == this.myUserId && this.gameStart) {
+          this.session.signal({
+            data: JSON.stringiFy({
+              gameTitle: this.gameTitle,
+              gameContent: this.gameContent,
+              gameStatus: this.gameStatus
+            }),
+            type: 'enter-user-in-game'
+          })
+        }
       });
+
+      this.session.on("enter-user-in-game", async (event) => {
+        if (!this.gameStart) {
+          this.eventData = await JSON.parse(event.data);
+          this.gameStatus = this.eventData.gameStatus;
+          this.gameScreenOpen(this.eventData.gameStatus);
+          this.gameTitle = this.eventData.gameTitle;
+          this.gameContent = this.eventData.gameContent;
+        }
+      })
 
       // On every Stream destroyed...
       this.session.on("streamDestroyed", ({ stream }) => {
@@ -794,6 +816,13 @@ export default {
       this.store.dispatch("roomModule/inviteFriend",{
         fromUserId: this.myUserId,
         toUserId: toUserId
+      }).then((response) => {
+        if(response == 200){
+          this.store.commit("errorModule/SET_STATUS", 205);
+        }
+        else if(response == 409){
+          this.store.commit("errorModule/SET_STATUS", 205);
+        }
       });
     },
   },

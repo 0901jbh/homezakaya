@@ -58,6 +58,9 @@ export default {
 				case 405:
                     sentenceTag.innerHTML = "강퇴당했습니다.";
                     break;
+				case 406:
+                    sentenceTag.innerHTML = "이미 초대했습니다.";
+                    break;
                 case 409:
                     sentenceTag.innerHTML = "방 인원이 가득 찼습니다.";
                     break;

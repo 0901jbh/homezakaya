@@ -799,6 +799,9 @@ export default {
         if(response == 200){
           this.store.commit("errorModule/SET_STATUS", 205);
         }
+        else if(response == 409){
+          this.store.commit("errorModule/SET_STATUS", 205);
+        }
       });
     },
   },

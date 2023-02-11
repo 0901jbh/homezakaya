@@ -278,7 +278,6 @@ export const roomModule = {
 
     // 방으로 친구 초대 -ok
     inviteFriend(context, payload) {
-      console.log(payload);
       return axios.post(`/api/userinroom/invite`, payload).then(({ status, data }) => {
           if (status == 200) {
             console.log("초대 요청을 보냈습니다.")
@@ -304,7 +303,7 @@ export const roomModule = {
           console.log("getInvites Success");
         }else if (status == 204){
           context.commit('SET_REQUESTS', [])
-          console.log("userId가 존재하지 않습니다.")
+          console.log("받은 초대 없음.")
         }
         
       }).catch((err) => {
@@ -317,10 +316,8 @@ export const roomModule = {
 
     // 방으로 친구 초대 거절(초대 정보 삭제) - ok
     removeInvite(context, payload) {
-      console.log(payload);
-      axios.delete(`/api/userinroom/invite`, payload).then(({ status, data }) => {
-          if (status == 200) {
-            console.log(data)
+      axios.delete(`api/userinroom/invite/${payload.fromUserId}/${payload.toUserId}`).then(({ status, data }) => {
+          if (status == 204) {
             console.log("방초대 삭제 완료")
           }
         })

@@ -8,7 +8,7 @@
         values (#{fromUserId}, #{toUserId})
     </insert>
 
-    <select id="inviteList" resultType="map" parameterType="String">
+    <select id="inviteList" resultType="String" parameterType="String">
         select fromUserId
         from invitefriend
         where toUserId = #{toUserId}
@@ -31,7 +31,7 @@
         from user
                  left outer join userinroom on user.userId = userinroom.userId
         where user.userId in
-              (select userBId from friend where userAId = #{userId})
+              (select userBId from friend where userAId = #{userId} and isConnected = 1)
           and state = 'online'
           and userinroom.userId is null;
     </select>

@@ -267,34 +267,33 @@ export const roomModule = {
         if(status == 200){
           context.commit("SET_INVITEVALID_FRIENDS", data)
           console.log("초대 가능한 친구 목록 : ", data)
-        }else if(status == 204){
-          console.log("초대 가능한 친구가 없습니다.")
-        }else if(status == 500){
-          console.log("INTERVAL_SERVER_ERROR")
         }
       }).catch((err)=>{
         console.log(err)
+        if (err.response.status == 404) {
+          console.log("userId가 존재하지 않습니다.")
+        }
       })
     },
 
     // 방으로 친구 초대 -ok
     inviteFriend(context, payload) {
-      axios
+      return axios
         .post(`/api/userinroom/invite`, payload)
         .then(({ status, data }) => {
           if (status == 200) {
-            context.dispatch("getInvitesList", payload.toUserId)
-            console.log(data)
             console.log("초대 요청을 보냈습니다.")
+            return status;
           }
         })
         .catch((err) => {
           console.log(err)
-          if (err.response.status == 404) {
-            console.log("userId가 존재하지 않습니다.")
+          if (err.response.status == 409) {
+            console.log("이미 보낸 초대.")
           } else if (err.response.status == 500) {
             console.log("그 외 서버 관련 에러")
           }
+          return err.response.status;
         })
     },
 
@@ -322,14 +321,15 @@ export const roomModule = {
 
     // 방으로 친구 초대 거절(초대 정보 삭제) - ok
     removeInvite(context, payload) {
+      console.log(payload);
       axios
         .delete(
-          `api/userinroom/invite/${payload.fromUserId}/${payload.toUserId}`
+          `api/userinroom/invite`, payload
         )
         .then(({ status, data }) => {
           if (status == 200) {
             console.log(data)
-            console.log("방초대 거절 완료")
+            console.log("방초대 삭제 완료")
           }
         })
         .catch((err) => {

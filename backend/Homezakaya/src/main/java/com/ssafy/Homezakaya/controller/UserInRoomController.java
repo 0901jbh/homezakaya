@@ -109,19 +109,16 @@ public class UserInRoomController {
     @GetMapping("/invite/valid/{fromUserId}")
     public ResponseEntity<?> getValidInviteList(@PathVariable String fromUserId){
         Map<String, Object> resultMap = new HashMap<>();
-        List<UserDto> inviteValidFriends = inviteFriendService.getInviteValidFriends(fromUserId);
-        System.out.println(inviteValidFriends.size());
+
+        if (userService.getUser(fromUserId) == null) {
+            resultMap.put("message", "존재하지 않는 userId");
+            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NOT_FOUND);
+        }
 
         try{
-            if(inviteValidFriends.size() > 0){
-                resultMap.put("inviteValidFriends", inviteValidFriends);
-                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
-            }else{
-                resultMap.put("message", "초대 가능한 친구가 없습니다.");
-                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NO_CONTENT);
-            }
+            List<UserDto> inviteValidFriends = inviteFriendService.getInviteValidFriends(fromUserId);
+            return new ResponseEntity<>(inviteValidFriends, HttpStatus.OK);
         }catch (Exception e){
-            resultMap.put("message", "초대 가능한 친구가 없습니다.");
             return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -130,8 +127,14 @@ public class UserInRoomController {
     @PostMapping("/invite")
     public ResponseEntity<?> createInvite(@RequestBody InviteFriendDto inviteFriendDto) {
         Map<String, Object> resultMap = new HashMap<>();
-        boolean res = inviteFriendService.createInvite(inviteFriendDto);
+
+        List<String> invites = inviteFriendService.getInvites(inviteFriendDto.getToUserId());
+        if(invites.contains(inviteFriendDto.getFromUserId())){
+            resultMap.put("message", "이미 초대를 보냈습니다.");
+            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.CONFLICT);
+        }
         try {
+            boolean res = inviteFriendService.createInvite(inviteFriendDto);
             if (res) {
                 resultMap.put("message", "친구를 방으로 초대했습니다.");
                 return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
@@ -139,7 +142,6 @@ public class UserInRoomController {
                 return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
             }
         } catch (Exception e) {
-            resultMap.put("message", "이미 초대를 보냈습니다.");
             return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -149,9 +151,6 @@ public class UserInRoomController {
     public ResponseEntity<?> getInvitesList(@PathVariable String toUserId) {
         Map<String, Object> resultMap = new HashMap<>();
         List<String> invitesFromUser = inviteFriendService.getInvites(toUserId);
-
-        System.out.println(invitesFromUser.toString());
-        System.out.println(invitesFromUser);
 
         try {
             if (invitesFromUser.size() == 0) {
@@ -166,14 +165,12 @@ public class UserInRoomController {
         }
     }
 
-    @DeleteMapping("/invite/{fromUserId}/{toUserId}")
-    public ResponseEntity<?> removeInvite(@PathVariable String fromUserId, @PathVariable String toUserId) {
+    @DeleteMapping("/invite")
+    public ResponseEntity<?> removeInvite(@RequestBody InviteFriendDto inviteFriendDto) {
         Map<String, Object> resultMap = new HashMap<>();
-        List<String> invitesFromUser = inviteFriendService.getInvites(toUserId);    // 초대한 유저 리스트
         try {
-            if (!invitesFromUser.isEmpty()) {
-                InviteFriendDto invite = new InviteFriendDto(fromUserId, toUserId);
-                inviteFriendService.removeInvite(invite);
+            boolean res = inviteFriendService.removeInvite(inviteFriendDto);
+            if(res) {
                 resultMap.put("message", "방 초대 요청 삭제 완료");
                 return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
             } else {

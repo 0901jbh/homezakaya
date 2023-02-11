@@ -733,9 +733,9 @@ export default {
       }
     },
 
-    kickUser(username) {
+    kickUser(userId) {
       this.session.signal({
-        data: JSON.stringify({ username: username }),
+        data: JSON.stringify({ userId: userId }),
         type: 'kick'
       })
         .then(() => {
@@ -782,7 +782,6 @@ export default {
       }
     },
 
-
     friendRequest(userId) {
       this.store.dispatch("friendModule/sendRequest",{
         userAId: this.myUserId,
@@ -795,10 +794,6 @@ export default {
       this.store.dispatch("roomModule/inviteFriend",{
         fromUserId: this.myUserId,
         toUserId: toUserId
-      }).then((response) => {
-        if(response == 200){
-          this.store.commit("errorModule/SET_STATUS", 205);
-        }
       });
     },
   },

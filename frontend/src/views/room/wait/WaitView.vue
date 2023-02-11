@@ -233,6 +233,8 @@ export default {
             this.session = undefined;
             this.publisher = undefined;
             this.OV = undefined;
+
+            window.removeEventListener("beforeunload", this.leaveSession);
           })
         }
         else{

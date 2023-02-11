@@ -332,7 +332,7 @@ export default {
         // 게임 중 유저 입장 시 처리 signal
         if (this.hostId == this.myUserId && this.gameStart) {
           this.session.signal({
-            data: JSON.stringiFy({
+            data: JSON.stringify({
               gameTitle: this.gameTitle,
               gameContent: this.gameContent,
               gameStatus: this.gameStatus
@@ -342,13 +342,16 @@ export default {
         }
       });
 
-      this.session.on("enter-user-in-game", async (event) => {
+      this.session.on("signal:enter-user-in-game", async (event) => {
         if (!this.gameStart) {
           this.eventData = await JSON.parse(event.data);
           this.gameStatus = this.eventData.gameStatus;
           this.gameScreenOpen(this.eventData.gameStatus);
           this.gameTitle = this.eventData.gameTitle;
           this.gameContent = this.eventData.gameContent;
+          if (this.gameStatus == 1) {
+            this.store.dispatch("gameModule/startSmileGame");
+          }
         }
       })
 
@@ -495,10 +498,10 @@ export default {
         this.changeHost(data.userId);
       }
 
-      this.store.dispatch("roomModule/quitRoom", this.mySessionId)
+      this.store.dispatch("roomModule/removeUserInRoom", this.store.state.userModule.user.userId)
         .then((result) => {
           if (result) {
-            this.store.dispatch("roomModule/removeUserInRoom", this.store.state.userModule.user.userId)
+            this.store.dispatch("roomModule/quitRoom", this.mySessionId)
           }
         })
 
@@ -782,7 +785,7 @@ export default {
     },
 
     gameScreenOpen(idx){
-      this.gameIdx = idx;
+      this.gameStatus = idx;
       this.gameTitle = this.games[idx];
       if (!this.gameStart) {
         this.gameStart = true;
@@ -793,7 +796,7 @@ export default {
     gameScreenErase() {
       this.gameTitle = '';
       this.gameContent = '';
-      this.gameIdx = 0;
+      this.gameStatus = 0;
     },
 
     async gameScreenClose(){

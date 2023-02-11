@@ -646,12 +646,12 @@ export default {
             this.session.signal({
               type: 'detect-smile'
             })
-              .then(() => {
-                this.session.signal({
-                  data: JSON.stringify({ keyword: this.store.state.gameModule.keyword }),
-                  type: 'random-keyword'
-                })           
+            .then(() => {
+              this.session.signal({
+                data: JSON.stringify({ keyword: this.store.state.gameModule.keyword }),
+                type: 'random-keyword'
               })
+            })
           })
           break;
         // case 2:

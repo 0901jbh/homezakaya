@@ -719,7 +719,7 @@ export default {
     },
 
     checkDrunk(username){
-      if (hostId == myUserId) {
+      if (this.hostId == this.myUserId) {
         console.log("나안취했어 버튼 클릭")
         this.store.dispatch("gameModule/getSentence").then(() => {
           this.session.signal({

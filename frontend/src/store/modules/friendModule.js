@@ -7,7 +7,6 @@ export const friendModule = {
     friends: [],
     requests: [],
     searchUsers: [],
-    inviteValidFriends:[],
   }),
   mutations: {
     SET_FRIENDS(state, payload) {
@@ -18,9 +17,6 @@ export const friendModule = {
     },
     SET_SEARCH_USERS(state, payload) {
       state.searchUsers = payload;
-    },
-    SET_INVITE_VALID_FRIENDS(state, payload) {  // 여기 포함되어 있으면 초대목록에 표시X
-      state.inviteValidFriends = payload;
     },
   },
   getters: {

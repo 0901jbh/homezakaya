@@ -795,6 +795,10 @@ export default {
       this.store.dispatch("roomModule/inviteFriend",{
         fromUserId: this.myUserId,
         toUserId: toUserId
+      }).then((response) => {
+        if(response == 200){
+          this.store.commit("errorModule/SET_STATUS", 205);
+        }
       });
     },
   },

@@ -324,12 +324,13 @@ export const roomModule = {
       console.log(payload);
       axios
         .delete(
-          `api/userinroom/invite`, payload
+          `api/userinroom/invite/${payload.fromUserId}/${payload.toUserId}`, payload
         )
         .then(({ status, data }) => {
           if (status == 200) {
             console.log(data)
             console.log("방초대 삭제 완료")
+            context.dispatch("getInvitesList", payload.toUserId);
           }
         })
         .catch((err) => {

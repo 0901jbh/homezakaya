@@ -19,7 +19,7 @@ import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
 const props = defineProps({
-  invite: Object,
+  invite: String,
 })
 
 const store = useStore()
@@ -32,7 +32,7 @@ const data = ref({
 onMounted(async () => {
   const friends = await store.getters["friendModule/getFriends"]
   friends.forEach(friend => {
-    if (friend.userId == props.invite.fromUserId) {
+    if (friend.userId == props.invite) {
       data.value.nickname = friend.nickname;
     }
   });
@@ -40,13 +40,13 @@ onMounted(async () => {
 
 const deleteInvite = () => {
   store.dispatch('roomModule/removeInvite', {
-    fromUserId: props.invite.fromUserId,
+    fromUserId: props.invite,
     toUserId: store.state.userModule.user.userId
   })
 }
 
 const approveInvite = async () => {
-  const fromUserId = props.invite.fromUserId;
+  const fromUserId = props.invite;
   const roomId = await store.dispatch('roomModule/getRoomId', fromUserId)
   .then((result) => {
     if (result == -1) {

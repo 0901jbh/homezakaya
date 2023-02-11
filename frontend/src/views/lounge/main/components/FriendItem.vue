@@ -9,7 +9,7 @@
     </div>
     <div class="second-line">
       <img src="@/assets/images/manner_w.png" alt="manner_w img" style="height:25px;">
-      <div>{{ props.friend.mannerPoint }}</div>
+      <div>{{ parseFloat(props.friend.mannerPoint.toFixed(2)) }}</div>
       <img src="@/assets/images/alcohol_w.png" alt="alcohol_w img" style="height:25px;">
       <div>{{ props.friend.alcoholPoint }}잔</div>
       <div v-if="props.friend.state == 'online'" class="follow-friend" type="button" @click="followFriend">따라가기</div>

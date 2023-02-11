@@ -8,7 +8,7 @@
     </div>
     <div class="second-line">
       <img src="@/assets/images/manner_w.png" alt="manner_w img" style="height:25px;">
-      <div>{{ props.user.mannerPoint }}</div>
+      <div>{{ parseFloat(props.user.mannerPoint.toFixed(2)) }}</div>
       <img src="@/assets/images/alcohol_w.png" alt="alcohol_w img" style="height:25px;">
       <div>{{ props.user.alcoholPoint }}잔</div>
       <div v-if="!isFriend" class="request-friend" type="button" @click="sendRequest">친구 요청</div>

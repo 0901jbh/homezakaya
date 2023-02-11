@@ -1,6 +1,6 @@
 <template>
   <header>
-    <RoomHeader :title="title" :category="category" :headCount="headCount" :headCountMax="headCountMax" />
+    <RoomWaitHeader :title="title" :category="category" :headCount="headCount" :headCountMax="headCountMax" />
   </header>
   <div id="main-container" class="container">
     <div id="session">
@@ -19,6 +19,7 @@
           </div>
         </div>
         <div id="btns" style="align-self: center;">
+          <div style="color:white" >{{ title }} 방에 입장하시겠습니까?</div>
           <div class="content enter_content" @click="enterRoom">Enter</div>
         </div>
         <div id="btns">
@@ -30,7 +31,7 @@
 </template>
 
 <script>
-import RoomHeader from '../menu/RoomHeader.vue'
+import RoomWaitHeader from '../menu/RoomWaitHeader.vue'
 import { OpenVidu } from "openvidu-browser";
 import axios from "axios";
 import UserVideo from "./components/UserVideo.vue";
@@ -47,7 +48,7 @@ export default {
 
   components: {
     UserVideo,
-    RoomHeader,
+    RoomWaitHeader,
   },
 
   data() {
@@ -61,6 +62,7 @@ export default {
 
       // Join form
       roomId: this.$route.params.roomId,
+      title: this.$route.params.title,
       myUserId: "",
       myUserName: "",
 

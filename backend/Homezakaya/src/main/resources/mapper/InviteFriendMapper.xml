@@ -20,4 +20,19 @@
         where fromUserId = #{fromUserId}
           and toUserId = #{toUserId}
     </delete>
+
+<!--    selectInviteValidFriends-->
+<!--    select user.userId, user.nickname from user left outer join userinroom  on user.userId = userinroom.userId where user.userId in-->
+<!--    (select userBId from friend where userAId = 'dubi')-->
+<!--    and state = 'online'-->
+<!--    and userinroom.userId is null;-->
+    <select id="selectInviteValidFriends" resultType="map" parameterType="string">
+        select user.userId, user.nickname
+        from user
+                 left outer join userinroom on user.userId = userinroom.userId
+        where user.userId in
+              (select userBId from friend where userAId = #{userId})
+          and state = 'online'
+          and userinroom.userId is null;
+    </select>
 </mapper>

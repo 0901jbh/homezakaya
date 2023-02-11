@@ -1,6 +1,8 @@
 package com.ssafy.Homezakaya.controller;
 
+import com.ssafy.Homezakaya.model.dto.FriendDto;
 import com.ssafy.Homezakaya.model.dto.InviteFriendDto;
+import com.ssafy.Homezakaya.model.dto.UserDto;
 import com.ssafy.Homezakaya.model.dto.UserInRoomDto;
 import com.ssafy.Homezakaya.model.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,6 +105,27 @@ public class UserInRoomController {
             return ResponseEntity.internalServerError().build();
     }
 
+    // 초대 가능한 친구 조회 (online, 다른방 참여 X)
+    @GetMapping("/invite/valid/{fromUserId}")
+    public ResponseEntity<?> getValidInviteList(@PathVariable String fromUserId){
+        Map<String, Object> resultMap = new HashMap<>();
+        List<UserDto> inviteValidFriends = inviteFriendService.getInviteValidFriends(fromUserId);
+        System.out.println(inviteValidFriends.size());
+
+        try{
+            if(inviteValidFriends.size() > 0){
+                resultMap.put("inviteValidFriends", inviteValidFriends);
+                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+            }else{
+                resultMap.put("message", "초대 가능한 친구가 없습니다.");
+                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NO_CONTENT);
+            }
+        }catch (Exception e){
+            resultMap.put("message", "초대 가능한 친구가 없습니다.");
+            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     // 방에서 친구초대
     @PostMapping("/invite")
     public ResponseEntity<?> createInvite(@RequestBody InviteFriendDto inviteFriendDto) {
@@ -118,7 +141,6 @@ public class UserInRoomController {
         } catch (Exception e) {
             resultMap.put("message", "이미 초대를 보냈습니다.");
             return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
-
         }
     }
 

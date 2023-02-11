@@ -119,12 +119,14 @@ public class UserController {
                 log.info("인증코드 : " + code);
                 resultMap.put("emailCode", code);
                 return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+            } else {
+                resultMap.put("message", "이미 가입된 이메일 입니다.");
+                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.ALREADY_REPORTED);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        resultMap.put("message", "이미 가입된 이메일 입니다.");
-        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.ALREADY_REPORTED);
+        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     // id 찾기
@@ -136,18 +138,20 @@ public class UserController {
             if (userService.findByEmail(email) != null) { // 이메일로 userId 검색 (email이 가입되어 있어야 보낼 수 있음)
                 String userId = userService.findByEmail(email).getUserId();
                 resultMap.put("userId", userId);
-                
+
                 // email 인증 보내기
                 String code = emailService.sendSimpleMessage(email);
                 log.info("인증코드 : " + code);
                 resultMap.put("emailCode", code);
 
                 return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+            } else {
+                resultMap.put("message", "해당 이메일로 가입한 아이디가 존재하지 않습니다.");
+                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NO_CONTENT);
             }
         } catch (Exception e) {
             e.printStackTrace();    // DB 중복 이메일 오류
         }
-        resultMap.put("message", "해당 이메일로 가입한 아이디가 존재하지 않습니다.");
         return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -156,18 +160,23 @@ public class UserController {
     public ResponseEntity<?> findPassword(@RequestParam("userId") String userId, @RequestParam("email") String email) throws MessagingException, UnsupportedEncodingException {
         Map<String, Object> resultMap = new HashMap<>();
 
-        if (userService.getUser(userId) != null && userService.findByEmail(email) != null && userId.equals(userService.findByEmail(email).getUserId())) {
-            String temPw = emailService.sendSimpleMessageForPassword(email);    // 임시 비밀번호 발송
+        try{
+            if (userService.getUser(userId) != null && userService.findByEmail(email) != null && userId.equals(userService.findByEmail(email).getUserId())) {
+                String temPw = emailService.sendSimpleMessageForPassword(email);    // 임시 비밀번호 발송
 
-            log.info("임시비밀번호 : " + temPw);
-            resultMap.put("temPw", temPw);
+                log.info("임시비밀번호 : " + temPw);
+                resultMap.put("temPw", temPw);
 
-            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
 
-        } else {
-            resultMap.put("message", "가입 정보가 존재하지 않습니다.");
-            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
+            } else {
+                resultMap.put("message", "가입 정보가 존재하지 않습니다.");
+                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NO_CONTENT);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
+        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     // 매너 도수 갱신

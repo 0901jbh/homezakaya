@@ -6,11 +6,11 @@
     <div class="wrapper">
       <div class="signup-title">회원가입</div>
       <div class="signup-form">
-        <el-form :model="form" label-width="0px">
+        <el-form label-width="0px">
 
           <div v-if="data.idNull" style="color: red;">아이디를 입력해주세요.</div>
-          <div v-else-if="data.idErr" style="color: red;">아이디가 중복됩니다.</div>
-          <div v-else-if="data.idUnchecked" style="color: red;">아이디 중복확인을 해주세요.</div>
+          <div v-else-if="data.idErr" style="color: red;">아이디를 사용할 수 없습니다.</div>
+          <div v-else-if="data.idUnchecked" style="color: red;">아이디 확인을 해주세요.</div>
           <div v-else-if="data.idChecked">아이디 사용 가능합니다.</div>
           <div v-else>아이디</div>
           <el-form-item>
@@ -41,8 +41,8 @@
           </el-form-item>
 
           <div v-if="data.nicknameNull" style="color: red;">닉네임을 입력해주세요.</div>
-          <div v-else-if="data.nicknameErr" style="color: red;">닉네임이 중복됩니다.</div>
-          <div v-else-if="data.nicknameUnchecked" style="color: red;">닉네임 중복확인을 해주세요.</div>
+          <div v-else-if="data.nicknameErr" style="color: red;">닉네임을 사용할 수 없습니다.</div>
+          <div v-else-if="data.nicknameUnchecked" style="color: red;">닉네임 확인을 해주세요.</div>
           <div v-else-if="data.nicknameChecked">닉네임 사용 가능합니다.</div>
           <div v-else>닉네임</div>
           <el-form-item>
@@ -69,7 +69,7 @@
           </el-form-item> -->
 
           <div v-if="data.emailNull" style="color: red;">이메일을 입력해주세요.</div>
-          <div v-else-if="data.emailErr" style="color: red;">이메일이 중복됩니다.</div>
+          <div v-else-if="data.emailErr" style="color: red;">이메일을 사용할 수 없습니다.</div>
           <div v-else-if="data.emailUnchecked" style="color: red;">이메일 인증을 해주세요.</div>
           <div v-else>이메일</div>
           <el-form-item>
@@ -206,8 +206,7 @@ const onSubmit = async () => {
   if (data.value.emailChecked == false) {
     data.value.emailUnchecked = true
   }
-  // && data.value.emailChecked
-  if (data.value.idChecked && data.value.passwordChecked && data.value.nicknameChecked) {
+  if (data.value.idChecked && data.value.passwordChecked && data.value.nicknameChecked && data.value.emailChecked) {
     await store.dispatch("userModule/createUser", {
       userId: data.value.id,
       password: data.value.password,
@@ -302,6 +301,7 @@ const emailsend = async () => {
     data.value.emailNull = false
     const form = new FormData();
     form.append("email", data.value.email);
+    console.log(form)
     await store.dispatch("userModule/sendEmail", form);
     data.value.emailErr = store.state.userModule.emailErr
     if (data.value.emailErr == false) {

@@ -19,6 +19,7 @@ export const userModule = {
     idErr: null, // id 중복 boolean
     nicknameErr: null, // nickname 중복 boolean
     emailErr: null, // nickname 중복 boolean
+    newPass: null, // 새로운 비밀번호 갔는지 boolean
   }),
   getters: {
     checkUserInfo: function (state) {
@@ -49,6 +50,9 @@ export const userModule = {
     },
     SET_EMAIL_ERR: (state, emailErr) => {
       state.emailErr = emailErr
+    },
+    SET_NEW_PASSWORD: (state, newPass) => {
+      state.newPass = newPass
     },
   },
 
@@ -114,37 +118,40 @@ export const userModule = {
       await axios
         .post(`/api/users/login/mailConfirm`, payload)
         .then(({ status, data }) => {
+          console.log(status)
+          console.log(data)
           if (status == 200) {
             console.log(data)
             context.commit("SET_USER_INFO", data) // 인증번호 확인용
             console.log("인증메일 발송 완료")
             context.commit("SET_EMAIL_ERR", false)
-          } else {
+          } else if(status== 208) {
             console.log("이미 가입된 이메일 입니다.")
             context.commit("SET_EMAIL_ERR", true)
+          }else if(status == 500){
+            console.log("INTERNAL_SERVER_ERROR")
           }
         })
         .catch((err) => {
-          // 필요한가?
-          if (err.response.status == 404) {
-            console.log("발송 실패")
-          }
+          console.log("잘못된 email 형식입니다.")
           context.commit("SET_EMAIL_ERR", true)
         })
     },
 
     // id 찾기 (email 입력 - id 찾기용 email 인증 같이 써줘야 함) ok
-    findId(context, payload) {
-      axios
+    async findId(context, payload) {
+      await axios
         .post(`/api/users/login/findId`, payload)
         .then(({ status, data }) => {
           if (status == 200) {
             console.log(data) // userId, emailCode
             context.commit("SET_USER_INFO", data) //user에 저장(찾아온 id만)
             context.commit("SET_EMAIL_ERR", false)
-          } else if (status == 500) {
-            console.log("이메일 정보가 일치하지 않습니다")
+          } else if(status== 204){
             context.commit("SET_EMAIL_ERR", true)
+            console.log("해당 이메일로 가입한 아이디가 존재하지 않습니다.")
+          }else if (status == 500) {
+            console.log("INTERNAL_SERVER_ERROR")
           }
         })
         .catch((err) => {
@@ -154,18 +161,27 @@ export const userModule = {
     },
 
     // pw 찾기 (userId, email 입력) - ok
-    findPassword(context, payload) {
-      axios
+    async findPassword(context, payload) {
+      await axios
         .post(`/api/users/login/findPassword`, payload)
         .then(({ status, data }) => {
           if (status == 200) {
             console.log(data)
             console.log("임시 비밀번호 발급 완료!! 비밀번호를 변경해 주세요")
+            context.commit("SET_EMAIL_ERR", false)
+            context.commit("SET_NEW_PASSWORD", true)
+          }else if(status == 204){
+            console.log("해당 이메일로 가입한 아이디가 존재하지 않습니다.")
+            context.commit("SET_EMAIL_ERR", true)
+          }else if(status == 500){
+            console.log("INTERNAL_SERVER_ERROR")
           }
         })
         .catch((err) => {
-          console.log("아이디 or 이메일 정보가 일치하지 않습니다")
+          // console.log("아이디 or 이메일 정보가 일치하지 않습니다")
           console.log(err)
+          context.commit("SET_EMAIL_ERR", true)
+          context.commit("SET_NEW_PASSWORD", false)
         })
     },
 

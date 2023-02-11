@@ -39,11 +39,11 @@ export const gameModule = {
   },
   actions: {
     //문장 가져오기
-    getSentence(context, payload){
-      axios.get(`api/games/sentence`).then(({ status, data }) => {
+    async getSentence(context, payload){
+      await axios.get(`api/games/sentence`).then(async ({ status, data }) => {
         if(status == 200){
           console.log(data);
-          context.commit("SET_SENTENCE", data.content);
+          await context.commit("SET_SENTENCE", data.content);
         }
       }).catch(err => {
         if(err.response.status == 404){
@@ -52,11 +52,11 @@ export const gameModule = {
       });
     },
     //주제 가져오기
-    getTopic(context, payload){
-      axios.get(`api/games/topic`).then(({ status, data }) => {
+    async getTopic(context, payload){
+      await axios.get(`api/games/topic`).then(async ({ status, data }) => {
         if(status == 200){
           console.log(data);
-          context.commit("SET_TOPIC", data.content);
+          await context.commit("SET_TOPIC", data.content);
         }
       }).catch(err => {
         if(err.response.status == 404){
@@ -66,11 +66,11 @@ export const gameModule = {
     },
 
     // 웃참용 주제 가져오기
-    getKeyword(context, payload){
-      axios.get(`api/games/keyword`).then(({ status, data }) => {
+    async getKeyword(context, payload){
+      await axios.get(`api/games/keyword`).then(async ({ status, data }) => {
         if(status == 200){
           console.log(data);
-          context.commit("SET_KEYWORD", data.content);
+          await context.commit("SET_KEYWORD", data.content);
         }
       }).catch(err => {
         if(err.response.status == 404){

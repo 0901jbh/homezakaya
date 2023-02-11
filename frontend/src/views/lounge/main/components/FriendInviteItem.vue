@@ -29,7 +29,7 @@ const data = ref({
   nickname: '',
 })
 
-const setNickName = onMounted(async () => {
+onMounted(async () => {
   const friends = await store.getters["friendModule/getFriends"]
   friends.forEach(friend => {
     if (friend.userId == props.invite.fromUserId) {

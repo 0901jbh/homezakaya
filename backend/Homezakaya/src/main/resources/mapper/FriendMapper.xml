@@ -8,6 +8,7 @@
         from friend f join user u
         on userBId = userId
         where userAId = #{userId} and isConnected = 1
+        order by u.state DESC
     </select>
 
     <!--친구 삭제-->

@@ -51,8 +51,12 @@ import FriendItem from './FriendItem.vue'
 import FriendRequestItem from './FriendRequestItem.vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
+import { useProp } from 'element-plus'
 
 const router = useRouter()
+const props = defineProps({
+  renderKey: Number
+})
 
 const data = ref({
   userInput: '',
@@ -83,6 +87,10 @@ const getFriends = onBeforeMount(() => {
 
 const getInvites = onBeforeMount(() => {
   store.dispatch("roomModule/getInvitesList", store.state.userModule.user.userId);
+})
+
+const reloadSearchUser = onBeforeMount(() => {
+  store.dispatch("friendModule/reloadSearchUser")
 })
 
 const searchUser = () => {

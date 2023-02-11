@@ -157,7 +157,11 @@ export const friendModule = {
       }).catch(err => {
         console.log(err);
       })
-    }
+    },
+    // 새로고침 버튼 클릭시
+    reloadSearchUser(context, payload){
+      context.commit("SET_SEARCH_USERS", [])
+    },
   }
 };
  

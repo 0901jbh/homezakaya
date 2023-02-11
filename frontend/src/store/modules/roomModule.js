@@ -128,15 +128,15 @@ export const roomModule = {
     },
     // 방 퇴장
     quitRoom(context, payload){
-      return axios.put(`api/rooms/${payload}/quit`).then(({ status, data }) => {
+      return axios.put(`api/rooms/${payload}/quit`).then( async ({ status, data }) => {
         if(status == 200){
           console.log("방 나가기 성공");
           if(data.personCount <= 0){
             context.dispatch("removeRoom", payload)
           }
-          // else {
-          //   context.dispatch("getRooms");
-          // }
+          else{
+            context.dispatch("getRooms")
+          }
           return true
         }
       }).catch(err => {
@@ -167,11 +167,13 @@ export const roomModule = {
             console.log("방 삭제 성공")
             context.dispatch("getRooms")
           }
+          
         })
         .catch((err) => {
           if (err.response.status == 404) {
             console.log("노방")
           }
+          
         })
     },
     createUserInRoom(context, payload) {
@@ -193,15 +195,17 @@ export const roomModule = {
         })
     },
     removeUserInRoom(context, payload){
-      axios.delete(`api/userinroom/${payload}`).then(({ status, data }) => {
+      return axios.delete(`api/userinroom/${payload}`).then(({ status, data }) => {
         if(status == 204){
           console.log("유저인룸 삭제 성공");
         }
+        return true;
       }).catch(err => {
         if(err.response.status == 404){
           console.log("이 유저는 현재 참여중인 방이 없습니다.");
         }
         console.log("유저인룸 삭제 실패");
+        return false;
       });
     },
     getRoomId(context, payload) {
@@ -319,6 +323,7 @@ export const roomModule = {
       axios.delete(`api/userinroom/invite/${payload.fromUserId}/${payload.toUserId}`).then(({ status, data }) => {
           if (status == 204) {
             console.log("방초대 삭제 완료")
+            context.dispatch("getInvitesList", payload.toUserId);
           }
         })
         .catch((err) => {

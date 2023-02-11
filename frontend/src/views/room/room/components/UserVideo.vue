@@ -129,7 +129,7 @@ export default {
 			this.$emit('checkDrunk', this.username);
 		},
 		kick() {
-			this.$emit('kickUser', this.username);
+			this.$emit('kickUser', this.userId);
 		},
 		host() {
 			this.$emit('changeHost', this.userId);

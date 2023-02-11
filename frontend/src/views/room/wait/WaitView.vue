@@ -228,7 +228,14 @@ export default {
         roomId: this.roomId,
       }).then((status) => {
         if(status == 200){
-          this.$router.push({ name: 'room', params: { roomId: this.roomId }, query: { video: this.videoActive, audio: this.audioActive } })
+          this.$router.push({ name: 'room', params: { roomId: this.roomId }, query: { video: this.videoActive, audio: this.audioActive } }).then(() => {
+            if (this.session) this.session.disconnect();
+            this.session = undefined;
+            this.publisher = undefined;
+            this.OV = undefined;
+
+            window.removeEventListener("beforeunload", this.leaveSession);
+          })
         }
         else{
           this.store.commit("errorModule/SET_STATUS", status);

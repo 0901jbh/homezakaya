@@ -70,7 +70,7 @@
 
 <script setup>
 import RoomItem from './RoomItem.vue'
-import { computed, onBeforeMount, ref } from 'vue'
+import { computed, onBeforeMount, onMounted, onUpdated, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 
@@ -120,7 +120,7 @@ const createRoom = () => {
 
 form.value.rooms = computed(() => store.state.roomModule.rooms)
 
-const getRooms = onBeforeMount(() => {
+onBeforeMount(() => {
 	store.dispatch("roomModule/getRooms")
 })
 

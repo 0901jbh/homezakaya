@@ -616,13 +616,11 @@ export default {
 
     // online 이면서 다른방에 참여중이 아닌 친구만 넣어줘야 함 + 친구 상황이 바뀔때마다 갱신
     async getFriends() {
-      const friends = await this.store.state.friendModule.friends;
+      await this.store.dispatch("roomModule/inviteValidFriend", this.myUserId);
+      const friends = await this.store.state.roomModule.inviteValidFriends;
       const parseFriends = JSON.parse(JSON.stringify(friends));
-      this.friends = parseFriends.filter(friend => friend.state === "online");
-      console.log("+++++++",this.friends, "+++++++++++"); // online 친구 넘어옴
-
-      // await store.dispatch("roomModule/inviteValidFriend", myUserId);
-      // console.log("초대 가능 친구 목록 완")
+      this.friends = parseFriends;
+      console.log("초대 가능 친구 목록 : ", this.friends);
     },
 
     async getRoom() {
@@ -845,14 +843,17 @@ export default {
   // check point
 
   async mounted() {
-    await this.getFriends();  // invite할때마다 친구목록 갱신
+    await this.getFriends();  
     await this.getRoom();
     this.getUser();
-
+    
     this.joinSession();
+   
+    
   },
 
   beforeRouteLeave (to, from, next) {
+    this.getFriends();  
     this.leaveSession();
     next();
   },

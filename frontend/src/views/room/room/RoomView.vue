@@ -1,6 +1,7 @@
 <template>
   <header>
     <RoomHeader :title="title" :category="category" :headCount="headCount" :headCountMax="headCountMax" />
+    <Snow :isSnowing="this.isSnowing"/>
   </header>
   <div id="main-container" class="container">
     <div id="session">
@@ -170,8 +171,9 @@
 </template>
 
 <script>
-import RoomHeader from '../menu/RoomHeader.vue'
+import RoomHeader from '../menu/RoomHeader.vue';
 import UserVideo from "./components/UserVideo.vue";
+import Snow from "./components/Snow.vue";
 import { OpenVidu } from "openvidu-browser";
 import { useStore } from 'vuex';
 import axios from "axios";
@@ -186,6 +188,7 @@ export default {
   components: {
     UserVideo,
     RoomHeader,
+    Snow,
   },
 
   data() {
@@ -233,6 +236,9 @@ export default {
       gameStart: false,
       gameTitle: "",
       gameContent: "",
+
+      // 눈내리기
+      isSnowing: false,
     };
   },
 
@@ -807,6 +813,7 @@ export default {
         this.gameStart = false;
         document.getElementById("chatting-container-small").id="chatting-container";
       }
+      this.isSnowing = !this.isSnowing;
     },
 
     friendRequest(userId) {

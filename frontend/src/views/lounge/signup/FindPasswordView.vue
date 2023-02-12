@@ -36,6 +36,11 @@
       <div v-if="data.newPass" class="id-result">
         새로운 비밀번호가 당신의 메일로 전송되었습니다.
       </div>
+      <el-form-item>
+            <el-button type="info" size="large" style="width: 300px;">
+              <RouterLink to="/homeview" style="color:black">뒤로 가기</RouterLink>
+            </el-button>
+          </el-form-item>
     </div>
   </div>
   <footer>
@@ -108,7 +113,9 @@ const emailsend = async () => {
   font-family: "dodum";
   src: url("@/assets/fonts/GowunDodum-Regular.ttf");
 }
-
+a {
+  text-decoration: none;
+}
 .container {
   display: flex;
   justify-content: center;

@@ -12,17 +12,18 @@
           'under-six': this.headCount == 5 || this.headCount == 6,
           'under-eight': this.headCount == 7 || this.headCount == 8,
         }">
-          <user-video class="video" :streamManager="publisher" :myVideo="true" :isHostView="hostId == myUserId" :hostId="hostId" :highLightId="highLightId"
+          <user-video class="video" :streamManager="publisher" :myVideo="true" :isHostView="hostId == myUserId" :hostId="hostId" :highLightUserName="highLightUserName"
             @checkDrunk="checkDrunk"/>
           <user-video class="video" v-for="sub in subscribers" :key="sub.stream.connection.connectionId"
-            :streamManager="sub" :myVideo="false" :isHostView="hostId == myUserId" :hostId="hostId" :friends="friends" :highLightId="highLightId"
+            :streamManager="sub" :myVideo="false" :isHostView="hostId == myUserId" :hostId="hostId" :friends="friends" :highLightUserName="highLightUserName"
             @kickUser="kickUser" @changeHost="changeHost" @friendRequest="friendRequest" @checkDrunk="checkDrunk"/>
         </div>
         <div class="game-chatting-container">
           <Transition>
             <div class="game-container" v-if="this.gameStart">
-                <div class="game-title">{{ this.gameTitle }}</div>
-                <div class="game-content">{{ this.gameContent }}</div>
+              <button class="cancel" type="button" @click="gameScreenClose">X</button>
+              <div class="game-title">{{ this.gameTitle }}</div>
+              <div class="game-content">{{ this.gameContent }}</div>
             </div>
           </Transition>
           <div id="chatting-container">
@@ -214,7 +215,7 @@ export default {
       headCountMax: 8,
       headCount: 1,
       hostId: "",
-      highLightId: "",
+      highLightUserName: "",
 
       myUserId: "",
       myUserName: "",
@@ -251,7 +252,6 @@ export default {
       if (value) {
         this.session.signal({
           data: JSON.stringify({
-            userId : this.myUserId,
             username : this.myUserName
           }),
           type: 'smile'
@@ -406,7 +406,7 @@ export default {
       this.session.on('signal:smile', (event) => {
         this.store.dispatch("gameModule/stopDetect");
         this.eventData = JSON.parse(event.data);
-        this.highLightId = this.eventData.userId;
+        this.highLightUserName = this.eventData.username;
         this.gameContent = `${this.eventData.username}님이 웃으셨습니다 !`;
         setTimeout(() => {this.gameScreenClose()}, 5000);
       })
@@ -416,6 +416,7 @@ export default {
         this.gameScreenOpen(2)
         this.eventData = JSON.parse(event.data);
         this.gameContent = `${this.eventData.username}님 말 할 준비!`;
+        this.highLightUserName = this.eventData.username;
         setTimeout(() => {
           this.gameContent = this.eventData.sentence
           if (this.eventData.username == this.myUserName) {
@@ -803,7 +804,7 @@ export default {
       this.gameTitle = '';
       this.gameContent = '';
       this.gameStatus = 0;
-      this.highLightId = '';
+      this.highLightUserName = '';
     },
 
     async gameScreenClose(){
@@ -1489,6 +1490,18 @@ li{
 .game-content {
   color: white;
   font-size: 1rem;
+}
+
+.cancel {
+  color: white;
+  border: none;
+  text-decoration: none;
+  background: none;
+  cursor: pointer;
+}
+
+.cancel:hover {
+  color: #e27b66;
 }
 
 .info_img{

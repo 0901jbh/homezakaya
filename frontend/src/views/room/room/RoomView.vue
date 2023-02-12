@@ -21,9 +21,18 @@
         <div class="game-chatting-container">
           <Transition>
             <div class="game-container" v-if="this.gameStart">
-              <button class="cancel" type="button" @click="gameScreenClose">X</button>
-              <div class="game-title">{{ this.gameTitle }}</div>
-              <div class="game-content">{{ this.gameContent }}</div>
+              <div class="stop-btn" v-if="hostId == myUserId">
+                <div class="cancel" 
+                type="button" 
+                @click="gameScreenClose"
+                v-if="hostId == myUserId"
+                >X</div>
+              </div>
+              <div class="game-wrapper">
+                <div class="game-title">{{ this.gameTitle }}</div>
+                <div class="game-content">{{ this.gameContent }}</div>
+              </div>
+              
             </div>
           </Transition>
           <div id="chatting-container">
@@ -70,8 +79,8 @@
         </div>
         <div id="btns">
           <img class="option-footer-btn" src="@/assets/images/info.png" alt="게임정보" @click="infoOpen">
-          <img class="option-footer-btn" src="@/assets/images/laughter.png" alt="웃음참기" @click="startBtn(1)">
-          <img class="option-footer-btn" src="@/assets/images/random_topic.png" alt="랜덤주제" @click="startBtn(3)">
+          <img v-if="hostId==myUserId" class="option-footer-btn" src="@/assets/images/laughter.png" alt="웃음참기" @click="startBtn(1)">
+          <img v-if="hostId==myUserId" class="option-footer-btn" src="@/assets/images/random_topic.png" alt="랜덤주제" @click="startBtn(3)">
         </div>
         <div id="btns">
           <el-popover :width="300"
@@ -1381,6 +1390,9 @@ a:hover .demo-logo {
   font-size: 20px;
 }
 
+.game-info-sentence1::-webkit-scrollbar {
+	display: none;
+}
 
 li{    
   margin: 5px 0;
@@ -1493,7 +1505,16 @@ li{
   background-color: #2E303F;
   border: 2px solid #CBCBCB;
   border-radius: 30px;
+  padding: 1rem;
   margin-bottom: 3vh;
+  display: grid;
+  grid-template-rows: 1fr 9fr;
+}
+.stop-btn{
+  display:flex;
+  justify-content: flex-end;
+}
+.game-wrapper{
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -1514,6 +1535,7 @@ li{
   text-decoration: none;
   background: none;
   cursor: pointer;
+  margin-right: 0px;
 }
 
 .cancel:hover {

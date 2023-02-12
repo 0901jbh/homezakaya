@@ -11,6 +11,7 @@ import java.util.Map;
 public interface FriendDao {
     // 해당 유저의 친구 목록 조회
     public List<UserDto> selectFriendsById(String userId);
+    public List<UserDto> selectFriendsByuserBId(String userId);
 
     // 친구 삭제
     public int deleteFriend(FriendDto friendDto);

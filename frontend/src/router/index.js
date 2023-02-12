@@ -45,6 +45,19 @@ const router = createRouter({
       },
     },
     {
+      path: "/homeview",
+      name: "homeview",
+      component: () => import("../views/lounge/login/HomeView.vue"),
+      beforeEnter(to, from, next) {
+        if (store.state.userModule.isLogin) {
+          alert("이미 로그인 하셧습니다.")
+          next({ name: "rooms" })
+        } else {
+          next()
+        }
+      },
+    },
+    {
       path: "/findpassword",
       name: "findpassword",
       component: () => import("../views/lounge/signup/FindPasswordView.vue"),

@@ -111,7 +111,7 @@ export const gameModule = {
       console.log("탐지 끝");
     },
     getSpeech(context, payload){
-
+      context.commit("SET_TEXTS", '');
       window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
       let recognition = new SpeechRecognition();
@@ -119,7 +119,6 @@ export const gameModule = {
       recognition.lang = 'ko-KR';
 
       recognition.start();
-
       recognition.onstart = function() {
         context.commit("SET_ISFINISHED", false);
         console.log("감지 시작");

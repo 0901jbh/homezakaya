@@ -78,7 +78,7 @@
             popper-style="background: rgb(235 153 153); border: rgb(235 153 153); box-shadow: rgb(14 18 22 / 35%) 0px 10px 38px -10px, rgb(14 18 22 / 20%) 0px 10px 20px -15px; padding: 15px;"
             trigger="click">
             <template #reference>
-              <div class="footer-btn">초대하기</div>
+              <div @click="refreshInviteBtn()" class="footer-btn">초대하기</div>
             </template>
             <template #default>
               <div v-if="friends.length == 0">
@@ -234,7 +234,7 @@ export default {
   },
   watch: {
     isSmile(value) {
-      if (value && this.gameStatus == 1) {
+      if (value) {
         this.session.signal({
           data: JSON.stringify({
             username : this.myUserName
@@ -250,7 +250,7 @@ export default {
       }
     },
     isFinished(value) {
-      if (value && this.gameStatus == 2) {
+      if (value) {
         this.session.signal({
           //말할 문장, 말한 문장 담아서 보내기
           data: JSON.stringify({ 
@@ -379,13 +379,12 @@ export default {
       this.session.on('signal:random-keyword', (event) => {
         this.gameStatus = 1
         this.gameScreenOpen(1);
-        this.highLightUserName = '';
         this.eventData = JSON.parse(event.data);
         this.gameContent = this.eventData.keyword;
       })
 
       this.session.on('signal:detect-smile', (event) => {
-        this.store.dispatch("gameModule/stopDetect");
+        // 웃참 인식 시작
         this.store.dispatch("gameModule/startSmileGame");
       })
 
@@ -394,25 +393,19 @@ export default {
         this.eventData = JSON.parse(event.data);
         this.highLightUserName = this.eventData.username;
         this.gameContent = `${this.eventData.username}님이 웃으셨습니다 !`;
-        setTimeout(() => {
-          if(this.gameStatus == 1)
-            this.gameScreenClose();
-            }, 5000);
+        setTimeout(() => {this.gameScreenClose()}, 5000);
       })
 
       this.session.on('signal:check-drunk', async (event) => {
-        this.store.dispatch("gameModule/stopDetect");
         this.gameStatus = 2
         this.gameScreenOpen(2)
         this.eventData = JSON.parse(event.data);
         this.gameContent = `${this.eventData.username}님 말 할 준비!`;
         this.highLightUserName = this.eventData.username;
         setTimeout(() => {
-          if(this.gameStatus == 2) {
-            this.gameContent = this.eventData.sentence
-            if (this.eventData.username == this.myUserName) {
-              this.store.dispatch("gameModule/getSpeech");
-            }
+          this.gameContent = this.eventData.sentence
+          if (this.eventData.username == this.myUserName) {
+            this.store.dispatch("gameModule/getSpeech");
           }
         }, 3000)     
       })
@@ -423,20 +416,14 @@ export default {
 
         발음 문장 : ${this.eventData.strPerson}`;
         setTimeout(() => {
-          if(this.gameStatus == 2) {
-            this.store.dispatch("gameModule/getAccuracy", this.eventData).then((response) => {
-              this.gameContent = `정확도 : ${response}`;
-            });
-          }
+          this.store.dispatch("gameModule/getAccuracy", this.eventData).then((response) => {
+            this.gameContent = `정확도 : ${response}`;
+          });
         }, 6000)
-        setTimeout(() => {
-          if(this.gameStatus == 2)
-            this.gameScreenClose();
-          }, 9000);
+        setTimeout(() => {this.gameScreenClose()}, 9000);
       })
 
       this.session.on('signal:random-topic', (event) => {
-        this.store.dispatch("gameModule/stopDetect");
         this.gameStatus = 3
         this.gameScreenOpen(3)
         this.eventData = JSON.parse(event.data);
@@ -610,14 +597,14 @@ export default {
     //   const response = await axios.post(APPLICATION_SERVER_URL + '/api/sessions/' + sessionId + '/connections');
     //   return response.data; // The token
     // },
-
-    // online 이면서 다른방에 참여중이 아닌 친구만 넣어줘야 함 + 친구 상황이 바뀔때마다 갱신
-    async getFriends() {
-      await this.store.dispatch("roomModule/inviteValidFriend", this.myUserId);
-      const friends = await this.store.state.roomModule.inviteValidFriends;
-      const parseFriends = JSON.parse(JSON.stringify(friends));
-      this.friends = parseFriends;
-      console.log("초대 가능 친구 목록 : ", this.friends);
+    
+    // 초대 가능 친구 갱신
+    async refreshInviteBtn(){
+       await this.store.dispatch("roomModule/inviteValidFriend", this.myUserId);
+       const friends = await this.store.state.roomModule.inviteValidFriends;
+       const parseFriends = JSON.parse(JSON.stringify(friends));
+       this.friends = parseFriends;
+       console.log(this.friends);
     },
 
     async getRoom() {
@@ -840,13 +827,11 @@ export default {
   // check point
 
   async mounted() {
-    await this.getFriends();  
     await this.getRoom();
     this.getUser();
+    // await this.getFriends(); 
     
     this.joinSession();
-   
-    
   },
 
   beforeRouteLeave (to, from, next) {

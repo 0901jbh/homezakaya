@@ -266,8 +266,8 @@ export const roomModule = {
     },
 
     // 초대 가능 친구 조회 - ok
-    inviteValidFriend(context, payload){
-      axios.get(`/api/userinroom/invite/valid/${payload}`).then(({status, data})=>{
+    async inviteValidFriend(context, payload){
+      await axios.get(`/api/userinroom/invite/valid/${payload}`).then(({status, data})=>{
         if(status == 200){
           context.commit("SET_INVITEVALID_FRIENDS", data)
           console.log("초대 가능한 친구 목록 : ", data)

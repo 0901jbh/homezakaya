@@ -28,27 +28,7 @@ public class FriendServiceImpl implements FriendService{
         if( userDto == null){
             return null;
         }
-        List<UserDto> listA = fDao.selectFriendsById(userId);
-        List<UserDto> listB = fDao.selectFriendsByuserBId(userId);
-        List<UserDto> l1 = new ArrayList<>(); List<UserDto> l2 = new ArrayList<>();
-        System.out.println(listA);
-        System.out.println(listB);
-        for(UserDto user : listA){
-            if(user.getState().equals("online")){
-                l1.add(user);
-            } else {
-                l2.add(user);
-            }
-        }
-        for(UserDto user : listB){
-            if(user.getState().equals("online")){
-                l1.add(user);
-            } else {
-                l2.add(user);
-            }
-        }
-       l1.addAll(l2);
-        return l1; // 친구 목록 리턴
+        return  fDao.selectFriendsById(userId);// 친구 목록 리턴
     }
 
     // 친구 삭제 (친구 연결 끊기)

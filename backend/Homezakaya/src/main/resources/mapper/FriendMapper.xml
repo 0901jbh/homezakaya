@@ -10,15 +10,7 @@
         where userAId = #{userId} and isConnected = 1
         order by u.state DESC
     </select>
-
-    <select id="selectFriendsByuserBId" parameterType="string" resultType="UserDto">
-        select userId, nickname, email, mannerPoint, alcoholPoint, state
-        from friend f join user u
-        on userAId = userId
-        where userBId = #{userId} and isConnected = 1
-        order by u.state DESC
-    </select>
-
+    
     <!--친구 삭제-->
     <delete id="deleteFriend" parameterType="friendDto">
         delete from friend where userAId=#{userAId} and userBId=#{userBId};

@@ -12,9 +12,10 @@
           'under-six': this.headCount == 5 || this.headCount == 6,
           'under-eight': this.headCount == 7 || this.headCount == 8,
         }">
-          <user-video class="video" :streamManager="publisher" :myVideo="true" :isHostView="hostId == myUserId" :hostId="hostId" @checkDrunk="checkDrunk"/>
+          <user-video class="video" :streamManager="publisher" :myVideo="true" :isHostView="hostId == myUserId" :hostId="hostId" :highLightId="highLightId"
+            @checkDrunk="checkDrunk"/>
           <user-video class="video" v-for="sub in subscribers" :key="sub.stream.connection.connectionId"
-            :streamManager="sub" :myVideo="false" :isHostView="hostId == myUserId" :hostId="hostId" :friends="friends"
+            :streamManager="sub" :myVideo="false" :isHostView="hostId == myUserId" :hostId="hostId" :friends="friends" :highLightId="highLightId"
             @kickUser="kickUser" @changeHost="changeHost" @friendRequest="friendRequest" @checkDrunk="checkDrunk"/>
         </div>
         <div class="game-chatting-container">
@@ -213,6 +214,7 @@ export default {
       headCountMax: 8,
       headCount: 1,
       hostId: "",
+      highLightId: "",
 
       myUserId: "",
       myUserName: "",
@@ -248,7 +250,10 @@ export default {
     isSmile(value) {
       if (value) {
         this.session.signal({
-          data: JSON.stringify(this.myUserName),
+          data: JSON.stringify({
+            userId : this.myUserId,
+            username : this.myUserName
+          }),
           type: 'smile'
         })
           .then(() => {
@@ -400,15 +405,16 @@ export default {
 
       this.session.on('signal:smile', (event) => {
         this.store.dispatch("gameModule/stopDetect");
-        // console.log(event.data + "님이 웃으셨습니다!!");
-        this.gameContent = `${event.data}님이 웃으셨습니다 !`;
-        setTimeout(() => {this.gameScreenClose()}, 3000);
+        this.eventData = JSON.parse(event.data);
+        this.highLightId = this.eventData.userId;
+        this.gameContent = `${this.eventData.username}님이 웃으셨습니다 !`;
+        setTimeout(() => {this.gameScreenClose()}, 5000);
       })
 
       this.session.on('signal:check-drunk', async (event) => {
         this.gameStatus = 2
         this.gameScreenOpen(2)
-        this.eventData = await JSON.parse(event.data);
+        this.eventData = JSON.parse(event.data);
         this.gameContent = `${this.eventData.username}님 말 할 준비!`;
         setTimeout(() => {
           this.gameContent = this.eventData.sentence
@@ -419,7 +425,7 @@ export default {
       })
 
       this.session.on('signal:detect-audio',async (event) => {
-        this.eventData = await JSON.parse(event.data);
+        this.eventData = JSON.parse(event.data);
         this.gameContent = `기준 문장 : ${this.eventData.content}
 
         발음 문장 : ${this.eventData.strPerson}`;
@@ -797,6 +803,7 @@ export default {
       this.gameTitle = '';
       this.gameContent = '';
       this.gameStatus = 0;
+      this.highLightId = '';
     },
 
     async gameScreenClose(){
@@ -824,7 +831,7 @@ export default {
           this.store.commit("errorModule/SET_STATUS", 205);
         }
         else if(response == 409){
-          this.store.commit("errorModule/SET_STATUS", 205);
+          this.store.commit("errorModule/SET_STATUS", 406);
         }
       });
     },

@@ -47,7 +47,7 @@ export default {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	padding: auto;
+	margin-top: 10%;
 }
 
 #nametag {

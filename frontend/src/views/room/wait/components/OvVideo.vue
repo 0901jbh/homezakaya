@@ -16,10 +16,13 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 video {
 	max-height: 90%;
 	max-width: 90%;
+	border: solid 1.5px white;
+	overflow: hidden;
+	border-radius: 20px;
 	/* cursor: pointer; */
 }
 </style>

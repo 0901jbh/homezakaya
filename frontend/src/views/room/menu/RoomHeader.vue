@@ -32,8 +32,8 @@ const props = defineProps({
 
 .head {
   background-color: black;
-  height: 8vh;
-  border-bottom: solid 2vh #6E0000;
+  height: 10vh;
+  /* border-bottom: solid 2vh #6E0000; */
   display: flex;
   align-items: center;
   justify-content: space-between;

@@ -1,11 +1,11 @@
 <template>
 	<div id="video" v-if="streamManager">
 		<ov-video :streamManager="streamManager" />
-		<div id="nametag">
-			<!-- <img v-if="isHost" src="@/assets/images/crown.png" alt="crown img"
-				style="display: inline-block; width:20px; height:20px; padding-right: 5px;" /> -->
+		<!-- <div id="nametag">
+			<img v-if="isHost" src="@/assets/images/crown.png" alt="crown img"
+				style="display: inline-block; width:20px; height:20px; padding-right: 5px;" />
 			<p>{{ username }}</p>
-		</div>
+		</div> -->
 	</div>
 </template>
 
@@ -47,7 +47,7 @@ export default {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	padding: 10px;
+	padding: auto;
 }
 
 #nametag {

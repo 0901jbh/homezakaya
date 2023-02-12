@@ -8,7 +8,7 @@
 					<ov-video :streamManager="streamManager" @click="userInfo" />
 				</div>
 			</template>
-			<template #default >
+			<template #default >	
 				<div id="user_setting" style="display: flex; gap: 16px; flex-direction: column;"  >
 					<p class="user_nickname" style="margin: 0; font-size: 20px; color: white; align-self:center;">
 						{{ username }}
@@ -50,7 +50,7 @@
 		<div id="nametag">
 			<img v-if="isHost" src="@/assets/images/crown.png" alt="crown img"
 				style="display: inline-block; width:20px; height:20px; padding-right: 5px;" />
-			<p>{{ username }}</p>
+			<div class="username">{{ username }}</div>
 		</div>
 	</div>
 </template>
@@ -220,5 +220,17 @@ export default {
 	border-bottom-right-radius: 4px;
 	border-bottom-left-radius: 4px;
 	margin: 0;
+}
+.username {
+	width: 4rem;
+	height: 1.5rem;
+	font-size: 1.2rem;
+	text-align: center;
+	display: inline-block;
+	background: rgba(255, 255, 255, 0.18);
+	padding: 5px;
+	color: white;
+	border-radius: 22px;
+	margin-top: 0.7rem;
 }
 </style>

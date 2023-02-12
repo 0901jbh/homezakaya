@@ -67,31 +67,16 @@
           </div>
         </div>
         <div id="btns">
-          <div class="content" @click="infoOpen">Info</div>
-          <el-popover v-if="myUserId == hostId" :width="300"
-            popper-style="background: rgb(235 153 153); border: rgb(235 153 153); box-shadow: rgb(14 18 22 / 35%) 0px 10px 38px -10px, rgb(14 18 22 / 20%) 0px 10px 20px -15px; padding: 15px;"
-            trigger="click">
-            <template #reference>
-              <div class="content">game</div>
-            </template>
-            <template #default>
-              <div class="game" v-for="idx in 3" :key="idx"
-                style="display: flex; justify-content: space-evenly; align-items: center; margin: 10px;">
-                <p class="game_name" align="right"
-                  style="width: 80%; margin: 0; margin-right: 10px; font-size: 20px; color: white; align-self:center;">
-                  {{ games[idx] }}
-                </p>
-                <div @click="startBtn(idx)" class="content_inside" style="width: 20%; text-decoration:none;">
-                  start
-                </div>
-              </div>
-            </template>
-          </el-popover>
+          <img class="option-footer-btn" src="@/assets/images/info.png" alt="게임정보" @click="infoOpen">
+          <img class="option-footer-btn" src="@/assets/images/laughter.png" alt="웃음참기" @click="startBtn(1)">
+          <img class="option-footer-btn" src="@/assets/images/random_topic.png" alt="랜덤주제" @click="startBtn(3)">
+        </div>
+        <div id="btns">
           <el-popover :width="300"
             popper-style="background: rgb(235 153 153); border: rgb(235 153 153); box-shadow: rgb(14 18 22 / 35%) 0px 10px 38px -10px, rgb(14 18 22 / 20%) 0px 10px 20px -15px; padding: 15px;"
             trigger="click">
             <template #reference>
-              <div class="content">Invite</div>
+              <div class="footer-btn">초대하기</div>
             </template>
             <template #default>
               <div v-if="friends.length == 0">
@@ -103,13 +88,13 @@
                   style="width: 80%; margin: 0; margin-right: 10px; font-size: 20px; color: white; align-self:center;">
                   {{ friend.nickname }}
                 </p>
-                <div @click="inviteFriend(friend.userId)"  class="content_inside" style="width: 20%; text-decoration:none;">
-                  Invite
+                <div @click="inviteFriend(friend.userId)" style="width: 20%; text-decoration:none;">
+                  초대하기
                 </div>
               </div>
             </template>
           </el-popover>
-          <div class="content" @click="exitBtn">Exit</div>
+          <div class="footer-btn" @click="exitBtn">나가기</div>
         </div>
       </div>
     </div>
@@ -560,14 +545,13 @@ export default {
           .catch((response) => {
             let error = { ...response };
             if (error?.response?.status === 409) {
-              resolve(sessionId);
+              resolve(sessionId); 
             } else if (
               window.confirm(
                 `No connection to OpenVidu Server. This may be a certificate error at "${OPENVIDU_SERVER_URL}"\n\nClick OK to navigate and accept it. ` +
                   `If no certificate warning is shown, then check that your OpenVidu Server is up and running at "${OPENVIDU_SERVER_URL}"`
               )
-            ) {
-              
+            ) {           
               window.location.assign(`${OPENVIDU_SERVER_URL}/accept-certificate`);
             }
           });
@@ -1249,11 +1233,13 @@ a:hover .demo-logo {
 .onoff {
   margin-left: 100px;
   cursor: pointer;
+  transition: all .1s ease-in;
 }
 
 #btns {
   display: flex;
   justify-content: space-evenly;
+  align-items: center;
 }
 
 .content {
@@ -1323,8 +1309,8 @@ a:hover .demo-logo {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 50%;
-  height: 50%;
+  width: 60%;
+  height: 70%;
   background: #2E303F;
   border: 2px solid #CBCBCB;
   border-radius: 30px;
@@ -1344,10 +1330,10 @@ a:hover .demo-logo {
   height: 100%;
   width: 100%;
   display: grid;
-  grid-template-rows: 2fr 5fr 3fr;
+  grid-template-rows: 2fr 5fr 2.5fr;
   justify-content: center;
   align-items: center;
-  padding: 0 5%;
+  padding: 0 4%;
 }
 
 .game-info-title {
@@ -1401,6 +1387,23 @@ li{
 }
 
 .btn:hover {
+  transform: scale(1.2, 1.2);
+  cursor: pointer;
+}
+
+.footer-btn {
+  width: 5rem;
+  height: 3rem;
+  color: white;
+  text-align: center;
+  line-height: 3rem;
+
+  border: solid 3px #E27B66;
+  border-radius: 40px;
+  margin-right: 4vw;
+  transition: all .1s ease-in;
+}
+.footer-btn:hover {
   transform: scale(1.2, 1.2);
   cursor: pointer;
 }
@@ -1497,5 +1500,10 @@ p {
     margin : 0px;
 }
 
-
+.option-footer-btn{
+  margin-right: 4vw;
+}
+.option-footer-btn:hover{
+  cursor: pointer;
+}
 </style>

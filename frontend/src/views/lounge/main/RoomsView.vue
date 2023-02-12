@@ -13,9 +13,9 @@
     </div>
     <FriendIndex :key="renderKey" />
   </div>
-  <footer>
+  <!-- <footer>
     <FooterItem />
-  </footer>
+  </footer> -->
   <div class="reload-btn-wrapper" @click="reload">
     <div class="reload-btn">
       <img src="@/assets/images/circle_arrow.png" alt="circle_arrow">

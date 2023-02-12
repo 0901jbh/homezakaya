@@ -27,17 +27,17 @@
       <div v-if="data.emailChecked" class="id-result">
         당신의 아이디는 {{ data.id }} 입니다.
       </div>
-        <el-form-item>
-            <el-button type="info" size="large" style="width: 300px;">
-              <RouterLink to="/homeview" style="color:black">뒤로 가기</RouterLink>
-            </el-button>
-          </el-form-item>
+      <el-form-item>
+        <el-button type="info" size="large" style="width: 300px;">
+          <RouterLink to="/homeview" style="color:black">뒤로 가기</RouterLink>
+        </el-button>
+      </el-form-item>
 
     </div>
   </div>
-  <footer>
+  <!-- <footer>
     <FooterItem />
-  </footer>
+  </footer> -->
 </template>
 
 <script setup>
@@ -120,9 +120,11 @@ const emailsend = async () => {
   font-family: "dodum";
   src: url("@/assets/fonts/GowunDodum-Regular.ttf");
 }
+
 a {
   text-decoration: none;
 }
+
 .container {
   display: flex;
   justify-content: center;

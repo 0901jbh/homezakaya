@@ -43,9 +43,9 @@
       </div>
     </div>
   </div>
-  <footer>
+  <!-- <footer>
     <FooterItem />
-  </footer>
+  </footer> -->
   <!-- </div> -->
 </template>
 

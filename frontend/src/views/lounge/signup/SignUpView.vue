@@ -103,9 +103,9 @@
       </div>
     </div>
   </div>
-  <footer>
+  <!-- <footer>
     <FooterItem />
-  </footer>
+  </footer> -->
 </template>
 
 <script setup>

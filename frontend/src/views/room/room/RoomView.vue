@@ -872,7 +872,7 @@ export default {
 #chatting-container {
   display: flex;
   flex-direction: column;
-  background: #e9e9e9;
+  background: rgb(3, 3, 3);
   border-radius: 30px;
   height: 100%;
   width: 20vw;
@@ -882,7 +882,7 @@ export default {
 #chatting-container-small {
   display: flex;
   flex-direction: column;
-  background: #e9e9e9;
+  background: black;
   border-radius: 30px;
   height: 55%;
   width: 20vw;
@@ -925,11 +925,11 @@ export default {
 
 #send-form {
   display: flex;
-  background: #e27b66;
+  background: #c7c5c5;
   border-radius: 10px;
   align-self: flex-end;
   width: 90%;
-  height: 10%;
+  height: 40px;
   justify-content: space-evenly;
   align-items: center;
   margin: 5%;
@@ -938,9 +938,19 @@ export default {
 #send-form input {
   width: 70%;
   margin: auto;
-  background: #e27b66;
-  color: white;
+  background: #c7c5c5;
+  color: black;
   border : 0;
+}
+
+#send-form input:focus{
+  outline: none;
+}
+
+#send-form input::placeholder{
+  font-size: 17px;
+  opacity: 0.7;
+  color: rgb(95, 92, 92);
 }
 
 #send-form img {

@@ -853,7 +853,6 @@ export default {
   },
 
   beforeRouteLeave (to, from, next) {
-    this.getFriends();  
     this.leaveSession();
     next();
   },

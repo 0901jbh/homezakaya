@@ -4,7 +4,7 @@
 			popper-style="background: rgb(235 153 153); border: rgb(235 153 153); box-shadow: rgb(14 18 22 / 35%) 0px 10px 38px -10px, rgb(14 18 22 / 20%) 0px 10px 20px -15px; padding: 15px;"
 			trigger="click" placement="right">
 			<template #reference>
-				<div id="cam">
+				<div id="cam" :class="{ highlight: isHighLight }">
 					<ov-video :streamManager="streamManager" @click="userInfo" />
 				</div>
 			</template>
@@ -71,6 +71,7 @@ export default {
 		myVideo: Boolean,
 		isHostView: Boolean,
 		hostId: String,
+		highLightId: String,
 		friends: Array,
 	},
 
@@ -105,6 +106,10 @@ export default {
 			else
 				return false;
 		},
+		isHighLight() {
+			const clientData = this.getConnectionData();
+			return this.highLightId == clientData.userId;
+		}
 		// isHost 값을 주는 것 보다는 hostId와 clientId가 일치하는지 직접 비교하는게 나을듯
 		
 	},
@@ -152,6 +157,11 @@ export default {
 	max-height: 90%;
 	max-width: 100%;
 	cursor: pointer;
+}
+
+.highlight {
+	border : solid;
+	border-color : yellow;
 }
 
 /* .content {

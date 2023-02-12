@@ -99,7 +99,7 @@ export const gameModule = {
           const detections = await faceapi.detectAllFaces(payload, new faceapi.TinyFaceDetectorOptions()).withFaceExpressions();
           if(detections.length > 0){
               console.log(detections[0].expressions);
-              if(detections[0].expressions.happy > 0.3){
+              if(detections[0].expressions.happy > 0.7){
                 console.log("웃었땈ㅋ");
                 context.commit("SET_ISSMILE", true);
               }

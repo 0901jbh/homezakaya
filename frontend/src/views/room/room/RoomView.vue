@@ -908,13 +908,13 @@ export default {
 }
 
 #msg_mine {
-  background: #eb9999;
+  background: #c7c5c5;
   margin-left: auto;
   border-top-right-radius: 0;
 }
 
 #msg_not_mine {
-  background: #272727;
+  background: #e27b66;
   color: white;
   border-top-left-radius: 0;
 }
@@ -925,7 +925,7 @@ export default {
 
 #send-form {
   display: flex;
-  background: #282828;
+  background: #e27b66;
   border-radius: 10px;
   align-self: flex-end;
   width: 90%;
@@ -938,8 +938,9 @@ export default {
 #send-form input {
   width: 70%;
   margin: auto;
-  background: #3b3b3b;
+  background: #e27b66;
   color: white;
+  border : 0;
 }
 
 #send-form img {

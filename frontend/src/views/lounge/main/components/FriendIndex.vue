@@ -8,7 +8,7 @@
       <FriendInviteItem v-for="(invite, idx) in data.invites " :key="idx" :invite="invite"/>
       <FriendRequestItem v-for="(request, idx) in data.requests" :key="idx" :idx="idx" :request="request" />
       <FriendItem v-for="(friend, idx) in data.friends" :key="idx" :idx="idx" :friend="friend"
-        @followFriend="userInRoom" />
+        @followFriend="userInRoom"   />
     </div>
     <div class="tab_content" id="user_content">
       <input class="search-bar" type="text" v-model="data.userInput" @keyup.enter="searchUser"

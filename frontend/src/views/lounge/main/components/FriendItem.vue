@@ -47,7 +47,6 @@
 <script setup>
 import { onMounted, onUpdated } from 'vue';
 import { useStore } from 'vuex';
-
 const props = defineProps({
   friend: Object,
   idx: Number,

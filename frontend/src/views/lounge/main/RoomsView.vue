@@ -41,8 +41,9 @@ defineExpose(renderKey)
 .container {
   height: 92vh;
   display: grid;
-  grid-template-columns: 5fr 2fr;
-  margin: 0 4%;
+  grid-template-columns: 5fr 1.5fr;
+  padding: auto;
+  margin: 1% 10%;
 }
 
 /* .title {

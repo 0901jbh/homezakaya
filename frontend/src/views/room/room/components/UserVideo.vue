@@ -1,13 +1,14 @@
 <template>
 	<div id="video" v-if="streamManager !== undefined">
-		<el-popover :width="250" popper-style="background: #E27B66; border: none; padding: 15px;" trigger="click"
-			placement="right">
+		<el-popover :width="250"
+			popper-style="background: #1F1D2B; border: solid 2px #E27B66; border-radius: 22px; box-shadow: rgb(14 18 22 / 35%) 0px 10px 38px -10px, rgb(14 18 22 / 20%) 0px 10px 20px -15px; padding: 15px;"
+			trigger="click" placement="right">
 			<template #reference>
 				<div id="cam" :class="{ highlight: isHighLight }">
 					<ov-video :streamManager="streamManager" @click="userInfo" />
 				</div>
-			</template>
-			<template #default>
+			</template>			
+			<template #default>	
 				<div id="user_setting" style="display: flex; gap: 16px; flex-direction: column;">
 					<p class="user_nickname" style="margin: 0; font-size: 20px; color: white; align-self:center;">
 						{{ username }}
@@ -22,10 +23,15 @@
 					<!-- <div class="content" style="width: 60%; text-decoration:none;">
 						별점
 					</div> -->
-					<div v-if="!myVideo" class="content rate" style="width: 60%; text-decoration:none;">
-						<el-rate v-model="manner_rate" size="large" allow-half style="justify-content: center;" />
-						<button @click="evalMannerPoint" style=" text-decoration:none;">평가</button>
+					<div v-if="!myVideo" class = "rate_div">
+						
+						<el-rate v-if="!myVideo" v-model="manner_rate" size="large" 
+						style="justify-content: center;" />
+					
+						<div class="content" v-if="!myVideo" @click="evalMannerPoint"  
+						style="justify-content: center; width: 60%; text-decoration:none;">평가</div>
 					</div>
+					
 					<div v-if="!myVideo && !isFriend" @click="friend" class="content" style="width: 60%; text-decoration:none;">
 						친구 추가
 					</div>
@@ -200,11 +206,11 @@ export default {
 	color: white;
 	font-size: 1rem;
 	font-weight: 70;
-	background: #121212;
+	background: #E27B66;
 	/* box-shadow: -4px -4px 15px rgba(255, 255, 255, 0.5), 4px 4px 15px rgba(0, 0, 0, 0.5), inset 4px 4px 15px rgba(255, 255, 255, 0.5); */
-	border-radius: 50px;
+	border-radius: 53px;
 	/* border: solid 3px #E27B66; */
-
+	border: none;
 	cursor: pointer;
 }
 
@@ -234,4 +240,16 @@ export default {
 	border-radius: 22px;
 	margin-top: 0.7rem;
 }
+
+.rate_div{
+	display: flex; 
+	gap: 16px; 
+	flex-direction: column; 
+	justify-content: center; 
+	/* border:solid white 1px;  */
+	border-radius: 10px;
+	padding: 0 2px 10px 2px;
+	background-color: #2E303F;
+}
+
 </style>

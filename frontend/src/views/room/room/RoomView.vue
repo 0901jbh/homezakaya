@@ -26,8 +26,11 @@
                 <div class="cancel" type="button" @click="closeSignal">X</div>
               </div>
               <div class="game-wrapper">
+                <div></div>
                 <div class="game-title">{{ this.gameTitle }}</div>
                 <div class="game-content">{{ this.gameContent }}</div>
+                <div></div>
+                <div></div>
               </div>
             </div>
           </Transition>
@@ -878,6 +881,8 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://cdn.jsdelivr.net/npm/galmuri@latest/dist/galmuri.css');
+
 #main-container {
   /* background: ; */
   background: #121212;
@@ -1530,8 +1535,10 @@ li {
     height: 40%;
   }
 }
-
-.game-container {
+.game-container{
+  background-image: url('@/assets/images/game_screen.png');
+  background-repeat: no-repeat;
+  background-size: cover;
   border: solid white;
   height: 40%;
   background-color: #2E303F;
@@ -1556,11 +1563,13 @@ li {
 }
 
 .game-title {
+  font-family: 'Galmuri11';
   color: white;
-  font-size: 2rem;
+  font-size: 1.5rem;
 }
 
 .game-content {
+  font-family: 'Galmuri9';
   color: white;
   font-size: 1rem;
 }
@@ -1618,4 +1627,5 @@ p {
 
   cursor: pointer;
 }
+
 </style>

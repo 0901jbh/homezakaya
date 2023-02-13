@@ -115,6 +115,7 @@ const userInRoom = (userId) => {
         }
         else{
           const room = store.state.roomModule.rooms.find(r => r.roomId == data.value.followRoomId);
+          console.log(room);
           if(room.private){
             followPrivatePopOpen();
           }

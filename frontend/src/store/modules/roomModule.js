@@ -8,6 +8,7 @@ export const roomModule = {
     checkPasswordResult: false,
     requests: [], // 방초대 리스트
     inviteValidFriends:[],  // 초대 가능 친구 리스트
+    isClosed : false,
   }),
   mutations: {
     SET_ROOMS(state, payload) {
@@ -24,6 +25,9 @@ export const roomModule = {
     },
     SET_INVITEVALID_FRIENDS(state, payload){
       state.inviteValidFriends = payload;
+    },
+    SET_ISCLOSED(state,payload){
+      state.isClosed = payload;
     }
   },
   getters: {
@@ -333,5 +337,19 @@ export const roomModule = {
           }
         })
     },
+
+    isClosed(context, payload) {
+      context.commit('SET_ISCLOSED',true)
+      console.log("close 됌")
+    },
+
+
+
   },
+
+
+  
+
+
+
 }

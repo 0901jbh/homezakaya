@@ -243,8 +243,20 @@ export default {
     isFinished() {
       return this.store.state.gameModule.isFinished;
     },
+    isClosed(){
+      return this.store.state.roomModule.isClosed;
+    }
   },
   watch: {
+    isClosed(value){
+      console.log("watch");
+      if (value == true && this.hostId == this.myUserId && this.subscribers.length > 0) {
+        let data = JSON.parse(this.subscribers[0].stream.connection.data);
+        this.changeHost(data.userId);
+      }
+    },
+
+
     isSmile(value) {
       if (value) {
         this.session.signal({
@@ -275,7 +287,7 @@ export default {
     },
   },
   methods: {
-
+   
     sendMessage() {
       if (this.newMessage) {
         this.messageData = {
@@ -530,8 +542,6 @@ export default {
      * --------------------------------------------
      * GETTING A TOKEN FROM YOUR APPLICATION SERVER
      * --------------------------------------------
-     * The methods below request the creation of a Session and a Token to
-     * your application server. This keeps your OpenVidu deployment secure.
      * 
      * In this sample code, there is no user control at all. Anybody could
      * access your application server endpoints! In a real production
@@ -845,11 +855,10 @@ export default {
     
     this.joinSession();
   },
-
-  beforeRouteLeave (to, from, next) {
-    this.leaveSession();
-    next();
-  },
+  // beforeRouteLeave (to, from, next) {
+  //   this.leaveSession();
+  //   next();
+  // },
 };
 
 </script>

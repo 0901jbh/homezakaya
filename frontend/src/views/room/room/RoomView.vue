@@ -5,106 +5,118 @@
   <div id="main-container" class="container">
     <div id="session">
       <div id="container" style="display: flex;">
-        <div id="video-container" :class="{
-          'under-one': this.headCount == 1,
-          'under-two': this.headCount == 2,
-          'under-four': this.headCount == 3 || this.headCount == 4,
-          'under-six': this.headCount == 5 || this.headCount == 6,
-          'under-eight': this.headCount == 7 || this.headCount == 8,
-        }">
-          <user-video class="video" :streamManager="publisher" :myVideo="true" :isHostView="hostId == myUserId"
-            :hostId="hostId" :highLightUserName="highLightUserName" @checkDrunk="checkDrunk" />
-          <user-video class="video" v-for="sub in subscribers" :key="sub.stream.connection.connectionId"
-            :streamManager="sub" :myVideo="false" :isHostView="hostId == myUserId" :hostId="hostId" :friends="friends"
-            :highLightUserName="highLightUserName" @kickUser="kickUser" @changeHost="changeHost"
-            @friendRequest="friendRequest" @checkDrunk="checkDrunk" />
-        </div>
-        <div class="game-chatting-container">
-          <Transition>
-            <div class="game-container" v-if="this.gameStart">
-              <div class="stop-btn" v-if="hostId == myUserId">
-                <div class="cancel" type="button" @click="closeSignal">X</div>
+        <div id="video-btns">
+
+          <div id="video-container" :class="{
+            'under-one': this.headCount == 1,
+            'under-two': this.headCount == 2,
+            'under-four': this.headCount == 3 || this.headCount == 4,
+            'under-six': this.headCount == 5 || this.headCount == 6,
+            'under-eight': this.headCount == 7 || this.headCount == 8,
+          }">
+            <user-video class="video" :streamManager="publisher" :myVideo="true" :isHostView="hostId == myUserId"
+              :hostId="hostId" :highLightUserName="highLightUserName" @checkDrunk="checkDrunk" />
+            <user-video class="video" v-for="sub in subscribers" :key="sub.stream.connection.connectionId"
+              :streamManager="sub" :myVideo="false" :isHostView="hostId == myUserId" :hostId="hostId" :friends="friends"
+              :highLightUserName="highLightUserName" @kickUser="kickUser" @changeHost="changeHost"
+              @friendRequest="friendRequest" @checkDrunk="checkDrunk" />
+          </div>
+
+          <div id="btns-container">
+            <div id="mute">
+              <div class="onoff" @click="clickMuteVideo">
+                <img v-if="videoActive" src="@/assets/images/video_on.png" alt="video on img" />
+                <img v-else src="@/assets/images/video_off.png" alt="video on img" />
               </div>
-              <div class="game-wrapper">
-                <div></div>
-                <div class="game-title">{{ this.gameTitle }}</div>
-                <div class="game-content">{{ this.gameContent }}</div>
-                <div></div>
-                <div></div>
+              <div class="onoff" @click="clickMuteAudio">
+                <img v-if="audioActive" src="@/assets/images/audio_on.png" alt="audio on img" />
+                <img v-else src="@/assets/images/audio_off.png" alt="audio on img" />
+              </div>
+              <div class="onoff" @click="infoOpen">
+                <img class="option-footer-btn" src="@/assets/images/info.png" alt="게임정보">
               </div>
             </div>
-          </Transition>
-          <div id="chatting-container">
-            <div id="chats" ref="message_scroll">
-              <div v-for="message in messages" :key="message.id">
-                <!-- 내 채팅 -->
-                <div id="msg_mine" class="msg_box" v-if="message.username == myUserName">
-                  <div class="username">
-                    {{ message.username }}
-                  </div>
-                  <div class="msg">
-                    {{ message.text }}
-                  </div>
-                </div>
-                <!-- 남의 채팅 -->
-                <div id="msg_not_mine" class="msg_box" v-else>
-                  <div class="username">
-                    {{ message.username }}
-                  </div>
-                  <div class="msg">
-                    {{ message.text }}
-                  </div>
-                </div>
-              </div>
+            <div id="btns">
+              <img v-if="hostId == myUserId" class="option-footer-btn" src="@/assets/images/laughter.png" alt="웃음참기"
+                @click="startBtn(1)">
+              <img v-if="hostId == myUserId" class="option-footer-btn" src="@/assets/images/random_topic.png" alt="랜덤주제"
+                @click="startBtn(3)">
             </div>
-            <form id="send-form" @submit.prevent="sendMessage">
-              <input v-model="newMessage" placeholder="Type your message here" />
-              <img src="@/assets/images/message.png" alt="message img" @click="sendMessage"
-                style="width:30px; height:30px; cursor: pointer">
-            </form>
           </div>
+
         </div>
-      </div>
-      <div id="option-footer">
-        <div id="mute">
-          <div class="onoff" @click="clickMuteVideo">
-            <img v-if="videoActive" src="@/assets/images/video_on.png" alt="video on img" />
-            <img v-else src="@/assets/images/video_off.png" alt="video on img" />
-          </div>
-          <div class="onoff" @click="clickMuteAudio">
-            <img v-if="audioActive" src="@/assets/images/audio_on.png" alt="audio on img" />
-            <img v-else src="@/assets/images/audio_off.png" alt="audio on img" />
-          </div>
-        </div>
-        <div id="btns">
-          <img class="option-footer-btn" src="@/assets/images/info.png" alt="게임정보" @click="infoOpen">
-          <img v-if="hostId == myUserId" class="option-footer-btn" src="@/assets/images/laughter.png" alt="웃음참기"
-            @click="startBtn(1)">
-          <img v-if="hostId == myUserId" class="option-footer-btn" src="@/assets/images/random_topic.png" alt="랜덤주제"
-            @click="startBtn(3)">
-        </div>
-        <div id="btns">
-          <el-popover :width="300" popper-style="background: #E27B66; border: none; padding: 15px;" trigger="click">
-            <template #reference>
-              <div @click="refreshInviteBtn()" class="footer-btn">초대하기</div>
-            </template>
-            <template #default>
-              <div v-if="validFriends.length == 0">
-                초대 가능한 친구가 없어요
-              </div>
-              <div class="online_friend" v-for="friend in validFriends" :key="friend"
-                style="display: flex; justify-content: space-evenly; align-items: center; margin: 10px;">
-                <p class="friend_nickname" align="left"
-                  style="width: 80%; margin: 0; margin-right: 10px; font-size: 20px; color: white; align-self:center;">
-                  {{ friend.nickname }}
-                </p>
-                <div class="invite-btn" @click="inviteFriend(friend.userId)" style="">
-                  초대하기
+        <div id="chat-btns">
+
+          <div class="game-chatting-container">
+            <Transition>
+              <div class="game-container" v-if="this.gameStart">
+                <div class="stop-btn" v-if="hostId == myUserId">
+                  <div class="cancel" type="button" @click="closeSignal">X</div>
+                </div>
+                <div class="game-wrapper">
+                  <div></div>
+                  <div class="game-title">{{ this.gameTitle }}</div>
+                  <div class="game-content">{{ this.gameContent }}</div>
+                  <div></div>
+                  <div></div>
                 </div>
               </div>
-            </template>
-          </el-popover>
-          <div class="footer-btn" @click="exitBtn">나가기</div>
+            </Transition>
+            <div id="chatting-container">
+              <div id="chats" ref="message_scroll">
+                <div v-for="message in messages" :key="message.id">
+                  <!-- 내 채팅 -->
+                  <div id="msg_mine" class="msg_box" v-if="message.username == myUserName">
+                    <div class="username">
+                      {{ message.username }}
+                    </div>
+                    <div class="msg">
+                      {{ message.text }}
+                    </div>
+                  </div>
+                  <!-- 남의 채팅 -->
+                  <div id="msg_not_mine" class="msg_box" v-else>
+                    <div class="username">
+                      {{ message.username }}
+                    </div>
+                    <div class="msg">
+                      {{ message.text }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <form id="send-form" @submit.prevent="sendMessage">
+                <input v-model="newMessage" placeholder="Type your message here" />
+                <img src="@/assets/images/message.png" alt="message img" @click="sendMessage"
+                  style="width:30px; height:30px; cursor: pointer">
+              </form>
+            </div>
+          </div>
+
+          <div id="option-footer">
+            <el-popover :width="300" popper-style="background: #E27B66; border: none; padding: 15px;" trigger="click">
+              <template #reference>
+                <div @click="refreshInviteBtn()" class="footer-btn">초대하기</div>
+              </template>
+              <template #default>
+                <div v-if="friends.length == 0">
+                  초대 가능한 친구가 없어요
+                </div>
+                <div class="online_friend" v-for="friend in friends" :key="friend"
+                  style="display: flex; justify-content: space-evenly; align-items: center; margin: 10px;">
+                  <p class="friend_nickname" align="left"
+                    style="width: 80%; margin: 0; margin-right: 10px; font-size: 20px; color: white; align-self:center;">
+                    {{ friend.nickname }}
+                  </p>
+                  <div class="invite-btn" @click="inviteFriend(friend.userId)" style="">
+                    초대하기
+                  </div>
+                </div>
+              </template>
+            </el-popover>
+            <div class="footer-btn" @click="exitBtn">나가기</div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -897,12 +909,12 @@ export default {
 }
 
 #container {
-  height: 80vh;
+  height: 90vh;
 }
 
-#container>div {
+/* #container>div {
   margin: 20px;
-}
+} */
 
 #chatting-container {
   display: flex;
@@ -1137,6 +1149,20 @@ a:hover .demo-logo {
   display: inline-block;
 }
 
+#video-btns {
+  display: flex;
+  flex-direction: column;
+  width: 75vw;
+  height: 90vh;
+}
+
+#chat-btns {
+  display: flex;
+  flex-direction: column;
+  width: 25vw;
+  height: 90vh;
+}
+
 #video-container {
   /* border-style: solid;
   border-width: 5px; */
@@ -1145,9 +1171,18 @@ a:hover .demo-logo {
   align-content: center;
   align-items: center;
   align-self: center;
-  width: 80vw;
+  width: 75vw;
   height: 75vh;
   flex-wrap: wrap;
+  /* margin: 2.5vh; */
+}
+
+#btns-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 75vw;
+  height: 15vh;
 }
 
 #video-container .video {
@@ -1223,13 +1258,13 @@ a:hover .demo-logo {
   border-bottom-left-radius: 4px;
 }
 
-#session img {
+/* #session img {
   width: 100%;
   height: auto;
   display: inline-block;
   object-fit: contain;
   vertical-align: baseline;
-}
+} */
 
 /* #session #video-container img {
   position: relative;
@@ -1286,7 +1321,10 @@ a:hover .demo-logo {
 
 #option-footer {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 25vw;
+  height: 15vh;
 }
 
 #mute {
@@ -1300,10 +1338,20 @@ a:hover .demo-logo {
   transition: all .1s ease-in;
 }
 
+.onoff>img {
+  width: 60px;
+  height: 60px;
+}
+
 #btns {
   display: flex;
   justify-content: space-evenly;
   align-items: center;
+}
+
+#btns>img {
+  width: 60px;
+  height: 60px;
 }
 
 .content {
@@ -1472,7 +1520,6 @@ li {
 
   border: solid 3px #E27B66;
   border-radius: 40px;
-  margin-right: 4vw;
   transition: all .1s ease-in;
 }
 
@@ -1510,10 +1557,12 @@ li {
 
 .game-chatting-container {
   width: 20vw;
-  height: 75vh;
+  height: 72.5vh;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  align-self: center;
+  margin-top: 2.5vh;
 }
 
 .v-enter-active,
@@ -1542,7 +1591,8 @@ li {
     height: 40%;
   }
 }
-.game-container{
+
+.game-container {
   background-image: url('@/assets/images/game_screen.png');
   background-repeat: no-repeat;
   background-size: cover;
@@ -1608,7 +1658,7 @@ p {
 }
 
 .option-footer-btn {
-  margin-right: 4vw;
+  margin-right: 100px;
 }
 
 .option-footer-btn:hover {
@@ -1634,5 +1684,4 @@ p {
 
   cursor: pointer;
 }
-
 </style>

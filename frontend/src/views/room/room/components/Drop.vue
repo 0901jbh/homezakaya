@@ -19,7 +19,7 @@ export default {
   data(){
     return {
       dropping: this.isDrop,
-      dropItem: ["snowflake", "maple", "rain", "sakura"],
+      dropItem: ["sakura", "rain", "maple", "snowflake"],
     }
   },
   computed: {
@@ -33,7 +33,7 @@ export default {
       const delay = Math.random() * 5;
       const initialOpacity = Math.random();
       let duration = Math.random() * 20 + MIN_DURATION;
-      if (this.dropIdx == 2) {
+      if (this.dropIdx == 1) {
         duration = Math.random() * MIN_DURATION;
       }
 
@@ -42,7 +42,7 @@ export default {
       dropObject.style.animationDelay = `${delay}s`;
       dropObject.style.opacity = initialOpacity;
       dropObject.style.animation = `fall ${duration}s linear`;
-      if (this.dropIdx == 1 || this.dropIdx == 3) {
+      if (this.dropIdx == 0 || this.dropIdx == 2) {
         dropObject.style.transition = `all ${duration}s linear`
         dropObject.style.transform = `rotate(${Math.random() * 1440}deg)`;
         // dropObject.style.transform = `rotateX(${Math.random() * 7200}deg)`;

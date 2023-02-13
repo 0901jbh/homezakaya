@@ -43,16 +43,12 @@
           </el-form-item>
     </div>
   </div>
-  <footer>
-    <FooterItem />
-  </footer>
 </template>
 
 <script setup>
 import { ref, watch } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import HeaderItem from "../menu/HeaderItem.vue";
-import FooterItem from "../menu/FooterItem.vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 

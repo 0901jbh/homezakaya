@@ -23,10 +23,7 @@
           <Transition>
             <div class="game-container" v-if="this.gameStart">
               <div class="stop-btn" v-if="hostId == myUserId">
-                <div class="cancel" 
-                type="button" 
-                @click="closeSignal"
-                >X</div>
+                <div class="cancel" type="button" @click="closeSignal">X</div>
               </div>
               <div class="game-wrapper">
                 <div></div>
@@ -309,9 +306,11 @@ export default {
     },
     clickMuteVideo() {
       if (this.publisher.stream.videoActive) {
+        console.log('on')
         this.publisher.publishVideo(false)
         this.videoActive = false
       } else {
+        console.log('off')
         this.publisher.publishVideo(true)
         this.videoActive = true
       }

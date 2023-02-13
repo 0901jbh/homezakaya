@@ -5,26 +5,33 @@
   <div id="main-container" class="container">
     <div id="session">
       <div id="out">
-        <div @click="leaveSession">X</div>
+        <div id="out_btn">
+          <div @click="leaveSession">
+            X
+          </div>
+        </div>
       </div>
       <div id="txt">입장전 신분증 검사가 있겠습니다.</div>
       <div id="minz">
         <div id="container_txt">
-          <div>
+          <div style="font-size: 3rem;">
             주민등록증
           </div>
-          <div>
-            닉네임
+          <div style="font-size: 2rem; width: 90%; text-align: center; ">
+            {{ myUserName }}({{ myUserId }})
           </div>
-          <div>
-            매너도수
-          </div>
-          <div>
-            알콜도수
+          <div style="font-size: 1.5rem;">
+            매너도수 {{ mannerPoint }}
+            <br>
+            알콜도수 {{ alcoholPoint }}
           </div>
         </div>
         <div id="container_pic">
           <user-video :streamManager="publisher" />
+        </div>
+        <div id="container_in">
+          <div>홈자카야</div>
+          <img src="@/assets/images/in.png" alt="in img" style="height: 50%">
         </div>
       </div>
       <div id="option-footer">
@@ -40,7 +47,7 @@
         </div>
         <div id="enter">
           <div style=" margin: auto 30px auto 0px; color: white;" class="enter_content">{{ title }} 방에 입장하시겠습니까?</div>
-          <div class="content enter_content" @click="enterRoom">Enter</div>
+          <div class="content enter_content" @click="enterRoom">입장하기</div>
         </div>
       </div>
     </div>
@@ -82,6 +89,9 @@ export default {
       title: this.$route.params.title,
       myUserId: "",
       myUserName: "",
+
+      mannerPoint: null,
+      alcoholPoint: null,
 
       title: "",
       category: "",
@@ -239,6 +249,14 @@ export default {
       this.myUserName = user.nickname;
     },
 
+    userInfo() {
+      console.log("userInfo");
+      this.store.dispatch("userModule/getUserPoint", this.myUserId).then((response) => {
+        this.mannerPoint = parseFloat(response.mannerPoint.toFixed(2));
+        this.alcoholPoint = response.alcoholPoint;
+      });
+    },
+
     enterRoom() {
       this.store.dispatch('roomModule/doEnterRoom', {
         userId: this.myUserId,
@@ -264,6 +282,7 @@ export default {
   async mounted() {
     await this.getRoom();
     this.getUser();
+    this.userInfo();
     this.joinSession();
   },
 };
@@ -271,6 +290,26 @@ export default {
 </script>
 
 <style scoped>
+@font-face {
+  font-family: 'dokdo';
+  src: url('@/assets/fonts/Dokdo-Regular.ttf')
+}
+
+@font-face {
+  font-family: 'eastsea';
+  src: url('@/assets/fonts/EastSeaDokdo-Regular.ttf')
+}
+
+@font-face {
+  font-family: 'hansans';
+  src: url('@/assets/fonts/BlackHanSans-Regular.ttf')
+}
+
+@font-face {
+  font-family: "dodum";
+  src: url("@/assets/fonts/GowunDodum-Regular.ttf");
+}
+
 #main-container {
   display: flex;
   background: #121212;
@@ -589,7 +628,7 @@ a:hover .demo-logo {
   border-bottom-left-radius: 4px;
 }
 
-#session img {
+#mute img {
   width: 100%;
   height: auto;
   display: inline-block;
@@ -661,10 +700,13 @@ a:hover .demo-logo {
   border: none;
   text-decoration: none;
   background: none;
+}
+
+#out_btn {
   cursor: pointer;
 }
 
-#out:hover {
+#out_btn:hover {
   color: #e27b66;
 }
 
@@ -674,23 +716,48 @@ a:hover .demo-logo {
   align-items: center;
   height: 10%;
   color: white;
+
+  font-family: 'dodum';
+  font-size: 2rem;
 }
 
 #minz {
   display: flex;
-  height: 65%;
+  flex-wrap: wrap;
+  height: 50vh;
   background: #FFFFF4;
-  width: 65%
+  width: 80vh;
+  border-radius: 20px;
 }
 
 #container_txt {
-  height: 100%;
-  width: 40%
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  height: 80%;
+  width: 40%;
+
+  font-family: 'dodum';
 }
 
 #container_pic {
-  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80%;
   width: 60%
+}
+
+#container_in {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 20%;
+  width: 100%;
+
+  font-family: 'hansans';
+  font-size: 2rem;
 }
 
 #option-footer {
@@ -729,15 +796,20 @@ a:hover .demo-logo {
   width: 30px;
   height: 30px;
 
-  color: white;
-  font-size: 2rem;
-  font-weight: 500;
   background: #E27B66;
   /* box-shadow: -4px -4px 15px rgba(255, 255, 255, 0.5), 4px 4px 15px rgba(0, 0, 0, 0.5), inset 4px 4px 15px rgba(255, 255, 255, 0.5); */
   border-radius: 53px;
-  border: white;
 
   cursor: pointer;
+
+  width: 5rem;
+  /* height: 3rem; */
+  color: black;
+  text-align: center;
+  line-height: 3rem;
+
+  border-radius: 40px;
+  transition: all .1s ease-in;
 }
 
 .enter_content {

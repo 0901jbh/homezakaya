@@ -110,16 +110,12 @@
       </div>
     </div>
   </div>
-  <!-- <footer>
-    <FooterItem />
-  </footer> -->
 </template>
 
 <script setup>
 import { ref, watch } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import UserHeader from "../menu/UserHeader.vue";
-import FooterItem from "../menu/FooterItem.vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 

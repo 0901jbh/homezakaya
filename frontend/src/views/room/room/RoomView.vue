@@ -23,7 +23,10 @@
           <Transition>
             <div class="game-container" v-if="this.gameStart">
               <div class="stop-btn" v-if="hostId == myUserId">
-                <div class="cancel" type="button" @click="gameScreenClose">X</div>
+                <div class="cancel" 
+                type="button" 
+                @click="closeSignal"
+                >X</div>
               </div>
               <div class="game-wrapper">
                 <div class="game-title">{{ this.gameTitle }}</div>
@@ -464,6 +467,10 @@ export default {
         });
       })
 
+      this.session.on('signal:close', (event) => {
+        this.gameScreenClose();
+      })
+
       // --- 4) Connect to the session with a valid user token ---
 
       // Get a token from the OpenVidu deployment
@@ -812,6 +819,18 @@ export default {
         this.gameStart = false;
         document.getElementById("chatting-container-small").id = "chatting-container";
       }
+    },
+
+    closeSignal() {
+      this.session.signal({
+        type: 'close'
+      })
+        .then(() => {
+          console.log('창닫기');
+        })
+        .catch(error => {
+          console.error(error);
+        })
     },
 
     friendRequest(userId) {

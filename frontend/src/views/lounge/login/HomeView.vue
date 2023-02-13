@@ -43,15 +43,11 @@
       </div>
     </div>
   </div>
-  <!-- <footer>
-    <FooterItem />
-  </footer> -->
   <!-- </div> -->
 </template>
 
 <script setup>
 import HeaderItem from "../menu/HeaderItem.vue";
-import FooterItem from "../menu/FooterItem.vue";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";

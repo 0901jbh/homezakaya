@@ -102,7 +102,7 @@
                 <div @click="refreshInviteBtn()" class="footer-btn">초대하기</div>
               </template>
               <template #default>
-                <div v-if="friends.length == 0">
+                <div v-if="validFriends.length == 0">
                   초대 가능한 친구가 없어요
                 </div>
                 <div class="online_friend" v-for="friend in validFriends" :key="friend"
@@ -921,10 +921,10 @@ export default {
 
     this.joinSession();
   },
-  // beforeRouteLeave (to, from, next) {
-  //   this.leaveSession();
-  //   next();
-  // },
+  beforeRouteLeave (to, from, next) {
+    this.leaveSession();
+    next();
+  },
 };
 
 </script>

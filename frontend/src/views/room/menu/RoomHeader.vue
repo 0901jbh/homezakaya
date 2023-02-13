@@ -4,11 +4,14 @@
       <div style="margin-right: 4vw; font-family: 'dodum';">[{{ props.category }}]</div>
       <div>{{ props.title }}</div>
     </div>
-    <div @click="buttonClick" style="color:white; cursor:pointer;">
-      뿌리기
-    </div>
-    <div class="info">
-      {{ headCount }} / {{ headCountMax }}
+    
+    <div style="display: flex; flex-direction: row; ">
+      <div @click="buttonClick"  style="color:white; cursor:pointer; margin:1vw">
+        <img src="@/assets/images/cloud.png" style = "width:50px; height: auto;" >
+      </div>
+      <div class="info" style="margin:1vw">
+        {{ headCount }} / {{ headCountMax }}
+      </div>
     </div>
   </div>
 </template>

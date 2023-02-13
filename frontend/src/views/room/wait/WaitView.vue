@@ -804,7 +804,7 @@ a:hover .demo-logo {
 
   width: 5rem;
   /* height: 3rem; */
-  color: black;
+  color: white;
   text-align: center;
   line-height: 3rem;
 

@@ -813,7 +813,6 @@ export default {
         this.gameStart = false;
         document.getElementById("chatting-container-small").id="chatting-container";
       }
-      this.isSnowing = !this.isSnowing;
     },
 
     friendRequest(userId) {
@@ -837,6 +836,11 @@ export default {
         }
       });
     },
+
+    // 뿌리기 효과
+    dropAnimation(){
+      this.isSnowing = !this.isSnowing;
+    }
   },
 
   created() {
@@ -848,7 +852,7 @@ export default {
   async mounted() {
     await this.getRoom();
     this.getUser();
-    // await this.getFriends(); 
+    // await this.getFriends();
     
     this.joinSession();
   },

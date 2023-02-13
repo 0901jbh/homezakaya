@@ -20,7 +20,7 @@ body {
   background-color: white;
   position: absolute !important;
   top: -11px;
-  z-index: 1000;
+  z-index: 999;
   /* animation: fall 10s linear; */
 }
 

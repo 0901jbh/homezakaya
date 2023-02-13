@@ -7,111 +7,124 @@
   <div id="main-container" class="container">
     <div id="session">
       <div id="container" style="display: flex;">
-        <div id="video-container" :class="{
-          'under-one': this.headCount == 1,
-          'under-two': this.headCount == 2,
-          'under-four': this.headCount == 3 || this.headCount == 4,
-          'under-six': this.headCount == 5 || this.headCount == 6,
-          'under-eight': this.headCount == 7 || this.headCount == 8,
-        }">
-          <user-video class="video" :streamManager="publisher" :myVideo="true" :isHostView="hostId == myUserId" :hostId="hostId" :highLightUserName="highLightUserName"
-            @checkDrunk="checkDrunk"/>
-          <user-video class="video" v-for="sub in subscribers" :key="sub.stream.connection.connectionId"
-            :streamManager="sub" :myVideo="false" :isHostView="hostId == myUserId" :hostId="hostId" :friends="friends" :highLightUserName="highLightUserName"
-            @kickUser="kickUser" @changeHost="changeHost" @friendRequest="friendRequest" @checkDrunk="checkDrunk"/>
-        </div>
-        <div class="game-chatting-container">
-          <Transition>
-            <div class="game-container" v-if="this.gameStart">
-              <div class="stop-btn" v-if="hostId == myUserId">
-                <div class="cancel" 
-                type="button" 
-                @click="gameScreenClose"
-                >X</div>
+        <div id="video-btns">
+
+          <div id="video-container" :class="{
+            'under-one': this.headCount == 1,
+            'under-two': this.headCount == 2,
+            'under-four': this.headCount == 3 || this.headCount == 4,
+            'under-six': this.headCount == 5 || this.headCount == 6,
+            'under-eight': this.headCount == 7 || this.headCount == 8,
+          }">
+            <user-video class="video" :streamManager="publisher" :myVideo="true" :isHostView="hostId == myUserId"
+              :hostId="hostId" :highLightUserName="highLightUserName" @checkDrunk="checkDrunk" />
+            <user-video class="video" v-for="sub in subscribers" :key="sub.stream.connection.connectionId"
+              :streamManager="sub" :myVideo="false" :isHostView="hostId == myUserId" :hostId="hostId" :friends="friends"
+              :highLightUserName="highLightUserName" @kickUser="kickUser" @changeHost="changeHost"
+              @friendRequest="friendRequest" @checkDrunk="checkDrunk" />
+          </div>
+
+          <div id="btns-container">
+            <div id="mute">
+              <div class="onoff" @click="clickMuteVideo">
+                <img v-if="videoActive" src="@/assets/images/video_on.png" alt="video on img" />
+                <img v-else src="@/assets/images/video_off.png" alt="video on img" />
               </div>
-              <div class="game-wrapper">
-                <div class="game-title">{{ this.gameTitle }}</div>
-                <div class="game-content">{{ this.gameContent }}</div>
+              <div class="onoff" @click="clickMuteAudio">
+                <img v-if="audioActive" src="@/assets/images/audio_on.png" alt="audio on img" />
+                <img v-else src="@/assets/images/audio_off.png" alt="audio on img" />
+              </div>
+              <div class="onoff" @click="infoOpen">
+                <img class="option-footer-btn" src="@/assets/images/info.png" alt="게임정보">
               </div>
             </div>
-          </Transition>
-          <div id="chatting-container">
-            <div id="chats" ref="message_scroll">
-              <div v-for="message in messages" :key="message.id">
-                <!-- 내 채팅 -->
-                <div id="msg_mine" class="msg_box" v-if="message.username == myUserName">
-                  <div class="username">
-                    {{ message.username }}
-                  </div>
-                  <div class="msg">
-                    {{ message.text }}
-                  </div>
-                </div>
-                <!-- 남의 채팅 -->
-                <div id="msg_not_mine" class="msg_box" v-else>
-                  <div class="username">
-                    {{ message.username }}
-                  </div>
-                  <div class="msg">
-                    {{ message.text }}
-                  </div>
-                </div>
-              </div>
+            <div id="btns">
+              <img v-if="hostId == myUserId" class="option-footer-btn" src="@/assets/images/laughter.png" alt="웃음참기"
+                @click="startBtn(1)">
+              <img v-if="hostId == myUserId" class="option-footer-btn" src="@/assets/images/random_topic.png" alt="랜덤주제"
+                @click="startBtn(3)">
             </div>
-            <form id="send-form" @submit.prevent="sendMessage">
-              <input v-model="newMessage" placeholder="Type your message here" />
-              <img src="@/assets/images/message.png" alt="message img" @click="sendMessage"
-                style="width:30px; height:30px; cursor: pointer">
-            </form>
           </div>
+
         </div>
-      </div>
-      <div id="option-footer">
-        <div id="mute">
-          <div class="onoff" @click="clickMuteVideo">
-            <img v-if="videoActive" src="@/assets/images/video_on.png" alt="video on img" />
-            <img v-else src="@/assets/images/video_off.png" alt="video on img" />
-          </div>
-          <div class="onoff" @click="clickMuteAudio">
-            <img v-if="audioActive" src="@/assets/images/audio_on.png" alt="audio on img" />
-            <img v-else src="@/assets/images/audio_off.png" alt="audio on img" />
-          </div>
-        </div>
-        <div id="btns">
-          <img class="option-footer-btn" src="@/assets/images/info.png" alt="게임정보" @click="infoOpen">
-          <img v-if="hostId==myUserId" class="option-footer-btn" src="@/assets/images/laughter.png" alt="웃음참기" @click="startBtn(1)">
-          <img v-if="hostId==myUserId" class="option-footer-btn" src="@/assets/images/random_topic.png" alt="랜덤주제" @click="startBtn(3)">
-        </div>
-        <div id="btns">
-          <el-popover :width="300"
-            popper-style="background: rgb(235 153 153); border: rgb(235 153 153); box-shadow: rgb(14 18 22 / 35%) 0px 10px 38px -10px, rgb(14 18 22 / 20%) 0px 10px 20px -15px; padding: 15px;"
-            trigger="click">
-            <template #reference>
-              <div @click="refreshInviteBtn()" class="footer-btn">초대하기</div>
-            </template>
-            <template #default>
-              <div v-if="friends.length == 0">
-                초대 가능한 친구가 없어요
-              </div>  
-              <div class="online_friend" v-for="friend in friends" :key="friend"
-                style="display: flex; justify-content: space-evenly; align-items: center; margin: 10px;">
-                <p class="friend_nickname" align="left"
-                  style="width: 80%; margin: 0; margin-right: 10px; font-size: 20px; color: white; align-self:center;">
-                  {{ friend.nickname }}
-                </p>
-                <div class="invite-btn" @click="inviteFriend(friend.userId)" style="">
-                  초대하기
+        <div id="chat-btns">
+
+          <div class="game-chatting-container">
+            <Transition>
+              <div class="game-container" v-if="this.gameStart">
+                <div class="stop-btn" v-if="hostId == myUserId">
+                  <div class="cancel" type="button" @click="closeSignal">X</div>
+                </div>
+                <div class="game-wrapper">
+                  <div></div>
+                  <div class="game-title">{{ this.gameTitle }}</div>
+                  <div class="game-content">{{ this.gameContent }}</div>
+                  <div></div>
+                  <div></div>
                 </div>
               </div>
-            </template>
-          </el-popover>
-          <div class="footer-btn" @click="exitBtn">나가기</div>
+            </Transition>
+            <div id="chatting-container">
+              <div id="chats" ref="message_scroll">
+                <div v-for="message in messages" :key="message.id">
+                  <!-- 내 채팅 -->
+                  <div id="msg_mine" class="msg_box" v-if="message.username == myUserName">
+                    <div class="username">
+                      {{ message.username }}
+                    </div>
+                    <div class="msg">
+                      {{ message.text }}
+                    </div>
+                  </div>
+                  <!-- 남의 채팅 -->
+                  <div id="msg_not_mine" class="msg_box" v-else>
+                    <div class="username">
+                      {{ message.username }}
+                    </div>
+                    <div class="msg">
+                      {{ message.text }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <form id="send-form" @submit.prevent="sendMessage">
+                <input v-model="newMessage" placeholder="Type your message here" />
+                <img src="@/assets/images/message.png" alt="message img" @click="sendMessage"
+                  style="width:30px; height:30px; cursor: pointer">
+              </form>
+            </div>
+          </div>
+
+          <div id="option-footer">
+            <el-popover :width="300" popper-style="background: #E27B66; border: none; padding: 15px;" trigger="click">
+              <template #reference>
+                <div @click="refreshInviteBtn()" class="footer-btn">초대하기</div>
+              </template>
+              <template #default>
+                <div v-if="friends.length == 0">
+                  초대 가능한 친구가 없어요
+                </div>
+                <div class="online_friend" v-for="friend in friends" :key="friend"
+                  style="display: flex; justify-content: space-evenly; align-items: center; margin: 10px;">
+                  <p class="friend_nickname" align="left"
+                    style="width: 80%; margin: 0; margin-right: 10px; font-size: 20px; color: white; align-self:center;">
+                    {{ friend.nickname }}
+                  </p>
+                  <div class="invite-btn" @click="inviteFriend(friend.userId)" style="">
+                    초대하기
+                  </div>
+                </div>
+              </template>
+            </el-popover>
+            <div class="footer-btn" @click="exitBtn">나가기</div>
+          </div>
+
         </div>
       </div>
     </div>
   </div>
-   <!-- gameInfo popup -->
-   <div class="game-info-modal-bg" @click="infoClose"></div>
+  <!-- gameInfo popup -->
+  <div class="game-info-modal-bg" @click="infoClose"></div>
   <div class="game-info-modal-wrap">
     <div class="left-arrow" @click="leftClick()"></div>
     <div class="game-info-popup">
@@ -122,8 +135,13 @@
             <li><img src="@/assets/images/video_on.png" alt="video on img" /> : 카메라 on/off</li>
             <li><img src="@/assets/images/audio_on.png" alt="audio on img" /> : 오디오 on/off</li>
             <li><img class="info_img" src="@/assets/images/info.png" alt="info on img" /> : 방 내부와 게임 설명</li>
-            <li><div class="footer-btn" style="display:inline; padding: 5px 0px; margin-right:0px;">초대하기</div> : 온라인 상태인 친구를 초대할 수 있어요</li>
-            <li><div class="footer-btn" style="display:inline; padding: 5px 0px; margin-right:0px;">나가기</div> : 방 나가기</li>
+            <li>
+              <div class="footer-btn" style="display:inline; padding: 5px 0px; margin-right:0px;">초대하기</div> : 온라인 상태인
+              친구를 초대할 수 있어요
+            </li>
+            <li>
+              <div class="footer-btn" style="display:inline; padding: 5px 0px; margin-right:0px;">나가기</div> : 방 나가기
+            </li>
           </ul>
         </div>
       </div>
@@ -131,13 +149,14 @@
         <div class="game-info-title"> 웃음 참기 게임 </div>
         <div class="game-info-sentence">
           <br>
-          <p><img class="info_img" src="@/assets/images/laughter.png" alt="game on img" /> : 게임 시작 하기 (방장에게만 보여요)</p><br>
+          <p><img class="info_img" src="@/assets/images/laughter.png" alt="game on img" /> : 게임 시작 하기 (방장에게만 보여요)</p>
+          <br>
           <p>① 이가 보이지 않게 입술을 안으로
             말아 넣어서 할머니 입을 만든다</p><br />
           <p>② 랜덤으로 주제가 선정된다</p><br />
           <p>③ 한 명씩 돌아가면서 할머니 입 상태로 주제에 맞는 단어를 외친다</p><br />
           <p>④ 웃음이 감지되면 탈락!!</p><br />
-          
+
         </div>
       </div>
       <div class="page3">
@@ -155,7 +174,8 @@
         <div class="game-info-title"> 랜덤 대화 주제 </div>
         <div class="game-info-sentence">
           <br>
-          <p><img class="info_img" src="@/assets/images/random_topic.png" alt="game on img" /> : 게임 시작 하기 (방장에게만 보여요)</p><br>
+          <p><img class="info_img" src="@/assets/images/random_topic.png" alt="game on img" /> : 게임 시작 하기 (방장에게만 보여요)
+          </p><br>
           <p>처음 만난 사람들과 어색하다면?? </p><br />
           <p>랜덤 대화 주제를 통해 친해져보자!</p><br />
           <p>start 버튼을 클릭하면 랜덤으로 선택된 주제가 화면에 제시된다 (ex. 좋아하는 영화는 무엇인가요?)</p><br />
@@ -221,6 +241,7 @@ export default {
       myUserId: "",
       myUserName: "",
       friends: [],
+      validFriends: [],
 
       videoActive: JSON.parse(this.$route.query.video),
       audioActive: JSON.parse(this.$route.query.audio),
@@ -257,7 +278,7 @@ export default {
       if (value) {
         this.session.signal({
           data: JSON.stringify({
-            username : this.myUserName
+            username: this.myUserName
           }),
           type: 'smile'
         })
@@ -273,9 +294,9 @@ export default {
       if (value) {
         this.session.signal({
           //말할 문장, 말한 문장 담아서 보내기
-          data: JSON.stringify({ 
-            content: this.gameContent, 
-            strPerson: this.store.state.gameModule.texts 
+          data: JSON.stringify({
+            content: this.gameContent,
+            strPerson: this.store.state.gameModule.texts
           }),
           type: 'detect-audio'
         })
@@ -306,9 +327,11 @@ export default {
     },
     clickMuteVideo() {
       if (this.publisher.stream.videoActive) {
+        console.log('on')
         this.publisher.publishVideo(false)
         this.videoActive = false
       } else {
+        console.log('off')
         this.publisher.publishVideo(true)
         this.videoActive = true
       }
@@ -413,7 +436,7 @@ export default {
         this.eventData = JSON.parse(event.data);
         this.highLightUserName = this.eventData.username;
         this.gameContent = `${this.eventData.username}님이 웃으셨습니다 !`;
-        setTimeout(() => {this.gameScreenClose()}, 5000);
+        setTimeout(() => { this.gameScreenClose() }, 5000);
       })
 
       this.session.on('signal:check-drunk', async (event) => {
@@ -427,10 +450,10 @@ export default {
           if (this.eventData.username == this.myUserName) {
             this.store.dispatch("gameModule/getSpeech");
           }
-        }, 3000)     
+        }, 3000)
       })
 
-      this.session.on('signal:detect-audio',async (event) => {
+      this.session.on('signal:detect-audio', async (event) => {
         this.eventData = JSON.parse(event.data);
         this.gameContent = `기준 문장 : ${this.eventData.content}
 
@@ -440,7 +463,7 @@ export default {
             this.gameContent = `정확도 : ${response}`;
           });
         }, 6000)
-        setTimeout(() => {this.gameScreenClose()}, 9000);
+        setTimeout(() => { this.gameScreenClose() }, 9000);
       })
 
       this.session.on('signal:random-topic', (event) => {
@@ -467,13 +490,17 @@ export default {
         });
       })
 
+      this.session.on('signal:close', (event) => {
+        this.gameScreenClose();
+      })
+
       // --- 4) Connect to the session with a valid user token ---
 
       // Get a token from the OpenVidu deployment
       this.getToken(this.mySessionId).then((token) => {
         // First param is the token. Second param can be retrieved by every user on event
         // 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
-        this.session.connect(token, { userId: this.myUserId, username: this.myUserName})
+        this.session.connect(token, { userId: this.myUserId, username: this.myUserName })
           .then(() => {
 
             // --- 5) Get your own camera stream with the desired properties ---
@@ -572,13 +599,13 @@ export default {
           .catch((response) => {
             let error = { ...response };
             if (error?.response?.status === 409) {
-              resolve(sessionId); 
+              resolve(sessionId);
             } else if (
               window.confirm(
                 `No connection to OpenVidu Server. This may be a certificate error at "${OPENVIDU_SERVER_URL}"\n\nClick OK to navigate and accept it. ` +
-                  `If no certificate warning is shown, then check that your OpenVidu Server is up and running at "${OPENVIDU_SERVER_URL}"`
+                `If no certificate warning is shown, then check that your OpenVidu Server is up and running at "${OPENVIDU_SERVER_URL}"`
               )
-            ) {           
+            ) {
               window.location.assign(`${OPENVIDU_SERVER_URL}/accept-certificate`);
             }
           });
@@ -617,14 +644,20 @@ export default {
     //   const response = await axios.post(APPLICATION_SERVER_URL + '/api/sessions/' + sessionId + '/connections');
     //   return response.data; // The token
     // },
-    
+
     // 초대 가능 친구 갱신
-    async refreshInviteBtn(){
-       await this.store.dispatch("roomModule/inviteValidFriend", this.myUserId);
-       const friends = await this.store.state.roomModule.inviteValidFriends;
-       const parseFriends = JSON.parse(JSON.stringify(friends));
-       this.friends = parseFriends;
-       console.log(this.friends);
+    async refreshInviteBtn() {
+      await this.store.dispatch("roomModule/inviteValidFriend", this.myUserId);
+      const friends = this.store.state.roomModule.inviteValidFriends;
+      const parseFriends = JSON.parse(JSON.stringify(friends));
+      this.validFriends = parseFriends;
+    },
+
+    async getFriends() {
+      await this.store.dispatch("friendModule/getFriends", this.myUserId);
+      const friends = this.store.state.friendModule.friends;
+      const parseFriends = JSON.parse(JSON.stringify(friends));
+      this.friends = parseFriends;
     },
 
     async getRoom() {
@@ -650,18 +683,18 @@ export default {
         case 1:
           console.log('웃음참기 버튼 클릭');
           this.store.dispatch("gameModule/getKeyword")
-          .then(async () => {
-            this.gameContent = await this.store.state.gameModule.keyword;
-            this.session.signal({
-              type: 'detect-smile'
-            })
-            .then(() => {
+            .then(async () => {
+              this.gameContent = await this.store.state.gameModule.keyword;
               this.session.signal({
-                data: JSON.stringify({ keyword: this.store.state.gameModule.keyword }),
-                type: 'random-keyword'
+                type: 'detect-smile'
               })
+                .then(() => {
+                  this.session.signal({
+                    data: JSON.stringify({ keyword: this.store.state.gameModule.keyword }),
+                    type: 'random-keyword'
+                  })
+                })
             })
-          })
           break;
         // case 2:
         //   this.session.signal({
@@ -679,20 +712,20 @@ export default {
         case 3:
           console.log('랜덤주제 버튼 클릭');
           this.store.dispatch("gameModule/getTopic")
-          .then(async () => {
-            this.gameContent = await this.store.state.gameModule.topic
-            this.session.signal({
-              data: JSON.stringify({
-                topic: this.store.state.gameModule.topic
-              }),
-              type: 'random-topic'
+            .then(async () => {
+              this.gameContent = await this.store.state.gameModule.topic
+              this.session.signal({
+                data: JSON.stringify({
+                  topic: this.store.state.gameModule.topic
+                }),
+                type: 'random-topic'
+              })
             })
-          })
           break;
       }
     },
 
-    exitBtn(){
+    exitBtn() {
       this.$router.push({ name: 'rooms' });
     },
 
@@ -752,16 +785,16 @@ export default {
       }
     },
 
-    checkDrunk(username){
+    checkDrunk(username) {
       if (this.hostId == this.myUserId) {
         console.log("나안취했어 버튼 클릭")
         this.store.dispatch("gameModule/getSentence").then(() => {
           this.session.signal({
-          data: JSON.stringify({
-            username: username,
-            sentence: this.store.state.gameModule.sentence
+            data: JSON.stringify({
+              username: username,
+              sentence: this.store.state.gameModule.sentence
             }),
-          type: 'check-drunk'
+            type: 'check-drunk'
           })
         })
       }
@@ -793,10 +826,10 @@ export default {
         })
     },
 
-    gameScreenOpen(idx){
+    gameScreenOpen(idx) {
       if (!this.gameStart) {
         this.gameStart = true;
-        document.getElementById("chatting-container").id="chatting-container-small";
+        document.getElementById("chatting-container").id = "chatting-container-small";
       }
       this.gameStatus = idx;
       this.gameTitle = this.games[idx];
@@ -809,31 +842,43 @@ export default {
       this.highLightUserName = '';
     },
 
-    async gameScreenClose(){
+    async gameScreenClose() {
       await this.gameScreenErase();
-      if(this.gameStart){
+      if (this.gameStart) {
         this.gameStart = false;
-        document.getElementById("chatting-container-small").id="chatting-container";
+        document.getElementById("chatting-container-small").id = "chatting-container";
       }
     },
 
+    closeSignal() {
+      this.session.signal({
+        type: 'close'
+      })
+        .then(() => {
+          console.log('창닫기');
+        })
+        .catch(error => {
+          console.error(error);
+        })
+    },
+
     friendRequest(userId) {
-      this.store.dispatch("friendModule/sendRequest",{
+      this.store.dispatch("friendModule/sendRequest", {
         userAId: this.myUserId,
         userBId: userId
       });
     },
 
-     // 초대 요청 보내기
-    inviteFriend(toUserId){
-      this.store.dispatch("roomModule/inviteFriend",{
+    // 초대 요청 보내기
+    inviteFriend(toUserId) {
+      this.store.dispatch("roomModule/inviteFriend", {
         fromUserId: this.myUserId,
         toUserId: toUserId
       }).then((response) => {
-        if(response == 200){
+        if (response == 200) {
           this.store.commit("errorModule/SET_STATUS", 205);
         }
-        else if(response == 409){
+        else if (response == 409) {
           this.store.commit("errorModule/SET_STATUS", 406);
         }
       });
@@ -859,14 +904,14 @@ export default {
   // check point
 
   async mounted() {
-    await this.getRoom();
     this.getUser();
-    // await this.getFriends();
-    
+    await this.getRoom();
+    await this.getFriends(); 
+
     this.joinSession();
   },
 
-  beforeRouteLeave (to, from, next) {
+  beforeRouteLeave(to, from, next) {
     this.leaveSession();
     next();
   },
@@ -875,24 +920,26 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://cdn.jsdelivr.net/npm/galmuri@latest/dist/galmuri.css');
+
 #main-container {
   /* background: ; */
-  background:#121212;
+  background: #121212;
   height: 90vh;
 }
 
 #container {
-  height: 80vh;
+  height: 90vh;
 }
 
-#container>div {
+/* #container>div {
   margin: 20px;
-}
+} */
 
 #chatting-container {
   display: flex;
   flex-direction: column;
-  background: #e9e9e9;
+  background: rgb(3, 3, 3);
   border-radius: 30px;
   height: 100%;
   width: 20vw;
@@ -902,7 +949,7 @@ export default {
 #chatting-container-small {
   display: flex;
   flex-direction: column;
-  background: #e9e9e9;
+  background: black;
   border-radius: 30px;
   height: 55%;
   width: 20vw;
@@ -928,14 +975,14 @@ export default {
 }
 
 #msg_mine {
-  background: #eb9999;
+  background: #e27b66;
+  color: white;
   margin-left: auto;
   border-top-right-radius: 0;
 }
 
 #msg_not_mine {
-  background: #272727;
-  color: white;
+  background: #c7c5c5;
   border-top-left-radius: 0;
 }
 
@@ -945,11 +992,11 @@ export default {
 
 #send-form {
   display: flex;
-  background: #282828;
+  background: #c7c5c5;
   border-radius: 10px;
   align-self: flex-end;
   width: 90%;
-  height: 10%;
+  height: 40px;
   justify-content: space-evenly;
   align-items: center;
   margin: 5%;
@@ -958,8 +1005,19 @@ export default {
 #send-form input {
   width: 70%;
   margin: auto;
-  background: #3b3b3b;
-  color: white;
+  background: #c7c5c5;
+  color: black;
+  border: 0;
+}
+
+#send-form input:focus {
+  outline: none;
+}
+
+#send-form input::placeholder {
+  font-size: 17px;
+  opacity: 0.7;
+  color: rgb(95, 92, 92);
 }
 
 #send-form img {
@@ -1111,6 +1169,20 @@ a:hover .demo-logo {
   display: inline-block;
 }
 
+#video-btns {
+  display: flex;
+  flex-direction: column;
+  width: 75vw;
+  height: 90vh;
+}
+
+#chat-btns {
+  display: flex;
+  flex-direction: column;
+  width: 25vw;
+  height: 90vh;
+}
+
 #video-container {
   /* border-style: solid;
   border-width: 5px; */
@@ -1119,9 +1191,18 @@ a:hover .demo-logo {
   align-content: center;
   align-items: center;
   align-self: center;
-  width: 80vw;
+  width: 75vw;
   height: 75vh;
   flex-wrap: wrap;
+  /* margin: 2.5vh; */
+}
+
+#btns-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 75vw;
+  height: 15vh;
 }
 
 #video-container .video {
@@ -1197,13 +1278,13 @@ a:hover .demo-logo {
   border-bottom-left-radius: 4px;
 }
 
-#session img {
+/* #session img {
   width: 100%;
   height: auto;
   display: inline-block;
   object-fit: contain;
   vertical-align: baseline;
-}
+} */
 
 /* #session #video-container img {
   position: relative;
@@ -1260,7 +1341,10 @@ a:hover .demo-logo {
 
 #option-footer {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 25vw;
+  height: 15vh;
 }
 
 #mute {
@@ -1274,10 +1358,20 @@ a:hover .demo-logo {
   transition: all .1s ease-in;
 }
 
+.onoff>img {
+  width: 60px;
+  height: 60px;
+}
+
 #btns {
   display: flex;
   justify-content: space-evenly;
   align-items: center;
+}
+
+#btns>img {
+  width: 60px;
+  height: 60px;
 }
 
 .content {
@@ -1339,6 +1433,7 @@ a:hover .demo-logo {
   right: 0;
   z-index: 998;
   transition: 0.5s ease-out;
+  backdrop-filter: blur(4px) brightness(60%);
 }
 
 .game-info-modal-wrap {
@@ -1385,7 +1480,7 @@ a:hover .demo-logo {
 .game-info-sentence {
   text-align: center;
   color: white;
-  height : 120%;
+  height: 120%;
   overflow: auto;
   font-size: 20px;
 }
@@ -1393,19 +1488,20 @@ a:hover .demo-logo {
 .game-info-sentence1 {
   text-align: left;
   color: white;
-  height : 120%;
+  height: 120%;
   overflow: auto;
   font-size: 20px;
 }
 
 .game-info-sentence1::-webkit-scrollbar {
-	display: none;
-}
-.game-info-sentence::-webkit-scrollbar {
-	display: none;
+  display: none;
 }
 
-li{    
+.game-info-sentence::-webkit-scrollbar {
+  display: none;
+}
+
+li {
   margin: 5px 0;
 }
 
@@ -1444,9 +1540,9 @@ li{
 
   border: solid 3px #E27B66;
   border-radius: 40px;
-  margin-right: 4vw;
   transition: all .1s ease-in;
 }
+
 .footer-btn:hover {
   transform: scale(1.2, 1.2);
   cursor: pointer;
@@ -1478,12 +1574,15 @@ li{
   transform: scale(1.2, 1.2);
   cursor: pointer;
 }
-.game-chatting-container{
+
+.game-chatting-container {
   width: 20vw;
-  height: 75vh;
+  height: 72.5vh;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  align-self: center;
+  margin-top: 2.5vh;
 }
 
 .v-enter-active,
@@ -1503,14 +1602,20 @@ li{
   0% {
     height: 0%;
   }
+
   50% {
     height: 20%;
   }
+
   100% {
     height: 40%;
   }
 }
-.game-container{
+
+.game-container {
+  background-image: url('@/assets/images/game_screen.png');
+  background-repeat: no-repeat;
+  background-size: cover;
   border: solid white;
   height: 40%;
   background-color: #2E303F;
@@ -1521,21 +1626,27 @@ li{
   display: grid;
   grid-template-rows: 1fr 9fr;
 }
-.stop-btn{
-  display:flex;
+
+.stop-btn {
+  display: flex;
   justify-content: flex-end;
 }
-.game-wrapper{
+
+.game-wrapper {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
 }
+
 .game-title {
+  font-family: 'Galmuri11';
   color: white;
-  font-size: 2rem;
+  font-size: 1.5rem;
 }
+
 .game-content {
+  font-family: 'Galmuri9';
   color: white;
   font-size: 1rem;
 }
@@ -1553,43 +1664,44 @@ li{
   color: #e27b66;
 }
 
-.info_img{
+.info_img {
   height: 50px;
   width: auto;
 }
 
-ul{
- list-style:none;
+ul {
+  list-style: none;
 }
 
 p {
-    margin : 0px;
+  margin: 0px;
 }
 
-.option-footer-btn{
-  margin-right: 4vw;
+.option-footer-btn {
+  margin-right: 100px;
 }
-.option-footer-btn:hover{
+
+.option-footer-btn:hover {
   cursor: pointer;
 }
 
-.invite-btn{
+.invite-btn {
   display: flex;
-	flex-direction: row;
-	justify-content: center;
-	align-items: center;
-	align-self: center;
-	padding: 15px 20px;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  align-self: center;
+  padding: 15px 20px;
 
-  width:6rem;
-  height:0.8rem;
-	color: white;
-	font-size: 1rem;
-	font-weight: 70;
-	background: rgb(121 65 65);
-	box-shadow: -4px -4px 15px rgba(255, 255, 255, 0.5), 4px 4px 15px rgba(0, 0, 0, 0.5), inset 4px 4px 15px rgba(255, 255, 255, 0.5);
-	border-radius: 53px;
+  width: 6rem;
+  height: 0.8rem;
+  color: white;
+  font-size: 1rem;
+  font-weight: 70;
+  background: #121212;
+  /* box-shadow: -4px -4px 15px rgba(255, 255, 255, 0.5), 4px 4px 15px rgba(0, 0, 0, 0.5), inset 4px 4px 15px rgba(255, 255, 255, 0.5); */
+  border-radius: 50px;
 
-	cursor: pointer;
+  cursor: pointer;
 }
 </style>

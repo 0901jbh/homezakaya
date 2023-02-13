@@ -16,11 +16,11 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 video {
 	max-height: 100%;
 	max-width: 100%;
-	border:solid 1.5px white;
+	border: solid 1.5px white;
 	overflow: hidden;
 	border-radius: 20px;
 	/* cursor: pointer; */

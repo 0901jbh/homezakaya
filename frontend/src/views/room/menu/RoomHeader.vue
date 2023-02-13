@@ -1,7 +1,7 @@
 <template>
   <div class="head">
     <div class="title">
-      <div style="margin-right: 4vw;">{{ props.category }}</div>
+      <div style="margin-right: 4vw; font-family: 'dodum';">[{{ props.category }}]</div>
       <div>{{ props.title }}</div>
     </div>
     <div @click="buttonClick" style="color:white; cursor:pointer;">
@@ -39,6 +39,16 @@ function buttonClick() {
   src: url('@/assets/fonts/EastSeaDokdo-Regular.ttf')
 }
 
+@font-face {
+  font-family: 'hansans';
+  src: url('@/assets/fonts/BlackHanSans-Regular.ttf')
+}
+
+@font-face {
+  font-family: "dodum";
+  src: url("@/assets/fonts/GowunDodum-Regular.ttf");
+}
+
 .head {
   background-color: black;
   height: 10vh;
@@ -49,15 +59,18 @@ function buttonClick() {
 }
 
 .title {
-  font-family: 'dokdo';
+  font-family: 'hansans';
   color: white;
   font-size: 5vh;
-  font-weight: 600;
+  /* font-weight: 600; */
   padding-left: 1vw;
   display: flex;
+  align-items: center;
+
 }
 
 .info {
+  font-family: 'dodum';
   color: white;
   font-size: 4vh;
   font-weight: 600;

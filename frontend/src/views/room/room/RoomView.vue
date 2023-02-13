@@ -936,14 +936,14 @@ export default {
 }
 
 #msg_mine {
-  background: #c7c5c5;
+  background: #e27b66;
+  color: white;
   margin-left: auto;
   border-top-right-radius: 0;
 }
 
 #msg_not_mine {
-  background: #e27b66;
-  color: white;
+  background: #c7c5c5;
   border-top-left-radius: 0;
 }
 

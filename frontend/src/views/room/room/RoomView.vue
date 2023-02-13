@@ -1371,6 +1371,10 @@ a:hover .demo-logo {
 .onoff>img {
   width: 50px;
   height: 50px;
+  transition: all .1s ease-in;
+}
+.onoff>img:hover {
+  transform: scale(1.2, 1.2);
 }
 
 #btns {
@@ -1689,9 +1693,11 @@ p {
 
 .option-footer-btn {
   margin-right: 100px;
+  transition: all .1s ease;
 }
 
 .option-footer-btn:hover {
+  transform: scale(1.2, 1.2);
   cursor: pointer;
 }
 

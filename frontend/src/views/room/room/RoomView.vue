@@ -237,6 +237,7 @@ export default {
       myUserId: "",
       myUserName: "",
       friends: [],
+      validFriends: [],
 
       videoActive: JSON.parse(this.$route.query.video),
       audioActive: JSON.parse(this.$route.query.audio),
@@ -639,10 +640,16 @@ export default {
     // 초대 가능 친구 갱신
     async refreshInviteBtn() {
       await this.store.dispatch("roomModule/inviteValidFriend", this.myUserId);
-      const friends = await this.store.state.roomModule.inviteValidFriends;
+      const friends = this.store.state.roomModule.inviteValidFriends;
+      const parseFriends = JSON.parse(JSON.stringify(friends));
+      this.validFriends = parseFriends;
+    },
+
+    async getFriends() {
+      await this.store.dispatch("friendModule/getFriends", this.myUserId);
+      const friends = this.store.state.friendModule.friends;
       const parseFriends = JSON.parse(JSON.stringify(friends));
       this.friends = parseFriends;
-      console.log(this.friends);
     },
 
     async getRoom() {
@@ -877,9 +884,9 @@ export default {
   // check point
 
   async mounted() {
-    await this.getRoom();
     this.getUser();
-    // await this.getFriends(); 
+    await this.getRoom();
+    await this.getFriends(); 
 
     this.joinSession();
   },
@@ -948,14 +955,14 @@ export default {
 }
 
 #msg_mine {
-  background: #c7c5c5;
+  background: #e27b66;
+  color: white;
   margin-left: auto;
   border-top-right-radius: 0;
 }
 
 #msg_not_mine {
-  background: #e27b66;
-  color: white;
+  background: #c7c5c5;
   border-top-left-radius: 0;
 }
 

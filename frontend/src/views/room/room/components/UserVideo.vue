@@ -24,7 +24,7 @@
 					</div> -->
 					<div v-if="!myVideo" class="content rate" style="width: 60%; text-decoration:none;">
 						<el-rate v-model="manner_rate" size="large" allow-half style="justify-content: center;" />
-						<button t@click="evalMannerPoint" style=" text-decoration:none;">평가</button>
+						<button @click="evalMannerPoint" style=" text-decoration:none;">평가</button>
 					</div>
 					<div v-if="!myVideo && !isFriend" @click="friend" class="content" style="width: 60%; text-decoration:none;">
 						친구 추가

@@ -24,7 +24,7 @@ export const roomModule = {
     },
     SET_INVITEVALID_FRIENDS(state, payload){
       state.inviteValidFriends = payload;
-    }
+    },
   },
   getters: {
     getCheckPasswordResult(state) {

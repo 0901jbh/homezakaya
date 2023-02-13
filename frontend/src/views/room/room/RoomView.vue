@@ -1,7 +1,8 @@
 <template>
   <header>
-    <RoomHeader :title="title" :category="category" :headCount="headCount" :headCountMax="headCountMax" />
-    <Snow :isSnowing="this.isSnowing"/>
+    <RoomHeader :title="title" :category="category" :headCount="headCount" :headCountMax="headCountMax" @clickDrop="clickDrop"/>
+    <Drop :isDrop="this.isDrop" :dropIdx="this.dropIdx"/>
+    <!-- <Drop :isDrop="this.isDrop" :dropIdx="this.dropIdx"/> -->
   </header>
   <div id="main-container" class="container">
     <div id="session">
@@ -173,7 +174,7 @@
 <script>
 import RoomHeader from '../menu/RoomHeader.vue';
 import UserVideo from "./components/UserVideo.vue";
-import Snow from "./components/Snow.vue";
+import Drop from "./components/Drop.vue";
 import { OpenVidu } from "openvidu-browser";
 import { useStore } from 'vuex';
 import axios from "axios";
@@ -188,7 +189,7 @@ export default {
   components: {
     UserVideo,
     RoomHeader,
-    Snow,
+    Drop,
   },
 
   data() {
@@ -237,8 +238,9 @@ export default {
       gameTitle: "",
       gameContent: "",
 
-      // 눈내리기
-      isSnowing: false,
+      // 배경효과
+      isDrop: false,
+      dropIdx: -1,
     };
   },
 
@@ -838,8 +840,15 @@ export default {
     },
 
     // 뿌리기 효과
-    dropAnimation(){
-      this.isSnowing = !this.isSnowing;
+    clickDrop(){
+      if (this.dropIdx == 3) {
+        this.isDrop = false;
+        this.dropIdx = -1;
+      } else {
+        this.isDrop = false;
+        this.dropIdx += 1;
+        this.isDrop = true;
+      }
     }
   },
 
@@ -1479,15 +1488,15 @@ li{
 
 .v-enter-active,
 .v-leave-active {
-  transition: all 0.5s ease;
-  animation: open-game-screen .5s;
+  transition: all 0.5s linear;
+  animation: open-game-screen .5s linear;
   animation-delay: 0.7s;
   margin-top: 0px;
 }
 
 .v-enter-from,
 .v-leave-to {
-  animation: open-game-screen 0.5s ease reverse;
+  animation: open-game-screen 0.5s linear reverse;
 }
 
 @keyframes open-game-screen {

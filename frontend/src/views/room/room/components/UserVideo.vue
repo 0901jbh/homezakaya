@@ -157,7 +157,7 @@ export default {
 	max-height: 90%;
 	max-width: 100%;
 	cursor: pointer;
-	z-index: 1000;
+	/* z-index: 1000; */
 }
 
 .highlight {

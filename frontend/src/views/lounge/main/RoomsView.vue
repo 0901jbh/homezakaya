@@ -13,9 +13,6 @@
     </div>
     <FriendIndex :key="renderKey" />
   </div>
-  <footer>
-    <FooterItem />
-  </footer>
   <div class="reload-btn-wrapper" @click="reload">
     <div class="reload-btn">
       <img src="@/assets/images/circle_arrow.png" alt="circle_arrow">
@@ -26,10 +23,8 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 import UserHeader from '../menu/UserHeader.vue'
-import FooterItem from '../menu/FooterItem.vue'
 import RoomsIndexItem from './components/RoomsIndexItem.vue'
 import FriendIndex from './components/FriendIndex.vue'
-import InfoItem from '../menu/InfoItem.vue'
 import { ref } from 'vue'
 
 const renderKey = ref(0);
@@ -46,8 +41,9 @@ defineExpose(renderKey)
 .container {
   height: 92vh;
   display: grid;
-  grid-template-columns: 5fr 2fr;
-  margin: 0 4%;
+  grid-template-columns: 5fr 1.5fr;
+  padding: auto;
+  margin: 1% 10%;
 }
 
 /* .title {

@@ -113,15 +113,22 @@ const userInRoom = (userId) => {
         if(status != 200){
           store.commit("errorModule/SET_STATUS", status);
         }
-        else{
-          const room = store.state.roomModule.rooms.find(r => r.roomId == data.value.followRoomId);
-          console.log(room);
-          if(room.private){
-            followPrivatePopOpen();
-          }
-          else{
-            router.push({ name: 'wait', params: { roomId: data.value.followRoomId } });
-          }
+        else {
+          store.dispatch("roomModule/getRooms").then(() => {
+            const room = store.state.roomModule.rooms.find(r => r.roomId == data.value.followRoomId);
+            if(room == undefined){
+              store.commit("errorModule/SET_STATUS", 404);
+            }
+            else{
+              if(room.private){
+                followPrivatePopOpen();
+              }
+              else{
+                router.push({ name: 'wait', params: { roomId: data.value.followRoomId } });
+              }
+            }
+          })
+          
         }
       });
     }
@@ -138,6 +145,7 @@ const followEnterPrivateRoom = () => {
     }
     else {
       store.commit("errorModule/SET_STATUS", 401);
+      followPrivatePopClose();
     }
   })
 }

@@ -4,6 +4,9 @@
       <div style="margin-right: 4vw; font-family: 'dodum';">[{{ props.category }}]</div>
       <div>{{ props.title }}</div>
     </div>
+    <div @click="buttonClick" style="color:white; cursor:pointer;">
+      뿌리기
+    </div>
     <div class="info">
       {{ headCount }} / {{ headCountMax }}
     </div>
@@ -11,12 +14,18 @@
 </template>
 
 <script setup>
+const emit = defineEmits(["clickDrop"])
+
 const props = defineProps({
   title: String,
   category: String,
   headCount: Number,
   headCountMax: Number,
 })
+
+function buttonClick() {
+  emit("clickDrop");
+}
 </script>
 
 <style scoped>

@@ -20,8 +20,38 @@ body {
   background-color: white;
   position: absolute !important;
   top: -11px;
-  z-index: 1000;
+  z-index: 999;
   /* animation: fall 10s linear; */
+}
+.sakura{
+  width: 11px !important;
+  height: 11px !important;
+  border-radius: 50%;
+  background-color: rgb(255, 108, 184);
+  position: absolute !important;
+  top: -11px;
+  z-index: 999;
+  /* animation: fall 10s linear; */
+}
+
+.maple {
+  width: 25px !important;
+  height: 25px !important;
+  background-image: url("@/assets/images/maple.png");
+  background-size: contain;
+  position: absolute !important;
+  top: -25px;
+  z-index: 999;
+}
+
+.rain {
+  width: 2px !important;
+  height: 30px !important;
+  border-radius: 50%;
+  background-color: white;
+  position: absolute !important;
+  top: -30px;
+  z-index: 999;
 }
 
 @keyframes fall {

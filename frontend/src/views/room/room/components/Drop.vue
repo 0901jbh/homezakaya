@@ -42,7 +42,7 @@ export default {
       dropObject.style.animationDelay = `${delay}s`;
       dropObject.style.opacity = initialOpacity;
       dropObject.style.animation = `fall ${duration}s linear`;
-      if (this.dropIdx == 1) {
+      if (this.dropIdx == 1 || this.dropIdx == 3) {
         dropObject.style.transition = `all ${duration}s linear`
         dropObject.style.transform = `rotate(${Math.random() * 1440}deg)`;
         // dropObject.style.transform = `rotateX(${Math.random() * 7200}deg)`;

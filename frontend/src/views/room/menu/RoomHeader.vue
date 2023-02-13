@@ -6,8 +6,8 @@
     </div>
     
     <div style="display: flex; flex-direction: row; ">
-      <div @click="buttonClick"  style="color:white; cursor:pointer; margin:1vw">
-        <img src="@/assets/images/cloud.png" style = "width:50px; height: auto;" >
+      <div class="drop-btn" @click="buttonClick">
+        <img src="@/assets/images/cloud.png" style = "width:45px; height: 45px;" >
       </div>
       <div class="info" style="margin:1vw">
         {{ headCount }} / {{ headCountMax }}
@@ -78,5 +78,14 @@ function buttonClick() {
   font-size: 4vh;
   font-weight: 600;
   margin-right: 1vw;
+}
+.drop-btn{
+  color: white;
+  cursor: pointer;
+  margin: 1vw;
+  transition: all .1s ease;
+}
+.drop-btn:hover {
+  transform: scale(1.2, 1.2);
 }
 </style>

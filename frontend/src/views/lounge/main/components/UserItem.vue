@@ -11,8 +11,8 @@
       <div>{{ parseFloat(props.user.mannerPoint.toFixed(2)) }}</div>
       <img src="@/assets/images/alcohol_w.png" alt="alcohol_w img" style="height:25px;">
       <div>{{ props.user.alcoholPoint }}잔</div>
-      <div v-if="!isFriend" class="request-friend" type="button" @click="sendRequest">친구 요청</div>
-      <div v-if="isFriend" class="request-friend"></div>
+      <div v-if="!isFriend" class="request-friend" type="button" @click="sendRequest">친구요청</div>
+      <div v-if="isFriend" class="request-friend-none"></div>
     </div>
   </div>
   <div class="request-friend-modal-bg" @click="requestFriendClose"></div>
@@ -158,6 +158,13 @@ const requestFriendClose = () => {
   border-radius: 20px;
   cursor: pointer;
   color: black;
+
+  height: 1.3rem;
+  font-size: 0.8rem;
+}
+
+.request-friend-none {
+  width: 30%;
 }
 
 .request-friend:hover {

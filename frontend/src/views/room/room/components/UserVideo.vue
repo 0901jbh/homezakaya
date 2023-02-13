@@ -1,33 +1,31 @@
 <template>
 	<div id="video" v-if="streamManager !== undefined">
-		<el-popover :width="250"
-			popper-style="background: rgb(235 153 153); border: rgb(235 153 153); box-shadow: rgb(14 18 22 / 35%) 0px 10px 38px -10px, rgb(14 18 22 / 20%) 0px 10px 20px -15px; padding: 15px;"
-			trigger="click" placement="right">
+		<el-popover :width="250" popper-style="background: #E27B66; border: none; padding: 15px;" trigger="click"
+			placement="right">
 			<template #reference>
 				<div id="cam" :class="{ highlight: isHighLight }">
 					<ov-video :streamManager="streamManager" @click="userInfo" />
 				</div>
 			</template>
-			<template #default >	
-				<div id="user_setting" style="display: flex; gap: 16px; flex-direction: column;"  >
+			<template #default>
+				<div id="user_setting" style="display: flex; gap: 16px; flex-direction: column;">
 					<p class="user_nickname" style="margin: 0; font-size: 20px; color: white; align-self:center;">
 						{{ username }}
 					</p>
-					<div class="user_manner_alcohol" 
+					<div class="user_manner_alcohol"
 						style="margin: 0; display: flex; gap: 16px; flex-direction: row; justify-content: center;">
 						<img src="@/assets/images/manner_w.png" alt="manner_w img" style="width:28px; height:28px;">
 						<p style="margin: 0; font-size: 20px; color: white; align-self:center;">{{ mannerPoint }}</p>
 						<img src="@/assets/images/alcohol_w.png" alt="alcohol_w img" style="width:28px; height:28px;">
-						<p style="margin: 0; font-size: 20px; color: white; align-self:center;">{{alcoholPoint}}잔</p>
+						<p style="margin: 0; font-size: 20px; color: white; align-self:center;">{{ alcoholPoint }}잔</p>
 					</div>
 					<!-- <div class="content" style="width: 60%; text-decoration:none;">
 						별점
 					</div> -->
-					<el-rate v-if="!myVideo" v-model="manner_rate" size="large" allow-half
-						style="justify-content: center;" />
-					
-					<button v-if="!myVideo" type="button" @click="evalMannerPoint"     style=" text-decoration:none;">평가</button>
-					
+					<div v-if="!myVideo" class="content rate" style="width: 60%; text-decoration:none;">
+						<el-rate v-model="manner_rate" size="large" allow-half style="justify-content: center;" />
+						<button t@click="evalMannerPoint" style=" text-decoration:none;">평가</button>
+					</div>
 					<div v-if="!myVideo && !isFriend" @click="friend" class="content" style="width: 60%; text-decoration:none;">
 						친구 추가
 					</div>
@@ -37,8 +35,7 @@
 					<div v-if="!myVideo && isHostView" @click="host" class="content" style="width: 60%; text-decoration:none;">
 						방장 변경
 					</div>
-					<div v-if="!myVideo && isHostView" @click="kick" class="content"
-						style="width: 60%; text-decoration:none;">
+					<div v-if="!myVideo && isHostView" @click="kick" class="content" style="width: 60%; text-decoration:none;">
 						강제 퇴장
 					</div>
 				</div>
@@ -49,7 +46,7 @@
 		</div> -->
 		<div id="nametag">
 			<img v-if="isHost" src="@/assets/images/crown.png" alt="crown img"
-				style="display: inline-block; width:1.5rem; height:1.5rem; padding-right: 5px;" />
+				style="display: inline-block; width:1.5rem; height:1.5rem; padding-right: 5px; margin-top: 0.7rem;" />
 			<div class="username">{{ username }}</div>
 		</div>
 	</div>
@@ -78,11 +75,11 @@ export default {
 	data() {
 		return {
 			store: useStore(),
-			manner_rate:0,
+			manner_rate: 0,
 			mannerPoint: 0,
-			alcoholPoint : 0,
-			isDetailOn : false,
-			count : 0,
+			alcoholPoint: 0,
+			isDetailOn: false,
+			count: 0,
 		}
 	},
 
@@ -101,7 +98,7 @@ export default {
 		},
 		isFriend() {
 			const clientData = this.getConnectionData();
-			if(this.friends != undefined)
+			if (this.friends != undefined)
 				return this.friends.includes(clientData.userId);
 			else
 				return false;
@@ -111,7 +108,7 @@ export default {
 			return this.highLightUserName == clientData.username;
 		}
 		// isHost 값을 주는 것 보다는 hostId와 clientId가 일치하는지 직접 비교하는게 나을듯
-		
+
 	},
 
 	methods: {
@@ -122,15 +119,15 @@ export default {
 		},
 		userInfo() {
 			console.log("userInfo");
-			this.store.dispatch("userModule/getUserPoint",this.userId).then((response) =>{
+			this.store.dispatch("userModule/getUserPoint", this.userId).then((response) => {
 				this.mannerPoint = parseFloat(response.mannerPoint.toFixed(2));
 				this.alcoholPoint = response.alcoholPoint;
 			});
 		},
-		friend(){
+		friend() {
 			this.$emit('friendRequest', this.userId);
 		},
-		drunk(){
+		drunk() {
 			this.$emit('checkDrunk', this.username);
 		},
 		kick() {
@@ -139,9 +136,9 @@ export default {
 		host() {
 			this.$emit('changeHost', this.userId);
 		},
-		evalMannerPoint(){
+		evalMannerPoint() {
 			console.log("manner rate :" + this.manner_rate);
-			this.store.dispatch("userModule/updateMannerPoint",{userId : this.userId, mannerPoint : this.manner_rate});
+			this.store.dispatch("userModule/updateMannerPoint", { userId: this.userId, mannerPoint: this.manner_rate });
 			this.store.commit("errorModule/SET_STATUS", 405);
 		}
 
@@ -160,9 +157,9 @@ export default {
 }
 
 .highlight {
-	border : solid;
+	border: solid;
 	border-radius: 22px;
-	border-color : yellow;
+	border-color: yellow;
 }
 
 /* .content {
@@ -203,9 +200,10 @@ export default {
 	color: white;
 	font-size: 1rem;
 	font-weight: 70;
-	background: rgb(121 65 65);
-	box-shadow: -4px -4px 15px rgba(255, 255, 255, 0.5), 4px 4px 15px rgba(0, 0, 0, 0.5), inset 4px 4px 15px rgba(255, 255, 255, 0.5);
-	border-radius: 53px;
+	background: #121212;
+	/* box-shadow: -4px -4px 15px rgba(255, 255, 255, 0.5), 4px 4px 15px rgba(0, 0, 0, 0.5), inset 4px 4px 15px rgba(255, 255, 255, 0.5); */
+	border-radius: 50px;
+	/* border: solid 3px #E27B66; */
 
 	cursor: pointer;
 }

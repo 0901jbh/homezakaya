@@ -172,8 +172,8 @@ const passwordClose = () => {
 
 .create-room {
 	width: 30%;
-	height: 45%;
-	padding: 2.5% 1.5%;
+	height: 35%;
+	padding: 5% 1.5%;
 	scroll-snap-align: start;
 }
 
@@ -190,8 +190,8 @@ const passwordClose = () => {
 
 .room {
 	width: 30%;
-	height: 45%;
-	padding: 2.5% 1.5%;
+	height: 35%;
+	padding: 5% 1.5%;
 	scroll-snap-align: start;
 }
 

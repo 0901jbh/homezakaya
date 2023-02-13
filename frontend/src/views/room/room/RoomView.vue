@@ -104,7 +104,7 @@
                 <div v-if="friends.length == 0">
                   초대 가능한 친구가 없어요
                 </div>
-                <div class="online_friend" v-for="friend in friends" :key="friend"
+                <div class="online_friend" v-for="friend in validFriends" :key="friend"
                   style="display: flex; justify-content: space-evenly; align-items: center; margin: 10px;">
                   <p class="friend_nickname" align="left"
                     style="width: 80%; margin: 0; margin-right: 10px; font-size: 20px; color: white; align-self:center;">
@@ -906,7 +906,7 @@ export default {
   async mounted() {
     this.getUser();
     await this.getRoom();
-    await this.getFriends(); 
+    await this.getFriends();
 
     this.joinSession();
   },

@@ -89,10 +89,10 @@
               <div @click="refreshInviteBtn()" class="footer-btn">초대하기</div>
             </template>
             <template #default>
-              <div v-if="friends.length == 0">
+              <div v-if="validFriends.length == 0">
                 초대 가능한 친구가 없어요
               </div>
-              <div class="online_friend" v-for="friend in friends" :key="friend"
+              <div class="online_friend" v-for="friend in validFriends" :key="friend"
                 style="display: flex; justify-content: space-evenly; align-items: center; margin: 10px;">
                 <p class="friend_nickname" align="left"
                   style="width: 80%; margin: 0; margin-right: 10px; font-size: 20px; color: white; align-self:center;">
@@ -225,6 +225,7 @@ export default {
       myUserId: "",
       myUserName: "",
       friends: [],
+      validFriends: [],
 
       videoActive: JSON.parse(this.$route.query.video),
       audioActive: JSON.parse(this.$route.query.audio),
@@ -625,10 +626,16 @@ export default {
     // 초대 가능 친구 갱신
     async refreshInviteBtn() {
       await this.store.dispatch("roomModule/inviteValidFriend", this.myUserId);
-      const friends = await this.store.state.roomModule.inviteValidFriends;
+      const friends = this.store.state.roomModule.inviteValidFriends;
+      const parseFriends = JSON.parse(JSON.stringify(friends));
+      this.validFriends = parseFriends;
+    },
+
+    async getFriends() {
+      await this.store.dispatch("friendModule/getFriends", this.myUserId);
+      const friends = this.store.state.friendModule.friends;
       const parseFriends = JSON.parse(JSON.stringify(friends));
       this.friends = parseFriends;
-      console.log(this.friends);
     },
 
     async getRoom() {
@@ -863,9 +870,9 @@ export default {
   // check point
 
   async mounted() {
-    await this.getRoom();
     this.getUser();
-    // await this.getFriends(); 
+    await this.getRoom();
+    await this.getFriends(); 
 
     this.joinSession();
   },

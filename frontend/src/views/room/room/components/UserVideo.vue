@@ -55,7 +55,6 @@
 <script>
 import OvVideo from './OvVideo.vue';
 import { useStore } from 'vuex';
-import axios from "axios";
 export default {
 	name: 'UserVideo',
 
@@ -78,7 +77,6 @@ export default {
 			manner_rate: 0,
 			mannerPoint: 0,
 			alcoholPoint: 0,
-			isDetailOn: false,
 			count: 0,
 		}
 	},
@@ -93,19 +91,22 @@ export default {
 			return userId;
 		},
 		isHost() {
-			const clientData = this.getConnectionData();
-			return this.hostId == clientData.userId;
+			const { userId } = this.getConnectionData();
+			return this.hostId == userId;
 		},
 		isFriend() {
-			const clientData = this.getConnectionData();
-			if (this.friends != undefined)
-				return this.friends.includes(clientData.userId);
-			else
-				return false;
+			const { userId } = this.getConnectionData();
+			let res = false;
+			this.friends.forEach(element => {
+				if(element.userId == userId){
+					res = true;
+				}
+			});
+			return res;
 		},
 		isHighLight() {
-			const clientData = this.getConnectionData();
-			return this.highLightUserName == clientData.username;
+			const { username } = this.getConnectionData();
+			return this.highLightUserName == username;
 		}
 		// isHost 값을 주는 것 보다는 hostId와 clientId가 일치하는지 직접 비교하는게 나을듯
 
@@ -114,7 +115,6 @@ export default {
 	methods: {
 		getConnectionData() {
 			const { connection } = this.streamManager.stream;
-			console.log(JSON.parse(connection.data));
 			return JSON.parse(connection.data);
 		},
 		userInfo() {
@@ -141,11 +141,7 @@ export default {
 			this.store.dispatch("userModule/updateMannerPoint", { userId: this.userId, mannerPoint: this.manner_rate });
 			this.store.commit("errorModule/SET_STATUS", 405);
 		}
-
-
 	},
-
-
 };
 </script>
 

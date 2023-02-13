@@ -144,8 +144,9 @@ export default {
 		},
 		evalMannerPoint() {
 			console.log("manner rate :" + this.manner_rate);
-			this.store.dispatch("userModule/updateMannerPoint", { userId: this.userId, mannerPoint: this.manner_rate });
-			this.store.commit("errorModule/SET_STATUS", 405);
+			this.store.dispatch("userModule/updateMannerPoint",{userId : this.userId, mannerPoint : this.manner_rate});
+			this.store.commit("errorModule/SET_STATUS", 204);
+
 		}
 	},
 };

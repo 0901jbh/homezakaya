@@ -13,7 +13,7 @@
       <img src="@/assets/images/alcohol_w.png" alt="alcohol_w img" style="height:25px;">
       <div>{{ props.friend.alcoholPoint }}잔</div>
       <div v-if="props.friend.state == 'online'" class="follow-friend" type="button" @click="followFriend">따라가기</div>
-      <div v-else class="follow-friend"></div>
+      <div v-else class="follow-friend-none"></div>
     </div>
   </div>
 
@@ -167,6 +167,13 @@ const deleteFriendClose = () => {
   border-radius: 20px;
   cursor: pointer;
   color: black;
+
+  height: 1.3rem;
+  font-size: 0.8rem;
+}
+
+.follow-friend-none {
+  width: 30%;
 }
 
 .follow-friend:hover {

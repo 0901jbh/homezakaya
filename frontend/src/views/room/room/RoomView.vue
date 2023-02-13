@@ -1,7 +1,8 @@
 <template>
   <header>
-    <RoomHeader :title="title" :category="category" :headCount="headCount" :headCountMax="headCountMax" @clickDrop="clickDrop"/>
-    <Drop :isDrop="this.isDrop" :dropIdx="this.dropIdx"/>
+    <RoomHeader :title="title" :category="category" :headCount="headCount" :headCountMax="headCountMax"
+      @clickDrop="clickDrop" />
+    <Drop :isDrop="this.isDrop" :dropIdx="this.dropIdx" />
     <!-- <Drop :isDrop="this.isDrop" :dropIdx="this.dropIdx"/> -->
   </header>
   <div id="main-container" class="container">
@@ -272,8 +273,20 @@ export default {
     isFinished() {
       return this.store.state.gameModule.isFinished;
     },
+    isClosed(){
+      return this.store.state.roomModule.isClosed;
+    }
   },
   watch: {
+    isClosed(value){
+      console.log("watch");
+      if (value == true && this.hostId == this.myUserId && this.subscribers.length > 0) {
+        let data = JSON.parse(this.subscribers[0].stream.connection.data);
+        this.changeHost(data.userId);
+      }
+    },
+
+
     isSmile(value) {
       if (value) {
         this.session.signal({
@@ -304,7 +317,7 @@ export default {
     },
   },
   methods: {
-
+   
     sendMessage() {
       if (this.newMessage) {
         this.messageData = {
@@ -565,8 +578,6 @@ export default {
      * --------------------------------------------
      * GETTING A TOKEN FROM YOUR APPLICATION SERVER
      * --------------------------------------------
-     * The methods below request the creation of a Session and a Token to
-     * your application server. This keeps your OpenVidu deployment secure.
      * 
      * In this sample code, there is no user control at all. Anybody could
      * access your application server endpoints! In a real production
@@ -885,7 +896,7 @@ export default {
     },
 
     // 뿌리기 효과
-    clickDrop(){
+    clickDrop() {
       if (this.dropIdx == 3) {
         this.isDrop = false;
         this.dropIdx = -1;
@@ -910,11 +921,10 @@ export default {
 
     this.joinSession();
   },
-
-  beforeRouteLeave(to, from, next) {
-    this.leaveSession();
-    next();
-  },
+  // beforeRouteLeave (to, from, next) {
+  //   this.leaveSession();
+  //   next();
+  // },
 };
 
 </script>
@@ -1359,8 +1369,8 @@ a:hover .demo-logo {
 }
 
 .onoff>img {
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
 }
 
 #btns {
@@ -1370,8 +1380,8 @@ a:hover .demo-logo {
 }
 
 #btns>img {
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
 }
 
 .content {
@@ -1532,7 +1542,7 @@ li {
 }
 
 .footer-btn {
-  width: 5rem;
+  width: 6rem;
   height: 3rem;
   color: white;
   text-align: center;

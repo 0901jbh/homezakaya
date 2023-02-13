@@ -30,16 +30,19 @@
 
         </el-form>
       </div>
-      <div v-if="data.emailErr" class="id-result" style="color: red;">
+      <div v-if="data.emailErr" class="id-result" style="color: red; margin-bottom: 18px;">
         아이디와 이메일 정보가 일치하지 않습니다.
       </div>
-      <div v-if="data.newPass" class="id-result">
+      <div v-if="data.newPass" class="id-result" style="margin-bottom: 18px;">
         새로운 비밀번호가 당신의 메일로 전송되었습니다.
       </div>
       <el-form-item>
-        <el-button type="info" size="large" style="width: 300px;">
-          <RouterLink to="/homeview" style="color:black">뒤로 가기</RouterLink>
-        </el-button>
+        <RouterLink to="/homeview" style="color: white; text-decoration: none;">
+          <el-button type="info" size="large"
+            style="width: 300px; background-color: hsl(229.41, 18.68%, 17.84%) !important; color: white !important; border: 1px solid #E27B66">
+            뒤로 가기
+          </el-button>
+        </RouterLink>
       </el-form-item>
     </div>
   </div>

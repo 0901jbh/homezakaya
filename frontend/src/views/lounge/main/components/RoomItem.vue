@@ -1,6 +1,6 @@
 <template>
 	<div class="room-state" @click="clickRoomIcon">
-		<img v-if="props.room.category == '자유'" src="@/assets/images/free.png" alt="free img"
+		<img v-if="props.room.category == '자유'" src="@/assets/images/free4.png" alt="free img"
 			style="height: 50%; align-self: center;">
 		<img v-if="props.room.category == '맥주'" src="@/assets/images/beer.png" alt="beer img"
 			style="height: 50%; align-self: center;">

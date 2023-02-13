@@ -39,11 +39,10 @@ defineExpose(renderKey)
 
 <style scoped>
 .container {
-  height: 92vh;
+  height: 88vh;
   display: grid;
   grid-template-columns: 5fr 1.5fr;
-  padding: auto;
-  margin: 1% 10%;
+  margin: 1vh 8vw;
 }
 
 /* .title {

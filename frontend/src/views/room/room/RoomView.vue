@@ -1,7 +1,8 @@
 <template>
   <header>
-    <RoomHeader :title="title" :category="category" :headCount="headCount" :headCountMax="headCountMax" @clickDrop="clickDrop"/>
-    <Drop :isDrop="this.isDrop" :dropIdx="this.dropIdx"/>
+    <RoomHeader :title="title" :category="category" :headCount="headCount" :headCountMax="headCountMax"
+      @clickDrop="clickDrop" />
+    <Drop :isDrop="this.isDrop" :dropIdx="this.dropIdx" />
     <!-- <Drop :isDrop="this.isDrop" :dropIdx="this.dropIdx"/> -->
   </header>
   <div id="main-container" class="container">
@@ -885,7 +886,7 @@ export default {
     },
 
     // 뿌리기 효과
-    clickDrop(){
+    clickDrop() {
       if (this.dropIdx == 3) {
         this.isDrop = false;
         this.dropIdx = -1;
@@ -1359,8 +1360,8 @@ a:hover .demo-logo {
 }
 
 .onoff>img {
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
 }
 
 #btns {
@@ -1370,8 +1371,8 @@ a:hover .demo-logo {
 }
 
 #btns>img {
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
 }
 
 .content {
@@ -1532,7 +1533,7 @@ li {
 }
 
 .footer-btn {
-  width: 5rem;
+  width: 6rem;
   height: 3rem;
   color: white;
   text-align: center;

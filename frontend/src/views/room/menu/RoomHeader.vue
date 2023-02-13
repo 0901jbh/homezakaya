@@ -1,7 +1,7 @@
 <template>
   <div class="head">
     <div class="title">
-      <div style="margin-right: 4vw; font-family: 'dodum';">[{{ props.category }}]</div>
+      <div style="margin-right: 1vw; font-family: 'hansans';">[{{ props.category }}]</div>
       <div>{{ props.title }}</div>
     </div>
     
@@ -64,7 +64,7 @@ function buttonClick() {
 .title {
   font-family: 'hansans';
   color: white;
-  font-size: 5vh;
+  font-size: 4.5vh;
   /* font-weight: 600; */
   padding-left: 1vw;
   display: flex;

@@ -10,6 +10,9 @@ import { RouterLink, RouterView } from "vue-router";
 import ErrorPopUp from "@/views/ErrorPopUp.vue";
 import { useStore } from "vuex";
 export default{
+  components:{
+    ErrorPopUp,
+  },
   data() {
     return {
       store: useStore(),

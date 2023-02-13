@@ -107,10 +107,10 @@ const createRoom = () => {
 			userId: store.state.userModule.user.userId,
 			roomId: result.roomId,
 		}).then((status) => {
-			if(status == 200){
+			if (status == 200) {
 				router.push({ name: 'room', params: { roomId: form.value.roomId }, query: { video: false, audio: false } })
 			}
-			else{
+			else {
 				popClose();
 				store.commit("errorModule/SET_STATUS", status);
 			}
@@ -297,5 +297,13 @@ const passwordClose = () => {
 
 .el-radio-button__inner:hover {
 	color: black;
+}
+
+.el-input {
+	width: 300px;
+}
+
+.el-select {
+	width: 300px;
 }
 </style>

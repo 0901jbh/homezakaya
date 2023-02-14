@@ -56,10 +56,12 @@
                 <div class="stop-btn" v-if="hostId == myUserId">
                   <div class="cancel" type="button" @click="closeSignal">X</div>
                 </div>
+                <div class="stop-btn" v-if="hostId != myUserId">
+                </div>
                 <div class="game-wrapper">
                   <div></div>
                   <div class="game-title">{{ this.gameTitle }}</div>
-                  <div class="game-content">{{ this.gameContent }}</div>
+                  <div class="game-content" v-html="this.gameContent"></div>
                   <div></div>
                   <div></div>
                 </div>
@@ -468,9 +470,7 @@ export default {
 
       this.session.on('signal:detect-audio', async (event) => {
         this.eventData = JSON.parse(event.data);
-        this.gameContent = `기준 문장 : ${this.eventData.content}
-
-        발음 문장 : ${this.eventData.strPerson}`;
+        this.gameContent = `기준 문장 : ${this.eventData.content} <br> 발음 문장 : ${this.eventData.strPerson}`
         setTimeout(() => {
           this.store.dispatch("gameModule/getAccuracy", this.eventData).then((response) => {
             this.gameContent = `정확도 : ${response}`;

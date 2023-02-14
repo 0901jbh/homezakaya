@@ -1,9 +1,9 @@
 <template>
   <header>
     <RoomHeader :title="title" :category="category" :headCount="headCount" :headCountMax="headCountMax"
-      @clickDrop="clickDrop" @clickCheers="clickCheers"/>
+      @clickDrop="clickDrop" @clickCheers="clickCheers" />
     <Drop :isDrop="this.isDrop" :dropIdx="this.dropIdx" />
-    <Cheers v-if="letCheers"/>
+    <Cheers v-if="letCheers" />
     <!-- <Drop :isDrop="this.isDrop" :dropIdx="this.dropIdx"/> -->
   </header>
   <div id="main-container" class="container">
@@ -40,13 +40,13 @@
                 <img class="option-footer-btn" src="@/assets/images/info.png" alt="게임정보">
               </div>
               <div id="btns">
-              <img v-if="hostId == myUserId" class="option-footer-btn" src="@/assets/images/laughter.png" alt="웃음참기"
-                @click="startBtn(1)">
-              <img v-if="hostId == myUserId" class="option-footer-btn" src="@/assets/images/random_topic.png" alt="랜덤주제"
-                @click="startBtn(3)">
+                <img v-if="hostId == myUserId" class="option-footer-btn" src="@/assets/images/laughter.png" alt="웃음참기"
+                  @click="startBtn(1)">
+                <img v-if="hostId == myUserId" class="option-footer-btn" src="@/assets/images/random_topic.png"
+                  alt="랜덤주제" @click="startBtn(3)">
+              </div>
             </div>
-            </div>
-           
+
           </div>
 
         </div>
@@ -101,7 +101,8 @@
           </div>
 
           <div id="option-footer">
-            <el-popover :width="300" popper-style="background: #E27B66; border: none; padding: 15px;border-radius: 15px" trigger="click">
+            <el-popover :width="300" popper-style="background: #E27B66; border: none; padding: 15px;border-radius: 15px"
+              trigger="click">
               <template #reference>
                 <div @click="refreshInviteBtn()" class="footer-btn">초대하기</div>
               </template>
@@ -140,15 +141,18 @@
             <li><img src="@/assets/images/video_on.png" alt="video on img" /> : 카메라 on/off</li>
             <li><img src="@/assets/images/audio_on.png" alt="audio on img" /> : 오디오 on/off</li>
             <li><img class="info_img" src="@/assets/images/info.png" alt="info on img" /> : 방 내부와 게임 설명</li>
-            <li><img src="@/assets/images/cloud.png" style = "width:45px; height: 45px;" alt="cloud img" /> : 벚꽃/비/단풍/눈 4가지 테마를 방 내부에 내리게 할 수 있어요</li>
+            <li><img src="@/assets/images/cloud.png" style="width:45px; height: 45px;" alt="cloud img" /> : 벚꽃/비/단풍/눈
+              4가지 테마를 방 내부에 내리게 할 수 있어요</li>
             <li>
-              <div class="footer-btn" style="display:inline; padding: 7px; margin-right:0px; font-size: 20px; ">초대하기</div> : 온라인 상태인
+              <div class="footer-btn" style="display:inline; padding: 7px; margin-right:0px; font-size: 20px; ">초대하기
+              </div> : 온라인 상태인
               친구를 초대할 수 있어요
             </li>
             <li>
-              <div class="footer-btn" style="display:inline; padding: 7px; margin-right:0px; font-size: 20px;">나가기</div> : 방 나가기
+              <div class="footer-btn" style="display:inline; padding: 7px; margin-right:0px; font-size: 20px;">나가기</div>
+              : 방 나가기
             </li>
-            
+
           </ul>
         </div>
       </div>
@@ -284,12 +288,12 @@ export default {
     isFinished() {
       return this.store.state.gameModule.isFinished;
     },
-    isClosed(){
+    isClosed() {
       return this.store.state.roomModule.isClosed;
     }
   },
   watch: {
-    isClosed(value){
+    isClosed(value) {
       console.log("watch");
       if (value == true && this.hostId == this.myUserId && this.subscribers.length > 0) {
         let data = JSON.parse(this.subscribers[0].stream.connection.data);
@@ -328,7 +332,7 @@ export default {
     },
   },
   methods: {
-   
+
     sendMessage() {
       if (this.newMessage) {
         this.messageData = {
@@ -490,7 +494,7 @@ export default {
 
       this.session.on('signal:cheers', () => {
         this.letCheers = true
-        setTimeout(()=>{this.letCheers = false}, 2000)
+        setTimeout(() => { this.letCheers = false }, 2000)
       })
 
       this.session.on('signal:random-topic', (event) => {
@@ -941,7 +945,7 @@ export default {
 
     this.joinSession();
   },
-  beforeRouteLeave (to, from, next) {
+  beforeRouteLeave(to, from, next) {
     this.leaveSession();
     next();
   },
@@ -1393,6 +1397,7 @@ a:hover .demo-logo {
   height: 40px;
   transition: all .1s ease-in;
 }
+
 .onoff>img:hover {
   transform: scale(1.2, 1.2);
 }

@@ -7,8 +7,8 @@
 				<div id="cam" :class="{ highlight: isHighLight }">
 					<ov-video :streamManager="streamManager" @click="userInfo" />
 				</div>
-			</template>			
-			<template #default>	
+			</template>
+			<template #default>
 				<div id="user_setting" style="display: flex; gap: 16px; flex-direction: column;">
 					<p class="user_nickname" style="margin: 0; font-size: 20px; color: white; align-self:center;">
 						{{ username }}
@@ -23,15 +23,14 @@
 					<!-- <div class="content" style="width: 60%; text-decoration:none;">
 						별점
 					</div> -->
-					<div v-if="!myVideo" class = "rate_div">
-						
-						<el-rate v-if="!myVideo" v-model="manner_rate" size="large" 
-						style="justify-content: center;" />
-					
-						<div class="content" v-if="!myVideo" @click="evalMannerPoint"  
-						style="justify-content: center; width: 60%; text-decoration:none;">평가</div>
+					<div v-if="!myVideo" class="rate_div">
+
+						<el-rate v-if="!myVideo" v-model="manner_rate" size="large" style="justify-content: center;" allow-half />
+
+						<div class="content" v-if="!myVideo" @click="evalMannerPoint"
+							style="justify-content: center; width: 60%; text-decoration:none;">평가</div>
 					</div>
-					
+
 					<div v-if="!myVideo && !isFriend" @click="friend" class="content" style="width: 60%; text-decoration:none;">
 						친구 추가
 					</div>
@@ -104,7 +103,7 @@ export default {
 			const { userId } = this.getConnectionData();
 			let res = false;
 			this.friends.forEach(element => {
-				if(element.userId == userId){
+				if (element.userId == userId) {
 					res = true;
 				}
 			});
@@ -144,7 +143,7 @@ export default {
 		},
 		evalMannerPoint() {
 			console.log("manner rate :" + this.manner_rate);
-			this.store.dispatch("userModule/updateMannerPoint",{userId : this.userId, mannerPoint : this.manner_rate});
+			this.store.dispatch("userModule/updateMannerPoint", { userId: this.userId, mannerPoint: this.manner_rate });
 			this.store.commit("errorModule/SET_STATUS", 204);
 
 		}
@@ -239,15 +238,14 @@ export default {
 	margin-top: 0.7rem;
 }
 
-.rate_div{
-	display: flex; 
-	gap: 16px; 
-	flex-direction: column; 
-	justify-content: center; 
+.rate_div {
+	display: flex;
+	gap: 16px;
+	flex-direction: column;
+	justify-content: center;
 	/* border:solid white 1px;  */
 	border-radius: 10px;
 	padding: 0 2px 10px 2px;
 	background-color: #2E303F;
 }
-
 </style>

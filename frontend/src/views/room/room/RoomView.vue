@@ -1,8 +1,9 @@
 <template>
   <header>
     <RoomHeader :title="title" :category="category" :headCount="headCount" :headCountMax="headCountMax"
-      @clickDrop="clickDrop" />
+      @clickDrop="clickDrop" @clickCheers="clickCheers"/>
     <Drop :isDrop="this.isDrop" :dropIdx="this.dropIdx" />
+    <Cheers v-if="letCheers"/>
     <!-- <Drop :isDrop="this.isDrop" :dropIdx="this.dropIdx"/> -->
   </header>
   <div id="main-container" class="container">
@@ -198,6 +199,7 @@
 
 <script>
 import RoomHeader from '../menu/RoomHeader.vue';
+import Cheers from './components/Cheers.vue';
 import UserVideo from "./components/UserVideo.vue";
 import Drop from "./components/Drop.vue";
 import { OpenVidu } from "openvidu-browser";
@@ -215,6 +217,7 @@ export default {
     UserVideo,
     RoomHeader,
     Drop,
+    Cheers,
   },
 
   data() {
@@ -267,6 +270,9 @@ export default {
       // 배경효과
       isDrop: false,
       dropIdx: -1,
+
+      // 건배
+      letCheers: false,
     };
   },
 
@@ -479,6 +485,11 @@ export default {
           });
         }, 6000)
         setTimeout(() => { this.gameScreenClose() }, 9000);
+      })
+
+      this.session.on('signal:cheers', () => {
+        this.letCheers = true
+        setTimeout(()=>{this.letCheers = false}, 2000)
       })
 
       this.session.on('signal:random-topic', (event) => {
@@ -907,6 +918,12 @@ export default {
         this.dropIdx += 1;
         this.isDrop = true;
       }
+    },
+
+    clickCheers() {
+      this.session.signal({
+        type: 'cheers'
+      })
     }
   },
 

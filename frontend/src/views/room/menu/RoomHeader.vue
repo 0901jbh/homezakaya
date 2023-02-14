@@ -6,8 +6,11 @@
     </div>
     
     <div style="display: flex; flex-direction: row; ">
+      <div class="cheers-btn" @click="cheersButtonClick">
+        <img src="@/assets/images/cheers.png" alt="건배 버튼" style="width: 45px; height: 45px;">
+      </div>
       <div class="drop-btn" @click="buttonClick">
-        <img src="@/assets/images/cloud.png" style = "width:45px; height: 45px;" >
+        <img src="@/assets/images/cloud.png" style = "width: 45px; height: 45px;" >
       </div>
       <div class="info" style="margin:1vw">
         {{ headCount }} / {{ headCountMax }}
@@ -17,7 +20,7 @@
 </template>
 
 <script setup>
-const emit = defineEmits(["clickDrop"])
+const emit = defineEmits(["clickDrop", "clickCheers"])
 
 const props = defineProps({
   title: String,
@@ -28,6 +31,9 @@ const props = defineProps({
 
 function buttonClick() {
   emit("clickDrop");
+}
+function cheersButtonClick() {
+  emit("clickCheers");
 }
 </script>
 
@@ -88,4 +94,14 @@ function buttonClick() {
 .drop-btn:hover {
   transform: scale(1.2, 1.2);
 }
+.cheers-btn{
+  color: white;
+  cursor: pointer;
+  margin: 1vw;
+  transition: all .1s ease;
+}
+.cheers-btn:hover {
+  transform: scale(1.2, 1.2);
+}
+
 </style>

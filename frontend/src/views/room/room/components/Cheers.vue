@@ -25,23 +25,21 @@ export default {
 
 @keyframes cheer{
     0% {
-        transform: translateX(-100%);
+      left: -100%;
     }
     50% {
-      transform: translateX(375%);
+      left: 35vw;
     }
     65% {
-      transform: translateX(335%);
+      left: 28vw;
     }
     70% {
-        transform: translateX(350%);
-        opacity: 100;
+      left: 30vw;
+      opacity: 100;
     }
     100% {
-        transform: translateX(350%);
-        opacity: 0;
+      left: 30vw;
+      opacity: 0;
     }
 }
-
-
 </style>

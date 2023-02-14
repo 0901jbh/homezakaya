@@ -43,6 +43,9 @@ public class UserController {
             resultMap.put("message", "중복된 id입니다.");
             return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.CONFLICT); // 409
         }
+        user.setMannerPoint(5);
+        user.setEvaluatedCount(1);
+
         userService.createUser(user);
         resultMap.put("message", SUCCESS);
         return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.CREATED);
@@ -229,7 +232,7 @@ public class UserController {
         // DB에서 refresh token 삭제
         // session 정보 삭제 - front
         UserDto loginUser = userService.getUser(userId);
-        loginUser.setRefreshToken(null);
+        loginUser.setRefreshToken("");
         userService.removeTokenInfo(loginUser);
 
         // 유저 state를 offline으로 변경

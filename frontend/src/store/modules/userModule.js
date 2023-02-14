@@ -72,6 +72,7 @@ export const userModule = {
           }
         })
     },
+
     // id 중복확인 - ok
     async idcheck(context, payload) {
       await axios
@@ -182,23 +183,6 @@ export const userModule = {
           console.log(err)
           context.commit("SET_EMAIL_ERR", true)
           context.commit("SET_NEW_PASSWORD", false)
-        })
-    },
-
-    // 회원 가입 - ok
-    async createUser(context, payload) {
-      await axios
-        .post(`/api/users`, payload)
-        .then(({ status, data }) => {
-          if (status == 200) {
-            console.log("회원가입 성공") // console 출력 안됨
-            context.commit("SET_USER", data)
-          }
-        })
-        .catch((err) => {
-          if (err.response.status == 500) {
-            console.log("회원가입 실패")
-          }
         })
     },
 

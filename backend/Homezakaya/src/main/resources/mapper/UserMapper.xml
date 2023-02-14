@@ -4,8 +4,8 @@
 <mapper namespace="com.ssafy.Homezakaya.model.dao.UserDao">
 
     <insert id="insertUser" parameterType="UserDto">
-        INSERT INTO user(userId, password, nickname, email, alcoholPoint)
-        VALUES (#{userId}, #{password}, #{nickname}, #{email}, #{alcoholPoint})
+        INSERT INTO user(userId, password, nickname, email, alcoholPoint, mannerPoint, evaluatedCount)
+        VALUES (#{userId}, #{password}, #{nickname}, #{email}, #{alcoholPoint}, #{mannerPoint}, #{evaluatedCount})
     </insert>
 
     <select id="getUser" parameterType="String" resultType="UserDto">

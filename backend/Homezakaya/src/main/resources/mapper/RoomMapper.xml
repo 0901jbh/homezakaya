@@ -10,7 +10,7 @@
     </insert>
 
     <select id="selectRooms" resultType="RoomDto">
-        select roomId, title, category, hostId, personLimit, personCount, isPrivate from room
+        select roomId, title, category, hostId, personLimit, personCount, isPrivate from room order by roomId desc;
     </select>
 
     <select id="selectRoom" resultType="RoomDto" parameterType="int">

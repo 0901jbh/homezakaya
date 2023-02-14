@@ -99,14 +99,14 @@
             </el-button>
           </el-form-item>
 
-          <el-form-item>
+          <!-- <el-form-item>
             <RouterLink to="/homeview" style="color: white; text-decoration: none;">
               <el-button type="info" size="large"
                 style="width: 300px; background-color: hsl(229.41, 18.68%, 17.84%) !important; color: white !important; border: 1px solid #E27B66">
                 뒤로 가기
               </el-button>
             </RouterLink>
-          </el-form-item>
+          </el-form-item> -->
 
         </el-form>
       </div>

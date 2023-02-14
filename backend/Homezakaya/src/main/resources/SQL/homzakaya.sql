@@ -1,4 +1,5 @@
 -- homezakaya DB
+DROP DATABASE homezakaya;
 CREATE DATABASE if NOT EXISTS homezakaya COLLATE utf8mb4_general_ci;
 USE homezakaya;
 
@@ -9,11 +10,10 @@ DROP table IF EXISTS room;
 DROP table IF EXISTS user;
 DROP table IF EXISTS sentence;
 DROP table IF EXISTS topic;
+DROP table IF EXISTS gamekeyword;
 DROP table IF EXISTS invitefriend;
 
-
--- TABLE User
-
+-- TABLE user
 CREATE TABLE IF NOT EXISTS user (
     userId VARCHAR(45) NOT NULL,
     password VARCHAR(45) NOT NULL,
@@ -25,11 +25,9 @@ CREATE TABLE IF NOT EXISTS user (
     refreshToken VARCHAR(255) NULL,
     state VARCHAR(10) NOT NULL DEFAULT 'offline',
     PRIMARY KEY (userId)
-    );
+);
 
-
--- TABLE Friend
-
+-- TABLE friend
 CREATE TABLE IF NOT EXISTS friend (
     userAId VARCHAR(45) NOT NULL,
     userBId VARCHAR(45) NOT NULL,
@@ -37,11 +35,9 @@ CREATE TABLE IF NOT EXISTS friend (
     PRIMARY KEY (userAId, userBId),
     FOREIGN KEY (userAId) REFERENCES user (userId) on delete cascade,
     FOREIGN KEY (userBId) REFERENCES user (userId) on delete cascade
-    );
+);
 
-
--- TABLE Room
-
+-- TABLE room
 CREATE TABLE IF NOT EXISTS room (
     roomId INT AUTO_INCREMENT,
     title VARCHAR(45) NOT NULL,
@@ -53,35 +49,37 @@ CREATE TABLE IF NOT EXISTS room (
     isPrivate BOOLEAN NOT NULL,
     PRIMARY KEY (roomId),
     FOREIGN KEY (hostId) REFERENCES user (userId) on delete cascade
-    );
+);
 
-
--- TABLE UserInRoom
-
+-- TABLE userinroom
 CREATE TABLE IF NOT EXISTS userinroom (
     userId VARCHAR(45) NOT NULL,
     roomId INT NOT NULL,
     PRIMARY KEY (userId),
     FOREIGN KEY (userId) REFERENCES user (userId) ON DELETE CASCADE,
     FOREIGN KEY (roomId) REFERENCES room (roomId) ON DELETE CASCADE
-    );
+);
 
-
--- TABLE Sentence
+-- TABLE sentence
 CREATE TABLE IF NOT EXISTS sentence (
     sentenceId INT AUTO_INCREMENT,
     content VARCHAR(255) NOT NULL,
     PRIMARY KEY (sentenceId)
-    );
+);
 
-
--- TABLE Topic
-
+-- TABLE topic
 CREATE TABLE IF NOT EXISTS topic (
     topicId INT AUTO_INCREMENT,
     content VARCHAR(255) NOT NULL,
     PRIMARY KEY (topicId)
-    );
+);
+
+-- TABLE gamekeyword
+CREATE TABLE IF NOT EXISTS gamekeyword (
+    keywordId INT AUTO_INCREMENT,
+    content VARCHAR(255) NOT NULL,
+    PRIMARY KEY (keywordId)
+);
 
 -- TABLE invitefriend
 CREATE TABLE IF NOT EXISTS invitefriend (
@@ -90,4 +88,4 @@ CREATE TABLE IF NOT EXISTS invitefriend (
     PRIMARY KEY (fromUserId, toUserId),
     FOREIGN KEY (fromUserId) REFERENCES friend (userAId) ON DELETE CASCADE,
     FOREIGN KEY (toUserId) REFERENCES friend (userBId) ON DELETE CASCADE
-    );
+);

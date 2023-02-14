@@ -139,13 +139,15 @@
             <li><img src="@/assets/images/video_on.png" alt="video on img" /> : 카메라 on/off</li>
             <li><img src="@/assets/images/audio_on.png" alt="audio on img" /> : 오디오 on/off</li>
             <li><img class="info_img" src="@/assets/images/info.png" alt="info on img" /> : 방 내부와 게임 설명</li>
+            <li><img src="@/assets/images/cloud.png" style = "width:45px; height: 45px;" alt="cloud img" /> : 벚꽃/비/단풍/눈 4가지 테마를 방 내부에 내리게 할 수 있어요</li>
             <li>
-              <div class="footer-btn" style="display:inline; padding: 5px 0px; margin-right:0px;">초대하기</div> : 온라인 상태인
+              <div class="footer-btn" style="display:inline; padding: 7px; margin-right:0px; font-size: 20px; ">초대하기</div> : 온라인 상태인
               친구를 초대할 수 있어요
             </li>
             <li>
-              <div class="footer-btn" style="display:inline; padding: 5px 0px; margin-right:0px;">나가기</div> : 방 나가기
+              <div class="footer-btn" style="display:inline; padding: 7px; margin-right:0px; font-size: 20px;">나가기</div> : 방 나가기
             </li>
+            
           </ul>
         </div>
       </div>
@@ -169,8 +171,8 @@
           <br>
           <p>게임시작 : 방장이 다른 유저의 화면을 클릭하여 진행할 수 있어요</p><br>
           <p>술 취했나 안 취했나 확인해보자!!</p><br />
-          <p>① 참여자가 술을 너무 많이 마신 것 같으면 방장이 지목하여 발음 테스트를 시작한다</p><br />
-          <p>② 지목 받은 사람은 랜덤으로 주어지는 발음 테스트 문장을 읽는다 (ex. 강 공장장이고, 된장 공장 공장장은 공 공장장이다)</p><br />
+          <p>① 참여자가 술을 너무 많이 마신 것 같으면 <br />방장이 지목하여 발음 테스트를 시작한다</p><br />
+          <p>② 지목 받은 사람은 랜덤으로 주어지는 발음 테스트 문장을 읽는다 <br />(ex. 강 공장장이고, 된장 공장 공장장은 공 공장장이다)</p><br />
           <p>③ 정확도를 통해 혀가 꼬였는지 확인 가능!</p><br />
         </div>
       </div>
@@ -182,7 +184,7 @@
           </p><br>
           <p>처음 만난 사람들과 어색하다면?? </p><br />
           <p>랜덤 대화 주제를 통해 친해져보자!</p><br />
-          <p>start 버튼을 클릭하면 랜덤으로 선택된 주제가 화면에 제시된다 (ex. 좋아하는 영화는 무엇인가요?)</p><br />
+          <p>start 버튼을 클릭하면 랜덤으로 선택된 주제가 화면에 제시된다 <br />(ex. 좋아하는 영화는 무엇인가요?)</p><br />
           <p>제시된 주제에 대한 이야기를 나누며 자연스럽게 무르익는 술자리~~</p><br />
         </div>
       </div>

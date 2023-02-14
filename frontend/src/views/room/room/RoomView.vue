@@ -895,6 +895,8 @@ export default {
       this.store.dispatch("friendModule/sendRequest", {
         userAId: this.myUserId,
         userBId: userId
+      }).then(() => {
+        this.store.commit("errorModule/SET_STATUS",206);
       });
     },
 

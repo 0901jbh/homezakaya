@@ -43,6 +43,9 @@ export default {
 				case 205:
                     sentenceTag.innerHTML = "친구에게 초대를 보냈습니다.";
                     break;
+				case 206:
+                    sentenceTag.innerHTML = "친구 추가 요청을 보냈습니다.";
+                    break;
                 case 401:
                     sentenceTag.innerHTML = "비밀번호가 틀렸습니다.";
                     break;

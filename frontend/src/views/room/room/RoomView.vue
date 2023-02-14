@@ -97,7 +97,7 @@
           </div>
 
           <div id="option-footer">
-            <el-popover :width="300" popper-style="background: #E27B66; border: none; padding: 15px;" trigger="click">
+            <el-popover :width="300" popper-style="background: #E27B66; border: none; padding: 15px;border-radius: 15px" trigger="click">
               <template #reference>
                 <div @click="refreshInviteBtn()" class="footer-btn">초대하기</div>
               </template>
@@ -1363,14 +1363,14 @@ a:hover .demo-logo {
 }
 
 .onoff {
-  margin-left: 100px;
+  margin-left: 70px;
   cursor: pointer;
   transition: all .1s ease-in;
 }
 
 .onoff>img {
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   transition: all .1s ease-in;
 }
 .onoff>img:hover {
@@ -1711,10 +1711,10 @@ p {
 
   width: 6rem;
   height: 0.8rem;
-  color: white;
+  color: black;
   font-size: 1rem;
   font-weight: 70;
-  background: #121212;
+  background: white;
   /* box-shadow: -4px -4px 15px rgba(255, 255, 255, 0.5), 4px 4px 15px rgba(0, 0, 0, 0.5), inset 4px 4px 15px rgba(255, 255, 255, 0.5); */
   border-radius: 50px;
 

@@ -38,13 +38,14 @@
               <div class="onoff" @click="infoOpen">
                 <img class="option-footer-btn" src="@/assets/images/info.png" alt="게임정보">
               </div>
-            </div>
-            <div id="btns">
+              <div id="btns">
               <img v-if="hostId == myUserId" class="option-footer-btn" src="@/assets/images/laughter.png" alt="웃음참기"
                 @click="startBtn(1)">
               <img v-if="hostId == myUserId" class="option-footer-btn" src="@/assets/images/random_topic.png" alt="랜덤주제"
                 @click="startBtn(3)">
             </div>
+            </div>
+           
           </div>
 
         </div>
@@ -1363,7 +1364,7 @@ a:hover .demo-logo {
 }
 
 .onoff {
-  margin-left: 70px;
+  margin-left: 50px;
   cursor: pointer;
   transition: all .1s ease-in;
 }
@@ -1384,8 +1385,8 @@ a:hover .demo-logo {
 }
 
 #btns>img {
-  width: 50px;
-  height: 50px;
+  width: 45px;
+  height: 45px;
 }
 
 .content {
@@ -1692,7 +1693,7 @@ p {
 }
 
 .option-footer-btn {
-  margin-right: 100px;
+  margin-right: 50px;
   transition: all .1s ease;
 }
 

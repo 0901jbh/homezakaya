@@ -26,8 +26,8 @@ public class SentenceServiceImpl implements SentenceService {
 	//정확도 검사
 	@Override
 	public int calculateAccuracy(String s1, String s2) {
-		s1 = s1.replaceAll(" ",  "");
-		s2 = s2.replaceAll(" ",  "");
+		s1 = s1.replaceAll("[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z0-9]", "");
+		s2 = s2.replaceAll("[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z0-9]", "");
 		String longer = s1, shorter = s2;
 
 		if (s1.length() < s2.length()) {

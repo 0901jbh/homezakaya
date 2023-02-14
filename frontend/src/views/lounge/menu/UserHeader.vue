@@ -8,7 +8,7 @@
       <template #reference>
         <!-- <img src="@/assets/images/profile.png" alt="profile img"
           style="width:60px; height:60px; padding-right: 1vw; cursor:pointer;"> -->
-        <div style="color: white; padding-right: 10vw; font-size: 30px; font-family: hansans; cursor: pointer;" @click="refreshData">
+        <div style="color: white; padding-right: 8vw; font-size: 30px; font-family: hansans; cursor: pointer;" @click="refreshData">
           오늘도 즐거운 술자리, {{ data.nickname }}님!
         </div>
       </template>
@@ -106,7 +106,7 @@ const refreshData = () =>{
   color: white;
   font-size: 2.5rem;
   font-weight: 600;
-  padding-left: 13vw;
+  padding-left: 11vw;
 }
 
 .content {

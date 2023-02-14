@@ -30,10 +30,11 @@
 				<div class="private-popup-header-title">비밀번호 입력</div>
 			</div> -->
 			<div class="private-popup-content">
-				<div style="margin-bottom:3%;">해당 방은 비공개방입니다.</div>
-				<div style="margin-bottom:5%;">비밀번호를 입력해주세요.</div>
+				<div></div>
+				<div style="margin-bottom:0;">[ 비공개방 입니다. ]</div>
+				<!-- <div style="margin-bottom:5%;">비밀번호를 입력해주세요.</div> -->
 				<div>
-					<el-form-item label="비밀번호">
+					<el-form-item>
 						<el-input v-model="data.userInput" placeholder="비밀번호를 입력해주세요" show-password />
 					</el-form-item>
 				</div>

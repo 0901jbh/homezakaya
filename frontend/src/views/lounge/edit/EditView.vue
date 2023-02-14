@@ -125,7 +125,7 @@ const store = useStore();
 const data = ref({
   id: store.state.userModule.user.userId,
   passwordNow: store.state.userModule.user.password,
-  password: store.state.userModule.user.password,
+  password: "",
   password2: "",
   nicknameNow: store.state.userModule.user.nickname,
   nickname: store.state.userModule.user.nickname,
@@ -140,7 +140,7 @@ const data = ref({
   passwordErr: false,
   passwordChecked: false,
   passwordUnchecked: false,
-  passwordSame: true,
+  passwordSame: false,
   password2Same: false,
 
   // nickname 관련 data

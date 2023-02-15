@@ -91,7 +91,7 @@ export default {
 	top: 0;
 	left: 0;
 	right: 0;
-	z-index: 999;
+	z-index: 1000;
 	transition: 0.5s ease-out;
 }
 
@@ -114,7 +114,6 @@ export default {
 	align-items: center;
 	height: 100%;
 	width: 100%;
-	/* grid-template-rows: 1fr 11fr; */
 	transition: 0.5s ease-out;
 	color: white;
 }

@@ -193,7 +193,15 @@ export const userModule = {
         .then(({ status, data }) => {
           if (status == 200) {
             console.log("정보 수정 완료")
-            context.commit("SET_USER_INFO", data)
+            axios.get(`/api/users/${payload.userId}`)
+            .then(({ status, data })=>{
+              if (status == 200) {
+                // console.log("data: ", data);
+                context.commit("SET_USER_INFO", data) //user에 저장
+              } else {
+                console.error("Failed to retrieve user information")
+              }
+            })
           }
         })
         .catch((err) => {

@@ -483,7 +483,10 @@ export default {
 
       this.session.on('signal:detect-audio', async (event) => {
         this.eventData = JSON.parse(event.data);
-        this.gameContent = `기준 문장 : ${this.eventData.content} <br> 발음 문장 : ${this.eventData.strPerson}`
+        this.gameContent = "분석중.."
+        setTimeout(() => {
+          this.gameContent = `${this.eventData.strPerson}`
+        }, 3000)
         setTimeout(() => {
           this.store.dispatch("gameModule/getAccuracy", this.eventData).then((response) => {
             this.gameContent = `정확도 : ${response}`;
@@ -1687,6 +1690,7 @@ li {
 }
 
 .game-content {
+  text-align: center;
   font-family: 'Galmuri9';
   color: white;
   font-size: 1rem;

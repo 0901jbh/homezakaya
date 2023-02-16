@@ -2,5 +2,62 @@ body {
   width: 100%;
   height: 100vh;
   margin: 0;
-  background: linear-gradient(180deg, #b4b4b4 0%, rgba(255, 255, 255, 0) 100%);
+  /* background: linear-gradient(180deg, #b4b4b4 0%, rgba(255, 255, 255, 0) 100%); */
+  background: #252836;
+  --el-color-primary: #e27b66;
+  --el-color-primary-dark-2: black;
+  --el-color-primary-light-3: #1f1d2b;
+  --el-color-primary-light-5: #252836;
+  --el-color-primary-light-7: #2e303f;
+  --el-color-primary-light-8: #cbcbcb;
+  --el-color-primary-light-9: white;
+}
+
+.snowflake {
+  width: 11px !important;
+  height: 11px !important;
+  border-radius: 50%;
+  background-color: white;
+  position: absolute !important;
+  top: -11px;
+  z-index: 999;
+  /* animation: fall 10s linear; */
+}
+.sakura{
+  width: 25px !important;
+  height: 25px !important;
+  background-image: url("@/assets/images/sakura.png");
+  background-size: contain;
+  position: absolute !important;
+  top: -25px;
+  z-index: 999;
+}
+
+.maple {
+  width: 25px !important;
+  height: 25px !important;
+  background-image: url("@/assets/images/maple.png");
+  background-size: contain;
+  position: absolute !important;
+  top: -25px;
+  z-index: 999;
+}
+
+.rain {
+  width: 2px !important;
+  height: 30px !important;
+  border-radius: 50%;
+  background-color: white;
+  position: absolute !important;
+  top: -30px;
+  z-index: 999;
+}
+
+@keyframes fall {
+  from {
+  }
+  to {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
 }

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.Homezakaya.model.dao.InviteFriendDao">
+    <!-- 친구 초대 관련 -->
+    <insert id="inviteFriend" parameterType="InviteFriendDto">
+        insert into invitefriend(fromUserId, toUserId)
+        values (#{fromUserId}, #{toUserId})
+    </insert>
+
+    <select id="inviteList" resultType="String" parameterType="String">
+        select fromUserId
+        from invitefriend
+        where toUserId = #{toUserId}
+    </select>
+
+    <delete id="deleteInvite" parameterType="InviteFriendDto">
+        delete
+        from invitefriend
+        where fromUserId = #{fromUserId}
+          and toUserId = #{toUserId}
+    </delete>
+
+<!--    selectInviteValidFriends-->
+<!--    select user.userId, user.nickname from user left outer join userinroom  on user.userId = userinroom.userId where user.userId in-->
+<!--    (select userBId from friend where userAId = 'dubi')-->
+<!--    and state = 'online'-->
+<!--    and userinroom.userId is null;-->
+    <select id="selectInviteValidFriends" resultType="map" parameterType="string">
+        select user.userId, user.nickname
+        from user
+                 left outer join userinroom on user.userId = userinroom.userId
+        where user.userId in
+              (select userBId from friend where userAId = #{userId} and isConnected = 1)
+          and state = 'online'
+          and userinroom.userId is null;
+    </select>
+</mapper>
